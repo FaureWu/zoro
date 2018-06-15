@@ -1,0 +1,46 @@
+{
+  "name": "zoro",
+  "version": "1.0.0",
+  "description": "redux helper framework, complete async await, like dva-core",
+  "main": "index.js",
+  "keywords": [
+    "redux",
+    "zoro",
+    "affair",
+    "promise",
+    "framework",
+    "frontend",
+    "dva-like"
+  ],
+  "scripts": {
+    "build": "babel src --out-dir ./ --copy-files",
+    "dev": "babel src --out-dir ./ --copy-files -w",
+    "lint": "eslint src"
+  },
+  "author": {
+    "name": "Faure Wu",
+    "email": "502556093@qq.com"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/faurewu/zoro",
+  "dependencies": {
+    "@babel/cli": "^7.0.0-beta.51",
+    "@babel/core": "^7.0.0-beta.51",
+    "@babel/preset-env": "^7.0.0-beta.51",
+    "babel-polyfill": "^6.26.0",
+    "eslint": "^4.19.1",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-config-standard": "^11.0.0",
+    "eslint-plugin-import": "^2.12.0",
+    "eslint-plugin-node": "^6.0.1",
+    "eslint-plugin-prettier": "^2.6.0",
+    "eslint-plugin-promise": "^3.8.0",
+    "eslint-plugin-standard": "^3.1.0",
+    "node-dev": "^3.1.3",
+    "prettier": "^1.13.5",
+    "redux": "^4.0.0"
+  },
+  "files": [
+    "index.js"
+  ]
+}
