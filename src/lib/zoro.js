@@ -1,8 +1,17 @@
 import { combineReducers } from 'redux'
 import Model from './model'
+import PluginEvent from './pluginEvent'
 import createStore from './store'
-import affairMiddlewareCreator from './affairMiddleware'
-import { noop, assert, isFunction, isArray } from './util'
+import { PLUGIN_EVENT, NAMESPACE_DIVIDER } from './constant'
+import effectMiddlewareCreator from './effectMiddleware'
+import {
+  noop,
+  assert,
+  isFunction,
+  isArray,
+  putCreator,
+  selectCreator,
+} from './util'
 
 const assertOpts = ({ onError = noop }) => {
   assert(
@@ -23,14 +32,23 @@ export default class Zoro {
   constructor(opts) {
     assertOpts(opts)
 
-    const { onError = noop, initialState = {}, onAffair = noop } = opts
+    const {
+      initialState = {},
+      onEffect = noop,
+      onAction = noop,
+      onSetup = noop,
+      onError = noop,
+    } = opts
 
     this.models = {}
     this.actions = {}
-    this.middlewares = []
+    this.middlewares = [effectMiddlewareCreator(this)]
     this.handleError = onError
-    this.handleAffair = onAffair
+    this.handleEffect = onEffect
+    this.handleAction = onAction
+    this.handleSetup = onSetup
     this.initialState = initialState
+    this.plugin = new PluginEvent()
   }
 
   getRootReducer() {
@@ -50,10 +68,10 @@ export default class Zoro {
     return combineReducers(rootReducer)
   }
 
-  getAffairs() {
-    return Object.keys(this.models).reduce((affairs, namespace) => {
+  getEffects() {
+    return Object.keys(this.models).reduce((effects, namespace) => {
       const model = this.models[namespace]
-      return { ...affairs, ...model.getAffairs() }
+      return { ...effects, ...model.getEffects() }
     }, {})
   }
 
@@ -64,49 +82,104 @@ export default class Zoro {
     }, {})
   }
 
-  model(opts) {
-    const model = new Model(opts)
-    assertModelUnique(this, model)
-    this.models[model.getNamespace()] = model
-  }
-
-  models(models) {
+  injectModels(models) {
     assert(
       isArray(models),
       `the models must be an Array, but we get ${typeof models}`,
     )
-    models.forEach(model => this.model(model))
+    models.forEach(opts => {
+      const model = new Model(opts)
+      assertModelUnique(this, model)
+      this.models[model.getNamespace()] = model
+    })
+
+    if (this.store) {
+      this.replaceReducer()
+    }
   }
 
-  middleware(middleware) {
-    assert(!!middleware, 'the middleware must has one param, but we get none')
-    this.middlewares.push(middleware)
-  }
-
-  middlewares(middlewares) {
+  injectMiddlewares(middlewares) {
     assert(
       isArray(middlewares),
       `the middlewares must be an Array, but we get ${typeof middlewares}`,
     )
-    middlewares.forEach(middleware => this.middleware(middleware))
+    middlewares.forEach(middleware => {
+      this.middlewares.push(middleware)
+    })
   }
 
   createStore() {
     const rootReducer = this.getRootReducer()
-    const affairMiddleware = affairMiddlewareCreator(this)
-    const middlewares = [affairMiddleware].concat(this.middlewares)
+    const pluginMiddlewares = this.plugin.emit(PLUGIN_EVENT.INJECT_MIDDLEWARES)
+    if (pluginMiddlewares instanceof Array) {
+      this.injectMiddlewares(pluginMiddlewares)
+    }
+
+    const pluginInitialState = this.plugin.emit(
+      PLUGIN_EVENT.INJECT_INITIAL_STATE,
+      this.initialState,
+    )
+
     return createStore({
       rootReducer,
-      middlewares,
+      middlewares: this.middlewares,
       initialState: {
         ...this.initialState,
+        ...(pluginInitialState || {}),
         ...this.getDefaultState(),
       },
     })
   }
 
-  start() {
-    this.store = this.createStore()
-    return this.store
+  replaceReducer() {
+    const rootReducer = this.getRootReducer()
+    this.store.replaceReducer(rootReducer)
+  }
+
+  setupModel() {
+    Object.keys(this.models).forEach(namespace => {
+      const model = this.models[namespace]
+      model.handleSetup.apply(undefined, [
+        {
+          put: putCreator(this.store, namespace),
+          select: selectCreator(this.store, namespace),
+          selectAll: selectCreator(this.store),
+        },
+      ])
+    })
+  }
+
+  use(creator) {
+    assert(
+      typeof creator === 'function',
+      `the use plugin must be a function, but we get ${typeof creator}`,
+    )
+
+    creator(this.plugin, {
+      DIVIDER: NAMESPACE_DIVIDER,
+      PLUGIN_EVENT,
+    })
+  }
+
+  setup() {
+    const pluginModels = this.plugin.emit(PLUGIN_EVENT.INJECT_MODELS)
+    if (pluginModels instanceof Array) {
+      this.injectModels(pluginModels)
+    }
+    const store = (this.store = this.createStore())
+    this.setupModel()
+    this.handleSetup.apply(undefined, [
+      {
+        put: putCreator(store),
+        select: selectCreator(store),
+      },
+    ])
+    this.plugin.emit(PLUGIN_EVENT.ON_SETUP, store)
+
+    store.subscribe(() => {
+      this.plugin.emit(PLUGIN_EVENT.ON_SUBSCRIBE, store)
+    })
+
+    return store
   }
 }

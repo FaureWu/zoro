@@ -1,5 +1,5 @@
 import createReducer from './createReducer'
-import { assert, isFunction } from './util'
+import { assert, isFunction, noop } from './util'
 import { NAMESPACE_DIVIDER } from './constant'
 
 const assertOpts = opts => {
@@ -15,23 +15,30 @@ class Model {
   constructor(opts) {
     assertOpts(opts)
 
-    const { namespace, state, reducers = {}, affairs = {} } = opts
+    const {
+      namespace,
+      state = null,
+      reducers = {},
+      effects = {},
+      setup = noop,
+    } = opts
     this.namespace = namespace
     this.defaultState = state
     this.reducers = this.createReducer(reducers)
-    this.affairs = this.createAffairs(affairs)
+    this.effects = this.createEffects(effects)
     this.actions = this.createActions({
       ...reducers,
-      ...affairs,
+      ...effects,
     })
+    this.handleSetup = setup
   }
 
   getNamespace() {
     return this.namespace
   }
 
-  getAffairs() {
-    return this.affairs
+  getEffects() {
+    return this.effects
   }
 
   getReducers() {
@@ -40,6 +47,10 @@ class Model {
 
   getDefaultState() {
     return this.defaultState
+  }
+
+  getActions() {
+    return this.actions
   }
 
   createActionType(type) {
@@ -61,12 +72,13 @@ class Model {
   }
 
   createActions(actions) {
+    const _that = this
     return Object.keys(actions).reduce(
       (combine, name) => ({
         ...combine,
         [name]: function() {
           return {
-            type: this.createActionType(name),
+            type: _that.createActionType(name),
             ...arguments,
           }
         },
@@ -75,15 +87,15 @@ class Model {
     )
   }
 
-  createAffairs(affairs) {
-    return Object.keys(affairs).reduce((combine, key) => {
-      const affair = affairs[key]
+  createEffects(effects) {
+    return Object.keys(effects).reduce((combine, key) => {
+      const effect = effects[key]
       const type = this.createActionType(key)
       assert(
-        isFunction(affair),
-        `the affair must be an function, but we get ${typeof affair} with type ${type}`,
+        isFunction(effect),
+        `the effect must be an function, but we get ${typeof effect} with type ${type}`,
       )
-      return { ...combine, [type]: affair }
+      return { ...combine, [type]: effect }
     }, {})
   }
 }

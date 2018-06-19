@@ -1,21 +1,25 @@
-import zoro from './index'
+import zoro, { actions, loadingPlugin } from './index'
 
 const delay = time => new Promise(resolve => setTimeout(resolve, time))
 
 const app = zoro({
-  initialState: {
-    loading: false,
-    test: {
-      eee: 1,
-    },
-  },
   onError(e) {
     console.log('onError: ', e)
   },
-  onAffair(action) {
-    console.log('onAffair: ', action)
+  onEffect(effect) {
+    console.log('onEffect: ', effect)
+  },
+  onAction(action) {
+    console.log('onAction: ', action)
+  },
+  async onSetup({ put, select }) {
+    const { timeout3 } = actions('test')
+    await put(timeout3())
+    console.log('end', select(state => state))
   },
 })
+
+app.use(loadingPlugin)
 
 app.model({
   namespace: 'test',
@@ -24,13 +28,41 @@ app.model({
     eee: 2,
   },
 
-  affairs: {
+  async setup({ put, select }) {
+    await put({ type: 'timeout' })
+    await put({ type: 'test/timeout2' })
+  },
+
+  effects: {
     async timeout(action, { put }) {
-      await delay(2000)
+      await delay(1000)
       put({
         type: 'save',
         payload: {
           name: 'test',
+          error: false,
+        },
+      })
+      await put({
+        type: 'timeout2'
+      })
+    },
+    async timeout2(action, { put }) {
+      await delay(2000)
+      put({
+        type: 'save',
+        payload: {
+          name: 'test1',
+          error: false,
+        },
+      })
+    },
+    async timeout3(action, { put }) {
+      await delay(3000)
+      put({
+        type: 'save',
+        payload: {
+          name: 'test3',
           error: false,
         },
       })
@@ -45,9 +77,12 @@ app.model({
 })
 
 const store = app.start()
+store.subscribe(() => console.log('subscribe state: ', store.getState()))
 store
   .dispatch({ type: 'test/timeout' })
-  .then(data => console.log('then: ', data))
-  .catch(e => console.log('error: ', e))
-console.log('init state: ', store.getState())
-store.subscribe(() => console.log('state: ', store.getState()))
+  .then(data => console.log('test/timeout callback: ', data))
+  .catch(e => console.log('test/timeout onError: ', e))
+
+app.model({
+  namespace: 'eee',
+})
