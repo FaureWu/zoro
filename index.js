@@ -3,13 +3,11 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = exports.loadingPlugin = exports.actions = void 0;
+exports.default = exports.actions = void 0;
 
 require("babel-polyfill");
 
 var _zoro2 = _interopRequireDefault(require("./lib/zoro"));
-
-var _loadingPlugin = _interopRequireDefault(require("./lib/plugin/loadingPlugin"));
 
 var _util = require("./lib/util");
 
@@ -23,14 +21,14 @@ function App(zoro) {
   _zoro = zoro;
 }
 
-App.prototype.model = function (model) {
-  _zoro.injectModels.call(_zoro, [model]);
+App.prototype.model = function (models) {
+  if (models instanceof Array) {
+    _zoro.injectModels.call(_zoro, models);
 
-  return this;
-};
+    return this;
+  }
 
-App.prototype.models = function (models) {
-  _zoro.injectModels.call(_zoro, models);
+  _zoro.injectModels.call(_zoro, [models]);
 
   return this;
 };
@@ -63,10 +61,9 @@ var actions = function actions(namespace) {
 };
 
 exports.actions = actions;
-var loadingPlugin = _loadingPlugin.default;
-exports.loadingPlugin = loadingPlugin;
 
-var _default = function _default(opts) {
+var _default = function _default() {
+  var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
   return new App(new _zoro2.default(opts));
 };
 

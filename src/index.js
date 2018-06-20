@@ -1,6 +1,5 @@
 import 'babel-polyfill'
 import Zoro from './lib/zoro'
-import loading from './lib/plugin/loadingPlugin'
 import { assert } from './lib/util'
 
 let _zoro
@@ -8,13 +7,14 @@ function App(zoro) {
   _zoro = zoro
 }
 
-App.prototype.model = function(model) {
-  _zoro.injectModels.call(_zoro, [model])
-  return this
-}
+App.prototype.model = function(models) {
+  if (models instanceof Array) {
+    _zoro.injectModels.call(_zoro, models)
 
-App.prototype.models = function(models) {
-  _zoro.injectModels.call(_zoro, models)
+    return this
+  }
+
+  _zoro.injectModels.call(_zoro, [models])
   return this
 }
 
@@ -47,6 +47,4 @@ export const actions = function(namespace) {
   return models[namespace].getActions()
 }
 
-export const loadingPlugin = loading
-
-export default opts => new App(new Zoro(opts))
+export default (opts = {}) => new App(new Zoro(opts))

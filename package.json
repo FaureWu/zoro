@@ -42,6 +42,7 @@
     "redux": "^4.0.0"
   },
   "files": [
-    "index.js"
+    "index.js",
+    "plugin.js"
   ]
 }
