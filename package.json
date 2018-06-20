@@ -1,6 +1,6 @@
 {
   "name": "roronoa-zoro",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "redux helper framework, complete async await, like dva-core",
   "main": "dist/index.js",
   "keywords": [
@@ -17,6 +17,7 @@
     "build": "babel src --out-dir ./dist --copy-files",
     "dev": "babel src --out-dir ./dist --copy-files -w",
     "example": "yarn build && node ./dist/example.js",
+    "release": "yarn lint && yarn build && yarn publish",
     "lint": "eslint src"
   },
   "author": {
