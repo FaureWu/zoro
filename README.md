@@ -16,10 +16,10 @@ yarn add roronoa-zoro
 ### 文档快捷导航
 
 * [开发自定义的plugin](https://github.com/FaureWu/zoro/tree/master/doc/PLUGIN.md)
-<!-- * [接入taro框架](https://github.com/FaureWu/zoro/tree/master/doc/TARO.md) -->
+* [接入taro框架](https://github.com/FaureWu/zoro/tree/master/doc/TARO.md)
 
 ### 结合第三方库
-<!-- * [taro](https://taro.aotu.io): 基于[react](https://github.com/facebook/react)多端统一开发框架 [taro接入文档](https://github.com/FaureWu/zoro/tree/master/doc/TARO.md) -->
+* [taro](https://taro.aotu.io): 基于[react](https://github.com/facebook/react)多端统一开发框架 [taro接入文档](https://github.com/FaureWu/zoro/tree/master/doc/TARO.md)
 
 ### 导出的文件
 

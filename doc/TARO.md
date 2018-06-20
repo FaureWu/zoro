@@ -75,6 +75,7 @@ export default {
 import Taro, { Component } from '@tarojs/taro'
 import { View, Text } from '@tarojs/components'
 import { connect } from '@tarojs/redux'
+import { bindActionCreators } from 'redux'
 import { actions } from '../../zoro'
 import { namespace } from '../../models/test'
 import './index.scss'
@@ -83,7 +84,7 @@ import './index.scss'
   state => ({
     data: state[namespace],
   }),
-  actions[namespace],
+  dispatch => bindActionCreators(actions(namespace), dispatch),
 )
 export default class Index extends Component {
   config = {
