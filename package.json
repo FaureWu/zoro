@@ -1,6 +1,6 @@
 {
   "name": "roronoa-zoro",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "redux helper framework, complete async await, like dva-core",
   "main": "dist/index.js",
   "keywords": [
@@ -26,8 +26,8 @@
   "license": "MIT",
   "homepage": "https://github.com/FaureWu/zoro.git",
   "dependencies": {
-    "babel-polyfill": "^6.26.0",
-    "redux": "^4.0.0"
+    "redux": "^4.0.0",
+    "regenerator-runtime": "^0.11.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.0.0-beta.51",
