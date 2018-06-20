@@ -89,7 +89,7 @@ model命名空间，需要保证唯一值
 * `selectAll(handler) <Function>` 获取整个redux state值，返回值为获取的state
   * `handler(state) <Function>` 
 
-你可以在这个初始化函数中执行一些初始化action，比如获取异步配置信息等
+你可以在这个初始化函数中执行一些初始化action，比如获取异步配置信息等
 
 #### `state` `<Any>`
 
