@@ -7,20 +7,20 @@
 ### 文档快捷导航
 
 * [开发自定义的plugin](https://github.com/FaureWu/zoro/tree/master/doc/PLUGIN.md)
-* [接入taro框架](https://github.com/FaureWu/zoro/tree/master/doc/TARO.md)
+* [接入taro框架](https://github.com/FaureWu/zoro/tree/master/doc/TARO.md)
 
 ### 结合第三方库
-* [taro](https://taro.aotu.io): 基于[react](https://github.com/facebook/react)多端统一开发框架 [taro接入文档](https://github.com/FaureWu/zoro/tree/master/doc/TARO.md)
+* [taro](https://taro.aotu.io): 基于[react](https://github.com/facebook/react)多端统一开发框架 [taro接入文档](https://github.com/FaureWu/zoro/tree/master/doc/TARO.md)
 
 ### 导出的文件
 
 #### zoro
-默认导出的文件
+默认导出的文件
 
 #### zoro/plugin
-导出内置定义好的plugin, 目前内置的plugin有: 
+导出内置定义好的plugin, 目前内置的plugin有: 
 [如何开发自己的plugin](https://github.com/FaureWu/zoro/tree/master/doc/PLUGIN.md)
-* **loading** 统一处理异步加载状态
+* **loading** 统一处理异步加载状态
 ```js
 import zoro from 'zoro'
 import { loading } from 'zoro/plugin'
@@ -35,7 +35,7 @@ app.use(loading)
 
 #### `const app = zoro(opts)`
 
-创建redux app，并且返回zoro的接口
+创建redux app，并且返回zoro的接口
 
 `opts` `<Object>` 包含如下可配置属性
 * `initialState` `<Object>` 初始化redux应用state，优先级如下：initialState < plugin initialState < model state
@@ -48,7 +48,7 @@ app.use(loading)
 
 #### `app.model()`
 
-注册model到应用，可以注册一个或者多个，多个时参数为数组
+注册model到应用，可以注册一个或者多个，多个时参数为数组
 
 #### `app.use()`
 
@@ -60,7 +60,7 @@ app.use(loading)
 
 #### `import { actions } from 'zoro'`
 
-根据命名空间获取actions
+根据命名空间获取actions
 ```js
 import { actions } from 'zoro'
 
