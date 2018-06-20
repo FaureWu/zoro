@@ -1,4 +1,4 @@
-import 'babel-polyfill'
+import 'regenerator-runtime/runtime'
 import Zoro from './lib/zoro'
 import { assert } from './lib/util'
 

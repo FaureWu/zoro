@@ -5,7 +5,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = exports.actions = void 0;
 
-require("babel-polyfill");
+require("regenerator-runtime/runtime");
 
 var _zoro2 = _interopRequireDefault(require("./lib/zoro"));
 
