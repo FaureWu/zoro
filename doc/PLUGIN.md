@@ -102,4 +102,4 @@ pluginEvent.on('onError', function(e, store) {
 })
 ```
 
-我们内部实现了一个loadingPlugin用于管理全局的loading状态[loading plugin](https://github.com/FaureWu/zoro/tree/master/src/lib/plugin/loadingPlugin.js)
+我们内部实现了一个loadingPlugin用于管理全局的loading状态[loading plugin](https://github.com/FaureWu/zoro/tree/master/src/lib/plugin/loadingPlugin.js)
