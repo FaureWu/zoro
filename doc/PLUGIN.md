@@ -1,4 +1,4 @@
-### Zoro Plugin开发
+### Zoro Plugin开发
 
 #### `function plugin(pluginEvent, opts) {}`
 
