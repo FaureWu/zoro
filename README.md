@@ -4,6 +4,15 @@
 
 ---
 
+### 如何安装
+```bash
+npm install --save roronoa-zoro
+
+or 
+
+yarn add roronoa-zoro
+```
+
 ### 文档快捷导航
 
 * [开发自定义的plugin](https://github.com/FaureWu/zoro/tree/master/doc/PLUGIN.md)
