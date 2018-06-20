@@ -1,12 +1,13 @@
 {
-  "name": "zoro",
+  "name": "roronoa-zoro",
   "version": "1.0.0",
   "description": "redux helper framework, complete async await, like dva-core",
   "main": "index.js",
   "keywords": [
     "redux",
+    "roronoa",
     "zoro",
-    "affair",
+    "effect",
     "promise",
     "framework",
     "frontend",
