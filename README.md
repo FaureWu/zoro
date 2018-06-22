@@ -51,7 +51,7 @@ app.use(loading)
   "model": {
     "modelNamespace": false
   },
-  "effects": {
+  "effect": {
     "modelNamespace/effectName": false
   }
 }
