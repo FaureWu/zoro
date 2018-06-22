@@ -43,6 +43,19 @@ app.use(loading)
 
 ...
 ```
+该插件会在state的存储loading状态
+**state['@loading']**
+```json
+{
+  "global": false,
+  "model": {
+    "modelNamespace": false
+  },
+  "effects": {
+    "modelNamespace/effectName": false
+  }
+}
+```
 
 ### zoro API
 
