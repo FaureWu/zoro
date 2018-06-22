@@ -107,7 +107,7 @@ action的参数为(payload, meta, error)
 ```js
 export default {
   namespace: 'modelName', // 该model的名称
-  onSetup: function({ put, select, selectAll }) {}, // model启动时调用
+  setup: function({ put, select, selectAll }) {}, // model启动时调用
   state: {}, // 默认的state，可以是任意格式数据
   reducers: {}, // reducer action定义
   effects: {}, // 副作用action，主要用于处理异步
