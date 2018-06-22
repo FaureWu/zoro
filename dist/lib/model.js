@@ -106,10 +106,13 @@ function () {
       var _that = this;
 
       return Object.keys(actions).reduce(function (combine, name) {
-        return _objectSpread({}, combine, _defineProperty({}, name, function () {
-          return _objectSpread({
-            type: _that.createActionType(name)
-          }, arguments);
+        return _objectSpread({}, combine, _defineProperty({}, name, function (payload, meta, error) {
+          return {
+            type: _that.createActionType(name),
+            payload: payload,
+            meta: meta,
+            error: error
+          };
         }));
       }, {});
     }

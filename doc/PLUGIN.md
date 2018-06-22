@@ -2,6 +2,10 @@
 
 #### `function plugin(pluginEvent, opts) {}`
 
+#### `opts` `<Object>`
+* `DIVIDER` `<String>` model命名空间与action的分隔符
+* `PLUGIN_EVENT` `<Object>` zoro提供的plugin event事件对象
+
 zoro plugin提供了部分事件
 ```js
 export const PLUGIN_EVENT = {

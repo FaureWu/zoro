@@ -76,10 +76,12 @@ class Model {
     return Object.keys(actions).reduce(
       (combine, name) => ({
         ...combine,
-        [name]: function() {
+        [name]: function(payload, meta, error) {
           return {
             type: _that.createActionType(name),
-            ...arguments,
+            payload,
+            meta,
+            error,
           }
         },
       }),

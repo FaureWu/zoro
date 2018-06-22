@@ -5,12 +5,13 @@
 ```js
 import Taro, { Component } from 'taro'
 import { Provider } from '@tarojs/redux'
-import zoro from 'zoro'
+import zoro from 'roronoa-zoro'
+import { loading } from 'roronoa-zoro/plugin'
+import testModel from './models/test'
 
 const app = zoro()
-app.model(...) // 注册单个model
-app.models([...]) // 注册多个model
-app.use(...) // 注册hook
+app.model(testModel) // 注册单个model或多个model，多个时为数组
+app.use(loading) // 注册单个或多个hook，多个时为数组
 
 const store = app.start() // 启动并创建store
 
@@ -78,7 +79,7 @@ import Taro, { Component } from '@tarojs/taro'
 import { View, Text } from '@tarojs/components'
 import { connect } from '@tarojs/redux'
 import { bindActionCreators } from 'redux'
-import { actions } from '../../zoro'
+import { actions } from 'roronoa-zoro'
 import { namespace } from '../../models/test'
 import './index.scss'
 
@@ -93,18 +94,10 @@ export default class Index extends Component {
     navigationBarTitleText: '首页',
   }
 
-  componentWillMount() {}
-
   componentDidMount() {
     const { queryTest } = this.props
     queryTest().then(data => console.log(data))
   }
-
-  componentWillUnmount() {}
-
-  componentDidShow() {}
-
-  componentDidHide() {}
 
   render() {
     const { data } = this.props

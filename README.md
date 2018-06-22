@@ -17,22 +17,26 @@ yarn add roronoa-zoro
 
 * [开发自定义的plugin](https://github.com/FaureWu/zoro/tree/master/doc/PLUGIN.md)
 * [接入taro框架](https://github.com/FaureWu/zoro/tree/master/doc/TARO.md)
+* [接入wepy框架](https://github.com/FaureWu/zoro/tree/master/doc/WEPY.md)
+* [react-redux接入文档](https://github.com/FaureWu/zoro/tree/master/doc/REACT-REDUX.md)
 
 ### 结合第三方库
 * [taro](https://taro.aotu.io): 基于[react](https://github.com/facebook/react)多端统一开发框架 [taro接入文档](https://github.com/FaureWu/zoro/tree/master/doc/TARO.md)
+* [wepy](https://tencent.github.io/wepy/): 基于[vue](https://cn.vuejs.org/v2/guide/)微信小程序组件化开发框架WePY [wepy接入文档](https://github.com/FaureWu/zoro/tree/master/doc/WEPY.md)
+* [react-redux](https://redux.js.org/basics/usage-with-react): 配合第三方应用生成器如[create-react-app](https://github.com/facebook/create-react-app) [react-redux接入文档](https://github.com/FaureWu/zoro/tree/master/doc/REACT-REDUX.md)
 
 ### 导出的文件
 
-#### zoro
+#### roronoa-zoro
 默认导出的文件
 
-#### zoro/plugin
+#### roronoa-zoro/plugin
 导出内置定义好的plugin, 目前内置的plugin有: 
 [如何开发自己的plugin](https://github.com/FaureWu/zoro/tree/master/doc/PLUGIN.md)
 * **loading** 统一处理异步加载状态
 ```js
-import zoro from 'zoro'
-import { loading } from 'zoro/plugin'
+import zoro from 'roronoa-zoro'
+import { loading } from 'roronoa-zoro/plugin'
 
 const app = zoro()
 app.use(loading)
@@ -67,19 +71,24 @@ app.use(loading)
 
 启动应用，并返回redux store
 
-#### `import { actions } from 'zoro'`
+#### `import { actions } from 'roronoa-zoro'`
 
 根据命名空间获取actions
 ```js
-import { actions } from 'zoro'
+import { actions } from 'roronoa-zoro'
+import { connect } from 'react-redux'
 
 const modelActions = actions(modelName)
-@connect(state => ({}), dispatch => ({
-  queryData: () => dispatch(modelActions.queryData())
-}))(Com)
+const mapStateToProps = state => ({})
+const mapDispatchToProps = dispatch => ({
+  queryData: (params) => dispatch(modelActions.queryData(params))
+})
+
+connect(mapStateToProps, mapDispatchToProps)(Com)
 ```
 
 所有的effect action 通过dispatch调用都返回一个Promise对象
+action的参数为(payload, meta, error)
 
 ### 如何定义一个model `<Object>`
 ```js
