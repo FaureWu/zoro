@@ -118,7 +118,7 @@ export default {
 
 model命名空间，需要保证唯一值
 
-#### `onSteup({ put, select, selectAll })` `<Function>`
+#### `setup({ put, select, selectAll })` `<Function>`
 * `put(action) <Function>` 发起一个redux action
 * `select(handler) <Function>` 获取当前model的state, 返回值为获取到的state
   * `handler(state) <Function>`

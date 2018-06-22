@@ -18,7 +18,8 @@
     "dev": "babel src --out-dir ./dist --copy-files -w",
     "example": "yarn build && node ./dist/example.js",
     "release": "yarn lint && yarn build && yarn publish",
-    "lint": "eslint src"
+    "lint": "eslint src",
+    "test": "jest"
   },
   "author": {
     "name": "Faure Wu",
