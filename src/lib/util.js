@@ -1,10 +1,13 @@
 import { NAMESPACE_DIVIDER } from './constant'
 
+export const isArray = arr => arr instanceof Array
+
+export const isObject = obj =>
+  obj !== null && typeof obj === 'object' && !isArray(obj)
+
 export const isBoolean = bool => typeof bool === 'boolean'
 
 export const isFunction = func => typeof func === 'function'
-
-export const isArray = arr => arr instanceof Array
 
 export const assert = (validate, message) => {
   if (

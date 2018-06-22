@@ -15,7 +15,7 @@ const app = zoro({
   },
   async onSetup({ put, select }) {
     const { timeout3 } = actions('test')
-    await put(timeout3())
+    await put(timeout3({ param: 1 }))
     console.log('end', select(state => state))
   },
 })
@@ -58,7 +58,8 @@ app.model({
         },
       })
     },
-    async timeout3(action, { put }) {
+    async timeout3({ payload }, { put }) {
+      console.log(payload)
       await delay(3000)
       put({
         type: 'save',
