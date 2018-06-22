@@ -57,6 +57,8 @@ export default {
         type: 'save',
         payload: data,
       })
+
+      return data
     },
   },
 
@@ -95,7 +97,7 @@ export default class Index extends Component {
 
   componentDidMount() {
     const { queryTest } = this.props
-    queryTest()
+    queryTest().then(data => console.log(data))
   }
 
   componentWillUnmount() {}

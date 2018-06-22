@@ -73,8 +73,13 @@ app.use(loading)
 ```js
 import { actions } from 'zoro'
 
-connect(null, actions[modelName])(Com)
+const modelActions = actions(modelName)
+@connect(state => ({}), dispatch => ({
+  queryData: () => dispatch(modelActions.queryData())
+}))(Com)
 ```
+
+所有的effect action 通过dispatch调用都返回一个Promise对象
 
 ### 如何定义一个model `<Object>`
 ```js
