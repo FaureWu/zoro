@@ -4,7 +4,10 @@
 /node_modules
 
 # production
-/dist
+/lib
+index.js
+example.js
+plugin.js
 
 # misc
 .DS_Store

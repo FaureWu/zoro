@@ -22,7 +22,6 @@ const middleware = ({ dispatch }) => next => async action => {
     } catch (e) {
       _zoro.handleError.apply(undefined, [e])
       _zoro.plugin.emit(PLUGIN_EVENT.ON_ERROR, e, _zoro.store)
-      throw e
     } finally {
       _zoro.plugin.emit(PLUGIN_EVENT.ON_DID_EFFECT, action, _zoro.store)
     }

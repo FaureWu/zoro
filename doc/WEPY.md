@@ -1,5 +1,9 @@
 ### Wepy 框架的接入
 
+#### `iwepy` 快速搭建小程序开发环境
+一整套完整的小程序开发解决方案，集成了[iview-weapp](https://weapp.iviewui.com/)
+[iwepy](https://github.com/FaureWu/iwepy) 引入iview-weapp组件，异步请求解决方案，redux小程序解决方案zoro，全局loading处理，全局错误捕获处理
+
 #### `wepy/src/app.wpy`
 
 ```js
@@ -11,10 +15,6 @@ import testModel from './models/test'
 const app = zoro()
 app.model(testModel) // 注册单个model或多个model，多个时为数组
 app.use(loading) // 注册单个或多个hook，多个时为数组
-
-const store = app.start() // 启动并创建store
-
-setStore(store)
 
 export default class extends wepy.app {
   config = {
@@ -34,6 +34,11 @@ export default class extends wepy.app {
   constructor() {
     super()
     this.use('promisify')
+  }
+
+  onLaunch() {
+    const store = app.start() // 启动并创建store
+    setStore(store)
   }
 }
 ```
