@@ -1,6 +1,6 @@
 {
   "name": "roronoa-zoro",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "redux helper framework, complete async await, like dva-core",
   "main": "dist/index.js",
   "keywords": [
@@ -50,8 +50,8 @@
     "prettier": "^1.13.5"
   },
   "files": [
-    "dist/index",
-    "dist/plugin",
+    "dist/index.js",
+    "dist/plugin.js",
     "dist/lib"
   ]
 }
