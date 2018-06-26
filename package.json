@@ -1,7 +1,7 @@
 {
   "name": "roronoa-zoro",
   "version": "1.1.0",
-  "description": "redux helper framework, complete async await, like dva-core",
+  "description": "a redux framework, complete async await",
   "main": "index.js",
   "keywords": [
     "redux",
@@ -10,8 +10,7 @@
     "effect",
     "promise",
     "framework",
-    "frontend",
-    "dva-like"
+    "frontend"
   ],
   "scripts": {
     "build": "babel src --out-dir ./ --copy-files",
