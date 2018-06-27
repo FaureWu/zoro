@@ -36,10 +36,10 @@ yarn add roronoa-zoro
 * **loading** 统一处理异步加载状态
 ```js
 import zoro from 'roronoa-zoro'
-import { loading } from 'roronoa-zoro/plugin'
+import { createLoading } from 'roronoa-zoro/plugin'
 
 const app = zoro()
-app.use(loading)
+app.use(createLoading())
 
 ...
 ```

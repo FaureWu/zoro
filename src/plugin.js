@@ -1,3 +1,3 @@
-import loading from './lib/plugin/loadingPlugin'
+import createLoading from './lib/plugin/loadingPlugin'
 
-export { loading }
+export { createLoading }

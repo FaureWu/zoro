@@ -1,5 +1,5 @@
 import zoro, { actions, loadingPlugin } from './index'
-import { loading } from './plugin'
+import { createLoading } from './plugin'
 
 const delay = time => new Promise(resolve => setTimeout(resolve, time))
 
@@ -20,11 +20,7 @@ const app = zoro({
   },
 })
 
-app.use(
-  loading({
-    namespace: 'loading',
-  }),
-)
+app.use(createLoading())
 
 app.model({
   namespace: 'test',

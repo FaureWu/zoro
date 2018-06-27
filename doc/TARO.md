@@ -6,12 +6,12 @@
 import Taro, { Component } from 'taro'
 import { Provider } from '@tarojs/redux'
 import zoro from 'roronoa-zoro'
-import { loading } from 'roronoa-zoro/plugin'
+import { createLoading } from 'roronoa-zoro/plugin'
 import testModel from './models/test'
 
 const app = zoro()
 app.model(testModel) // 注册单个model或多个model，多个时为数组
-app.use(loading) // 注册单个或多个hook，多个时为数组
+app.use(createLoading()) // 注册单个或多个hook，多个时为数组
 
 const store = app.start() // 启动并创建store
 
