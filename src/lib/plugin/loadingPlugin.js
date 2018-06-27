@@ -1,6 +1,6 @@
 import { splitType } from '../util'
 
-const loadingNamespace = '@loading'
+let loadingNamespace = 'loading'
 
 const loadingCount = {
   global: 0,
@@ -8,8 +8,8 @@ const loadingCount = {
   effect: {},
 }
 
-const loadingModel = {
-  namespace: loadingNamespace,
+const createLoadingModel = namespace => ({
+  namespace,
 
   state: {
     global: false,
@@ -56,9 +56,11 @@ const loadingModel = {
       }
     },
   },
-}
+})
 
 function loadingPlugin(event, { DIVIDER, PLUGIN_EVENT }) {
+  const loadingModel = createLoadingModel(loadingNamespace)
+
   event.on(PLUGIN_EVENT.INJECT_MODELS, function() {
     return [loadingModel]
   })
@@ -82,4 +84,10 @@ function loadingPlugin(event, { DIVIDER, PLUGIN_EVENT }) {
   })
 }
 
-export default loadingPlugin
+export default opt => {
+  if (opt && typeof opt.namespace === 'string') {
+    loadingNamespace = opt.namespace
+  }
+
+  return loadingPlugin
+}

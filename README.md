@@ -44,7 +44,7 @@ app.use(loading)
 ...
 ```
 该插件会在state的存储loading状态
-**state['@loading']**
+**state.loading**
 ```json
 {
   "global": false,

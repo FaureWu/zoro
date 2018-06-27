@@ -20,7 +20,11 @@ const app = zoro({
   },
 })
 
-app.use(loading)
+app.use(
+  loading({
+    namespace: 'loading',
+  }),
+)
 
 app.model({
   namespace: 'test',
@@ -45,7 +49,7 @@ app.model({
         },
       })
       await put({
-        type: 'timeout2'
+        type: 'timeout2',
       })
     },
     async timeout2(action, { put }) {
