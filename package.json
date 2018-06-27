@@ -1,6 +1,6 @@
 {
   "name": "roronoa-zoro",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "a redux framework, complete async await",
   "main": "index.js",
   "keywords": [
