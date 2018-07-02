@@ -14,6 +14,7 @@ const app = zoro({
     console.log('onAction: ', action)
   },
   async onSetup({ put, select }) {
+    console.log('onSetup')
     const { timeout3 } = actions('test')
     await put(timeout3({ param: 1 }))
     console.log('end', select(state => state))
@@ -78,13 +79,13 @@ app.model({
   },
 })
 
-const store = app.start()
+const store = app.start(false)
 store.subscribe(() => console.log('subscribe state: ', store.getState()))
 store
   .dispatch({ type: 'test/timeout' })
   .then(data => console.log('test/timeout callback: ', data))
   .catch(e => console.log('test/timeout onError: ', e))
-
+app.setup()
 app.model({
   namespace: 'eee',
 })

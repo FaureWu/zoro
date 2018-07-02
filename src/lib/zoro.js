@@ -161,25 +161,32 @@ export default class Zoro {
     })
   }
 
-  setup() {
+  start(setup) {
     const pluginModels = this.plugin.emit(PLUGIN_EVENT.INJECT_MODELS)
     if (pluginModels instanceof Array) {
       this.injectModels(pluginModels)
     }
     const store = (this.store = this.createStore())
-    this.setupModel()
-    this.handleSetup.apply(undefined, [
-      {
-        put: putCreator(store),
-        select: selectCreator(store),
-      },
-    ])
-    this.plugin.emit(PLUGIN_EVENT.ON_SETUP, store)
+    if (setup) {
+      this.setup()
+    }
 
     store.subscribe(() => {
       this.plugin.emit(PLUGIN_EVENT.ON_SUBSCRIBE, store)
     })
 
     return store
+  }
+
+  setup() {
+    assert(!!this.store, 'the setup function must be call after start(false)')
+    this.setupModel()
+    this.handleSetup.apply(undefined, [
+      {
+        put: putCreator(this.store),
+        select: selectCreator(this.store),
+      },
+    ])
+    this.plugin.emit(PLUGIN_EVENT.ON_SETUP, this.store)
   }
 }

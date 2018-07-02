@@ -80,7 +80,9 @@ app.use(createLoading())
 
 注册plugin，可以注册一个或者多个，多个时参数为数组
 
-#### `app.start()`
+#### `app.start(setup)`
+
+`setup` `<Boolean>` 是否立即启动初始设置，默认为true，用于用户自定义控制启动点
 
 启动应用，并返回redux store
 

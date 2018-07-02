@@ -35,10 +35,14 @@ App.prototype.use = function(plugins) {
   return this
 }
 
-App.prototype.start = function() {
-  const result = _zoro.setup.call(_zoro)
-  this.store = _zoro.store
-  return result
+App.prototype.start = function(setup = true) {
+  const store = _zoro.start.call(_zoro, setup)
+  this.store = store
+  return store
+}
+
+App.prototype.setup = function() {
+  _zoro.setup.call(_zoro)
 }
 
 export const actions = function(namespace) {
