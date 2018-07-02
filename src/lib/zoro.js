@@ -49,6 +49,7 @@ export default class Zoro {
     this.handleSetup = onSetup
     this.initialState = initialState
     this.plugin = new PluginEvent()
+    this._isSetup = false
   }
 
   getRootReducer() {
@@ -87,14 +88,21 @@ export default class Zoro {
       isArray(models),
       `the models must be an Array, but we get ${typeof models}`,
     )
+    const newModels = {}
     models.forEach(opts => {
       const model = new Model(opts)
+      const namespace = model.getNamespace()
       assertModelUnique(this, model)
-      this.models[model.getNamespace()] = model
+      this.models[namespace] = model
+      newModels[namespace] = model
     })
 
     if (this.store) {
       this.replaceReducer()
+
+      if (this._isSetup) {
+        this.setupModel(newModels)
+      }
     }
   }
 
@@ -136,9 +144,9 @@ export default class Zoro {
     this.store.replaceReducer(rootReducer)
   }
 
-  setupModel() {
-    Object.keys(this.models).forEach(namespace => {
-      const model = this.models[namespace]
+  setupModel(models = {}) {
+    Object.keys(models).forEach(namespace => {
+      const model = models[namespace]
       model.handleSetup.apply(undefined, [
         {
           put: putCreator(this.store, namespace),
@@ -180,13 +188,16 @@ export default class Zoro {
 
   setup() {
     assert(!!this.store, 'the setup function must be call after start(false)')
-    this.setupModel()
-    this.handleSetup.apply(undefined, [
-      {
-        put: putCreator(this.store),
-        select: selectCreator(this.store),
-      },
-    ])
-    this.plugin.emit(PLUGIN_EVENT.ON_SETUP, this.store)
+    if (!this._isSetup) {
+      this.setupModel(this.models)
+      this.handleSetup.apply(undefined, [
+        {
+          put: putCreator(this.store),
+          select: selectCreator(this.store),
+        },
+      ])
+      this.plugin.emit(PLUGIN_EVENT.ON_SETUP, this.store)
+    }
+    this._isSetup = true
   }
 }

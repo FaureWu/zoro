@@ -88,4 +88,16 @@ store
 app.setup()
 app.model({
   namespace: 'eee',
+
+  setup({ put }) {
+    put({ type: 'add' })
+  },
+
+  state: 0,
+
+  reducers: {
+    add(action, state) {
+      return state + 1
+    },
+  },
 })
