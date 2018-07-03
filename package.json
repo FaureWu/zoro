@@ -4,6 +4,8 @@
   "description": "a redux framework, complete async await",
   "main": "index.js",
   "keywords": [
+    "wx",
+    "wx-redux",
     "redux",
     "roronoa",
     "zoro",
