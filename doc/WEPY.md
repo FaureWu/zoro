@@ -1,8 +1,19 @@
 ### Wepy 框架的接入
 
 #### `iwepy` 快速搭建小程序开发环境
-一整套完整的小程序开发解决方案，集成了[iview-weapp](https://weapp.iviewui.com/)
-[iwepy](https://github.com/FaureWu/iwepy) 引入iview-weapp组件，异步请求解决方案，redux小程序解决方案zoro，全局loading处理，全局错误捕获处理
+[iwepy 完整代码库链接](https://github.com/FaureWu/iwepy)
+
+一整套完整的小程序开发解决方案，集成如下库
+[iview-weapp 小程序组件库](https://weapp.iviewui.com/)
+[zoro redux框架](https://github.com/FaureWu/zoro)
+
+解决如下问题：
+* 全局loading管理
+* 异步请求方案
+* 全局错误捕获
+* redux易用性
+
+### wepy接入zoro库简易demo
 
 #### `wepy/src/app.wpy`
 
@@ -25,7 +36,7 @@ export default class extends wepy.app {
     ],
     window: {
       navigationBarBackgroundColor: '#fafafa',
-      navigationBarTitleText: '果小美商城',
+      navigationBarTitleText: 'iwepy演示小程序',
       navigationBarTextStyle: 'black',
       backgroundTextStyle: 'dark',
       backgroundColor: '#f9f9f9',
