@@ -86,7 +86,7 @@ app.use(createLoading())
 
 启动应用，并返回redux store
 
-#### `app.setup`
+#### `app.setup()`
 
 立即启动初始化，该函数必须在app.start(false)执行之后执行
 
