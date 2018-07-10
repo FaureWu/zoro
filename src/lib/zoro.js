@@ -41,7 +41,6 @@ export default class Zoro {
     } = opts
 
     this.models = {}
-    this.actions = {}
     this.middlewares = [effectMiddlewareCreator(this)]
     this.handleError = onError
     this.handleEffect = onEffect

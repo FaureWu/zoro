@@ -38,6 +38,7 @@ App.prototype.use = function(plugins) {
 App.prototype.start = function(setup = true) {
   const store = _zoro.start.call(_zoro, setup)
   this.store = store
+
   return store
 }
 

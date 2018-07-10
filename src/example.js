@@ -1,4 +1,4 @@
-import zoro, { actions, loadingPlugin } from './index'
+import zoro, { actions } from './index'
 import { createLoading } from './plugin'
 
 const delay = time => new Promise(resolve => setTimeout(resolve, time))
