@@ -13,7 +13,7 @@ const app = zoro()
 app.model(testModel) // 注册单个model或多个model，多个时为数组
 app.use(createLoading()) // 注册单个或多个hook，多个时为数组
 
-const store = app.start(false) // 启动并创建store, 阻止默认初始化动作
+const store = app.start(false) // 启动并创建store, 阻止默认初始化动作
 
 class App extends Component {
   config = {
