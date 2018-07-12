@@ -1,6 +1,8 @@
 # zoro
 
-[![](https://img.shields.io/npm/v/roronoa-zoro.svg?style=flat-square)](https://npmjs.org/package/roronoa-zoro) [![](https://img.shields.io/npm/dt/roronoa-zoro.svg?style=flat-square)](https://npmjs.org/package/roronoa-zoro) [![](https://img.shields.io/npm/l/roronoa-zoro.svg?style=flat-square)](https://npmjs.org/package/roronoa-zoro)
+[![](https://img.shields.io/npm/v/roronoa-zoro.svg?style=flat-square)](https://npmjs.org/package/roronoa-zoro)
+[![](https://img.shields.io/npm/dt/roronoa-zoro.svg?style=flat-square)](https://npmjs.org/package/roronoa-zoro)
+[![](https://img.shields.io/npm/l/roronoa-zoro.svg?style=flat-square)](https://npmjs.org/package/roronoa-zoro)
 
 基于 [redux](https://github.com/reactjs/redux)、[async/await](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function)的轻量级前端框架，用于快速接入redux，省去配置redux的一堆繁琐操作
 
