@@ -8,7 +8,7 @@
 
 ---
 
-## 如何安装
+## 如何安装
 ```bash
 $ npm install --save roronoa-zoro
 ```
@@ -19,13 +19,13 @@ or
 $ yarn add roronoa-zoro
 ```
 
-## 简介
+## 简介
 
-> 个人维护项目，长期维护，目前主要使用于个人项目中
+> 个人维护项目，长期维护，目前主要使用于个人项目中
 
-* **快速入手** 仅有 6 个 [api](https://github.com/FaureWu/zoro/tree/master/doc/API.md)，对 redux 用户尤其友好
+* **快速入手** 仅有 6 个 [api](https://github.com/FaureWu/zoro/tree/master/doc/API.md)，对 redux 用户尤其友好
 * **可扩展** 支持插件机制，可实现自定义开发插件
-* **内置插件** 框架内置多个实用插件
+* **内置插件** 框架内置多个实用插件
 
 ## 文档链接
 
@@ -53,7 +53,7 @@ $ yarn add roronoa-zoro
 
 ## 开发交流
 
-请添加微信 `Faure5` 备注 `zoro` 咨询
+请添加微信 `Faure5` 备注 `zoro` 咨询
 
 ## License
 
