@@ -1,4 +1,4 @@
-### Zoro Plugin开发
+### zoro plugin开发文档
 
 #### `function plugin(pluginEvent, opts) {}`
 
@@ -10,7 +10,9 @@ zoro plugin提供了部分事件
 ```js
 export const PLUGIN_EVENT = {
   INJECT_INITIAL_STATE: 'injectInitialState',
+  BEFORE_INJECT_MODEL: 'beforeInjectModel',
   INJECT_MODELS: 'injectModels',
+  AFTER_INJECT_MODEL: 'afterInjectModel',
   INJECT_MIDDLEWARES: 'injectMiddlewares',
   ON_WILL_EFFECT: 'onWillEffect',
   ON_DID_EFFECT: 'onDidEffect',
@@ -26,6 +28,20 @@ export const PLUGIN_EVENT = {
 ```js
 pluginEvent.on('injectInitialState', function(initialState) {
   return { ...initialState, ...customInitalState }
+})
+```
+
+#### `BEFORE_INJECT_MODEL` 注入model前执行，返回值为新的model定义
+```js
+pluginEvent.on('beforeInjectModel', function(model) {
+  return { ...model, ...extraModel }
+})
+```
+
+#### `AFTER_INJECT_MODEL` 注入model完成后
+```js
+pluginEvent.on('afterInjectModel', function(model) {
+  return { ...model, ...extraModel }
 })
 ```
 
@@ -106,4 +122,7 @@ pluginEvent.on('onError', function(e, store) {
 })
 ```
 
-我们内部实现了一个loadingPlugin用于管理全局的loading状态[loading plugin](https://github.com/FaureWu/zoro/tree/master/src/lib/plugin/loadingPlugin.js)
+
+更多自定义plugin的使用方法，请参考内置plugin源码
+[loading plugin](https://github.com/FaureWu/zoro/tree/master/src/lib/plugin/loadingPlugin.js) [extend plugin](https://github.com/FaureWu/zoro/tree/master/src/lib/plugin/extendPlugin.js)
+

@@ -2,7 +2,9 @@ export const NAMESPACE_DIVIDER = '/'
 
 export const PLUGIN_EVENT = {
   INJECT_INITIAL_STATE: 'injectInitialState',
+  BEFORE_INJECT_MODEL: 'beforeInjectModel',
   INJECT_MODELS: 'injectModels',
+  AFTER_INJECT_MODEL: 'afterInjectModel',
   INJECT_MIDDLEWARES: 'injectMiddlewares',
   ON_WILL_EFFECT: 'onWillEffect',
   ON_DID_EFFECT: 'onDidEffect',

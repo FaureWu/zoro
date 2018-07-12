@@ -1,188 +1,60 @@
-# Zoro
+# zoro
 
-基于 [redux](https://github.com/reactjs/redux)、[async/await](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function)的轻量级前端框架。
+[![](https://img.shields.io/npm/v/roronoa-zoro.svg?style=flat-square)](https://npmjs.org/package/roronoa-zoro) [![](https://img.shields.io/npm/dt/roronoa-zoro.svg?style=flat-square)](https://npmjs.org/package/roronoa-zoro) [![](https://img.shields.io/npm/l/roronoa-zoro.svg?style=flat-square)](https://npmjs.org/package/roronoa-zoro)
+
+基于 [redux](https://github.com/reactjs/redux)、[async/await](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function)的轻量级前端框架，用于快速接入redux，省去配置redux的一堆繁琐操作
+
+> 目前不支持创建多个实例
 
 ---
 
-### 如何安装
+## 如何安装
 ```bash
-npm install --save roronoa-zoro
-
-or 
-
-yarn add roronoa-zoro
+$ npm install --save roronoa-zoro
 ```
 
-### 文档快捷导航
+or
 
-* [开发自定义的plugin](https://github.com/FaureWu/zoro/tree/master/doc/PLUGIN.md)
+```bash
+$ yarn add roronoa-zoro
+```
+
+## 简介
+
+> 个人维护项目，长期维护，目前主要使用于个人项目中
+
+* **快速入手** 仅有 6 个 [api](https://github.com/FaureWu/zoro/tree/master/doc/API.md)，对 redux 用户尤其友好
+* **可扩展** 支持插件机制，可实现自定义开发插件
+* **内置插件** 框架内置多个实用插件
+
+## 文档链接
+
+* [api文档](https://github.com/FaureWu/zoro/tree/master/doc/API.md)
+* [如何开发自定义的plugin](https://github.com/FaureWu/zoro/tree/master/doc/PLUGIN.md)
+* [更新日志](https://github.com/FaureWu/zoro/tree/master/doc/CHANGELOG.md)
+
+## 插件
+* [loading plugin](https://github.com/FaureWu/zoro/tree/master/doc/LOADING-PLUGIN.md) 全局自动记录loading状态，减少重复工作
+* [extend model plugin](https://github.com/FaureWu/zoro/tree/master/doc/EXTEND-MODEL-PLUGIN.md) 扩展model，实现model公共逻辑，减少重复工作
+
+> 欢迎各位开发者，提供更多的插件
+
+## 快速接入
+
 * [接入taro框架](https://github.com/FaureWu/zoro/tree/master/doc/TARO.md)
 * [接入wepy框架](https://github.com/FaureWu/zoro/tree/master/doc/WEPY.md)
 * [react-redux接入文档](https://github.com/FaureWu/zoro/tree/master/doc/REACT-REDUX.md)
 
-### 结合第三方库
-* [taro](https://taro.aotu.io): 基于[react](https://github.com/facebook/react)多端统一开发框架 [taro接入文档](https://github.com/FaureWu/zoro/tree/master/doc/TARO.md)
-* [wepy](https://tencent.github.io/wepy/): 基于[vue](https://cn.vuejs.org/v2/guide/)微信小程序组件化开发框架WePY [wepy接入文档](https://github.com/FaureWu/zoro/tree/master/doc/WEPY.md)
-* [react-redux](https://redux.js.org/basics/usage-with-react): 配合第三方应用生成器如[create-react-app](https://github.com/facebook/create-react-app) [react-redux接入文档](https://github.com/FaureWu/zoro/tree/master/doc/REACT-REDUX.md)
+> 其他框架接入暂未整理，接入方式大同小异
 
-### 导出的文件
+## 模版
 
-#### roronoa-zoro
-默认导出的文件
+* [iwepy](https://github.com/FaureWu/iwepy) 一套基于wepy, iview-weapp, zoro的完整的小程序开发解决方案
 
-#### roronoa-zoro/plugin
-导出内置定义好的plugin, 目前内置的plugin有: 
-[如何开发自己的plugin](https://github.com/FaureWu/zoro/tree/master/doc/PLUGIN.md)
-* **loading** 统一处理异步加载状态
-```js
-import zoro from 'roronoa-zoro'
-import { createLoading } from 'roronoa-zoro/plugin'
+## 开发交流
 
-const app = zoro()
-app.use(createLoading())
+请添加微信 `Faure5` 备注 `zoro` 咨询
 
-...
-```
-该插件会在state的存储loading状态
-**state.loading**
-```json
-{
-  "global": false,
-  "model": {
-    "modelNamespace": false
-  },
-  "effect": {
-    "modelNamespace/effectName": false
-  }
-}
-```
+## License
 
-### zoro API
-
-#### `const app = zoro(opts)`
-
-创建redux app，并且返回zoro的接口
-
-`opts` `<Object>` 包含如下可配置属性
-* `initialState` `<Object>` 初始化redux应用state，优先级如下：initialState < plugin initialState < model state
-* `onEffect(action)` `<Function>` 执行effect action时触发该事件
-* `onAction(action)` `<Function>` 执行action 时触发该事件，包含effect action, reducer action
-* `onSetup({ put, select })` `<Function>`redux应用启动时执行
-  * `put(action)` `<Function>` 用于发起一个action或者effect
-  * `select(handler)` `<Function>` 用于获取当前的最新的state
-* `onError(e)` `<Function>` 执行effect出错时触发该事件
-
-#### `app.model()`
-
-注册model到应用，可以注册一个或者多个，多个时参数为数组
-
-#### `app.use()`
-
-注册plugin，可以注册一个或者多个，多个时参数为数组
-
-#### `app.start(setup)`
-
-`setup` `<Boolean>` 是否立即启动初始设置，默认为true，用于用户自定义控制启动点
-
-启动应用，并返回redux store
-
-#### `app.setup()`
-
-立即启动初始化，该函数必须在app.start(false)执行之后执行
-
-#### `import { actions } from 'roronoa-zoro'`
-
-根据命名空间获取actions
-```js
-import { actions } from 'roronoa-zoro'
-import { connect } from 'react-redux'
-
-const modelActions = actions(modelName)
-const mapStateToProps = state => ({})
-const mapDispatchToProps = dispatch => ({
-  queryData: (params) => dispatch(modelActions.queryData(params))
-})
-
-connect(mapStateToProps, mapDispatchToProps)(Com)
-```
-
-所有的effect action 通过dispatch调用都返回一个Promise对象
-action的参数为(payload, meta, error)
-
-### 如何定义一个model `<Object>`
-```js
-export default {
-  namespace: 'modelName', // 该model的名称
-  setup: function({ put, select, selectAll }) {}, // model启动时调用
-  state: {}, // 默认的state，可以是任意格式数据
-  reducers: {}, // reducer action定义
-  effects: {}, // 副作用action，主要用于处理异步
-}
-```
-
-#### `namespace` `<String>`
-
-model命名空间，需要保证唯一值
-
-#### `setup({ put, select, selectAll })` `<Function>`
-* `put(action) <Function>` 发起一个redux action
-* `select(handler) <Function>` 获取当前model的state, 返回值为获取到的state
-  * `handler(state) <Function>`
-* `selectAll(handler) <Function>` 获取整个redux state值，返回值为获取的state
-  * `handler(state) <Function>` 
-
-你可以在这个初始化函数中执行一些初始化action，比如获取异步配置信息等
-
-#### `state` `<Any>`
-
-model的默认state
-
-#### `reducers` `<Object>`
-
-model的reducer定义
-```js
-export default {
-  namespace: 'model',
-  state: 0,
-  reducers: {
-    add(action, state) {
-      return state + 1
-    },
-  },
-}
-```
-
-#### `effects` `<Object>`
-```js
-const delay = function(time) {
-  return new Promise((resolve, reject) => {
-    setTimeout(time, resolve)
-  })
-}
-
-export default {
-  namespace: 'model',
-  state: 0,
-  reducers: {
-    add(action, state) {
-      return state + 1
-    },
-  },
-  effects: {
-    // 异步effect
-    async delayAdd(action, { put, select, selectAll }) {
-      await delay(1000)
-      put({ type: 'add' })
-    },
-    // effect中调用异步effect
-    async delayToDelayAdd(action, { put }) {
-      await delay(1000)
-      await put({ type: 'delayAdd' })
-    },
-    // 同步effect
-    noneDelay(action, { put }) {
-      put({ type: add })
-    },
-  },
-}
-```
+[MIT](https://tldrlegal.com/license/mit-license)

@@ -1,5 +1,5 @@
 import zoro, { actions } from './index'
-import { createLoading } from './plugin'
+import { createLoading, extendModel } from './plugin'
 
 const delay = time => new Promise(resolve => setTimeout(resolve, time))
 
@@ -17,11 +17,24 @@ const app = zoro({
     console.log('onSetup')
     const { timeout3 } = actions('test')
     await put(timeout3({ param: 1 }))
-    console.log('end', select(state => state))
+    console.log('end', select())
   },
 })
 
 app.use(createLoading())
+app.use(extendModel({
+  state: {
+    extendData: 0,
+  },
+
+  reducers: {
+    updateState(action, state) {
+      return { ...state, extendData: 111 }
+    },
+  },
+
+  excludeModels: ['eee'],
+}))
 
 app.model({
   namespace: 'test',
@@ -33,6 +46,7 @@ app.model({
   async setup({ put, select }) {
     await put({ type: 'timeout' })
     await put({ type: 'test/timeout2' })
+    put({ type: 'updateState' })
   },
 
   effects: {

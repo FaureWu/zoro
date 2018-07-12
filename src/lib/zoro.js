@@ -78,7 +78,12 @@ export default class Zoro {
   getDefaultState() {
     return Object.keys(this.models).reduce((defaultState, namespace) => {
       const model = this.models[namespace]
-      return { ...defaultState, [namespace]: model.getDefaultState() }
+      const modelState = model.getDefaultState()
+
+      if (modelState !== undefined) {
+        return { ...defaultState, [namespace]: model.getDefaultState() }
+      }
+      return defaultState
     }, {})
   }
 
@@ -89,11 +94,14 @@ export default class Zoro {
     )
     const newModels = {}
     models.forEach(opts => {
-      const model = new Model(opts)
+      const modelOpts =
+        this.plugin.emit(PLUGIN_EVENT.BEFORE_INJECT_MODEL, opts) || opts
+      const model = new Model(modelOpts)
       const namespace = model.getNamespace()
       assertModelUnique(this, model)
       this.models[namespace] = model
       newModels[namespace] = model
+      this.plugin.emit(PLUGIN_EVENT.AFTER_INJECT_MODEL, modelOpts)
     })
 
     if (this.store) {

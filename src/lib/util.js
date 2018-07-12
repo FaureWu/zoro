@@ -83,6 +83,10 @@ export function selectCreator(store, namespace) {
       state = state[namespace]
     }
 
+    if (!isFunction(handler)) {
+      return state
+    }
+
     return handler(state)
   }
 }

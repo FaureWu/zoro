@@ -15,13 +15,7 @@ class Model {
   constructor(opts) {
     assertOpts(opts)
 
-    const {
-      namespace,
-      state = null,
-      reducers = {},
-      effects = {},
-      setup = noop,
-    } = opts
+    const { namespace, state, reducers = {}, effects = {}, setup = noop } = opts
     this.namespace = namespace
     this.defaultState = state
     this.reducers = this.createReducer(reducers)
@@ -68,7 +62,7 @@ class Model {
       return { ...combine, [type]: reducer }
     }, {})
 
-    return createReducer(this.defaultState, _reducers)
+    return createReducer(this.defaultState || null, _reducers)
   }
 
   createActions(actions) {
