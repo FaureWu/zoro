@@ -23,9 +23,10 @@ $ yarn add roronoa-zoro
 
 > 个人维护项目，长期维护，目前主要使用于个人项目中
 
-* **快速入手** 仅有 6 个 [api](https://github.com/FaureWu/zoro/tree/master/doc/API.md)，对 redux 用户尤其友好
+* **快速入手** 仅有 6 个 [api](https://github.com/FaureWu/zoro/tree/master/doc/API.md)
 * **可扩展** 支持插件机制，可实现自定义开发插件
 * **内置插件** 框架内置多个实用插件
+* **全局错误处理** 不用一次次重复的书写错误处理代码
 
 ## 文档链接
 
