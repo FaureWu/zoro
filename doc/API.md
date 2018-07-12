@@ -1,8 +1,8 @@
 ### API
 
-#### 快速接入
+#### 快速接入
 
-zoro核心只有6个api，你可以在很短的时间内上手框架，只需要如下简单的几步即可快速开始开发
+zoro核心只有6个api，你可以在很短的时间内上手框架，只需要如下简单的几步即可快速开始开发
 
 ```js
 import zoro from 'roronoa-zoro'
@@ -26,12 +26,12 @@ ReactDom.render(
 #### `const app = zoro(opt)`
 
 * `opt.initialState` `<Object>` 初始化redux state，类似于redux preloadState
-* `opt.onEffect(action)` `<Function>` 监听用户调用model effect
+* `opt.onEffect(action)` `<Function>` 监听用户调用model effect
 * `opt.onAction(action)` `<Function>` 监听用户调用model effect 和 reducer action
 * `opt.onSetup(params)` `<Function>` redux应用启动时执行
   * `params.put(action)` `<Function>` 触发一个effect或者reducer
-  * `params.select(handler)` `<Function>` 获取当前state的值，handler参数为state，未传递handler，默认直接获取整个全局state
-> 调用app.start()触发该事件，或者手动调用
+  * `params.select(handler)` `<Function>` 获取当前state的值，handler参数为state，未传递handler，默认直接获取整个全局state
+> 调用app.start()触发该事件，或者手动调用
 app.start(false);
 app.setup();
 * `opt.onError(e)` `<Function>` 执行effect发生错误时触发，用于处理全局错误，比如请求错误提示
@@ -80,8 +80,8 @@ connect(mapStateToProps, mapDispatchToProps)(Com)
 * `model.state` `<Any>` model默认的state值
 * `model.setup(params)` `<Function>` 启动时的初始化动作
   * `params.put(action)` 发起一个reducer或者effect动作，调用自身model方法时，无需跟model namespace
-  * `params.select(handler)` `<Function>` 获取当前state的值，handler参数为本model中的state，未传递handler，默认直接获取该model整个state
-  * `params.selectAll(handler)` `<Function>` 获取当前state的值，handler参数为全局state，未传递handler，默认直接获取整个全局state
+  * `params.select(handler)` `<Function>` 获取当前state的值，handler参数为本model中的state，未传递handler，默认直接获取该model整个state
+  * `params.selectAll(handler)` `<Function>` 获取当前state的值，handler参数为全局state，未传递handler，默认直接获取整个全局state
 * `model.reducers` `<Object>` 定义model的reducers
 * `model.effects` `<Object>` 定义model的effects
 
