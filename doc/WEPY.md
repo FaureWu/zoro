@@ -5,7 +5,7 @@
 
 一整套完整的小程序开发解决方案，集成如下库
 [iview-weapp 小程序组件库](https://weapp.iviewui.com/)
-[zoro redux框架](https://github.com/FaureWu/zoro)
+[zoro redux框架](https://github.com/FaureWu/zoro)
 
 解决如下问题：
 * 全局loading管理
@@ -13,7 +13,7 @@
 * 全局错误捕获
 * redux易用性
 
-### wepy接入zoro库简易demo
+### wepy接入zoro库简易demo
 
 #### `wepy/src/app.wpy`
 
@@ -26,7 +26,7 @@ import testModel from './models/test'
 const app = zoro()
 app.model(testModel) // 注册单个model或多个model，多个时为数组
 app.use(createLoading()) // 注册单个或多个hook，多个时为数组
-const store = app.start(false) // 启动并创建store
+const store = app.start(false) // 启动并创建store
 setStore(store)
 
 export default class extends wepy.app {
