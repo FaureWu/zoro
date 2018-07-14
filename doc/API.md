@@ -42,7 +42,7 @@ app.setup();
 
 #### `app.use()` `<Function>`
 
-注册plugin，可以注册一个或者多个，多个时参数为数组
+注册plugin，可以注册一个或者多个，多个时参数为数组，use推荐在model之前调用
 
 #### `app.start(setup)` `<Function>`
 
@@ -54,14 +54,14 @@ app.setup();
 
 立即启动初始化，该函数必须在app.start(false)执行之后执行
 
-#### `actions(modelNamespace)` `<Function>`
+#### `actions(namespace)` `<Function>`
 
 根据命名空间获取model的actionCreators
 ```js
 import { actions } from 'roronoa-zoro'
 import { connect } from 'react-redux'
 
-const modelActions = actions('modelNamespace')
+const modelActions = actions('namespace')
 const mapStateToProps = state => ({})
 const mapDispatchToProps = dispatch => ({
   queryData: (params) => dispatch(modelActions.queryData(params))
@@ -71,6 +71,33 @@ connect(mapStateToProps, mapDispatchToProps)(Com)
 ```
 
 > actionCreator(payload, meta, error)
+
+#### `createDispatcher(namespace)` `<Function>`
+
+1.1.6版本新增api，`actions()` api升级版
+
+根据命名空间获取model的actionDispatcher
+
+```js
+import React, { PureComponent } from 'react'
+import { createDispatcher } from 'roronoa-zoro'
+import { connect } from 'react-redux'
+
+const model = createDispatcher('model')
+const mapStateToProps = state => ({ ... })
+
+class Com extends PureComponent {
+  componentDidMount() {
+    model.queryData(...)
+  }
+
+  render() {
+    return ...
+  }
+}
+
+connect(mapStateToProps, null)(Com)
+```
 
 ---
 

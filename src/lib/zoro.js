@@ -41,6 +41,7 @@ export default class Zoro {
     } = opts
 
     this.models = {}
+    this.modelOpts = {}
     this.middlewares = [effectMiddlewareCreator(this)]
     this.handleError = onError
     this.handleEffect = onEffect
@@ -118,9 +119,7 @@ export default class Zoro {
       isArray(middlewares),
       `the middlewares must be an Array, but we get ${typeof middlewares}`,
     )
-    middlewares.forEach(middleware => {
-      this.middlewares.push(middleware)
-    })
+    this.middlewares = this.middlewares.concat(middlewares)
   }
 
   createStore() {

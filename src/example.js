@@ -1,4 +1,4 @@
-import zoro, { actions } from './index'
+import zoro, { actions, createDispatcher } from './index'
 import { createLoading, extendModel } from './plugin'
 
 const delay = time => new Promise(resolve => setTimeout(resolve, time))
@@ -93,7 +93,10 @@ app.model({
   },
 })
 
+const dispatcher = createDispatcher('test')
+
 const store = app.start(false)
+dispatcher.timeout({ data: 1 }, { meta: 1 }, false)
 store.subscribe(() => console.log('subscribe state: ', store.getState()))
 store
   .dispatch({ type: 'test/timeout' })

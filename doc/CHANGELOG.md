@@ -1,5 +1,9 @@
 ### 更新日志
 
+#### `2018-07-14`
+> verison 1.1.6
+* 新增actions增强函数createDispatcher
+
 #### `2018-07-11` 
 > version 1.1.5
 * 修复initialState无法生效的bug
