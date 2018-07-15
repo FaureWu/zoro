@@ -1,5 +1,9 @@
 ### 更新日志
 
+#### `2018-07-15`
+> version 1.1.7
+* 修复effect发生错误时依旧执行.then的bug
+
 #### `2018-07-14`
 > verison 1.1.6
 * 新增actions增强函数createDispatcher

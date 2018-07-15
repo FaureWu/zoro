@@ -18,10 +18,11 @@ const middleware = ({ dispatch }) => next => async action => {
         select: selectCreator(_zoro.store, namespace),
         put: putCreator(_zoro.store, namespace),
       })
-      return result
+      return Promise.resolve(result)
     } catch (e) {
       _zoro.handleError.apply(undefined, [e])
       _zoro.plugin.emit(PLUGIN_EVENT.ON_ERROR, e, _zoro.store)
+      return Promise.reject(e)
     } finally {
       _zoro.plugin.emit(PLUGIN_EVENT.ON_DID_EFFECT, action, _zoro.store)
     }
