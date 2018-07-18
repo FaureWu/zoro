@@ -1,5 +1,6 @@
 import 'regenerator-runtime/runtime'
 import Zoro from './lib/zoro'
+import dispatcherCreator from './lib/dispatcherCreator'
 import { assert } from './lib/util'
 
 let _zoro
@@ -55,17 +56,7 @@ export const actions = function(namespace) {
 export const createDispatcher = function(namespace) {
   const models = _zoro.models
   assert(!!models[namespace], `the ${namespace} model not define`)
-  const actions = models[namespace].getActions()
-
-  return Object.keys(actions).reduce(function(dispatcher, name) {
-    return {
-      ...dispatcher,
-      [name]: function(...rest) {
-        assert(!!_zoro.store, `dispatch action must be call after app.start()`)
-        return _zoro.store.dispatch(actions[name](...rest))
-      },
-    }
-  })
+  return dispatcherCreator(namespace, models[namespace], _zoro)
 }
 
 export default (opts = {}) => new App(new Zoro(opts))

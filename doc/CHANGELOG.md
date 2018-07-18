@@ -1,5 +1,9 @@
 ### 更新日志
 
+#### `2018-07-18`
+> version 1.1.8
+* 优化createDispatcher，增加缓存
+
 #### `2018-07-15`
 > version 1.1.7
 * 修复effect发生错误时依旧执行.then的bug
