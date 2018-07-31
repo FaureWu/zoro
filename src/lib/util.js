@@ -90,3 +90,16 @@ export function selectCreator(store, namespace) {
     return handler(state)
   }
 }
+
+export function isShallowEqual(a, b) {
+  if (a === b) return true
+
+  const aks = Object.keys(a)
+  const bks = Object.keys(b)
+
+  if (aks.length !== bks.length) return false
+
+  return aks.every(k => {
+    return b.hasOwnProperty(k) && a[k] === b[k]
+  })
+}

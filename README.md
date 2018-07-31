@@ -21,6 +21,8 @@ or
 $ yarn add roronoa-zoro
 ```
 
+> 微信原生小程序中引入请查看 [快速接入原生小程序文档](https://github.com/FaureWu/zoro/tree/master/doc/WEAPP.md)
+
 ## 简介
 
 > 个人维护项目，长期维护，目前主要使用于个人项目中
@@ -47,6 +49,7 @@ $ yarn add roronoa-zoro
 * [接入taro框架](https://github.com/FaureWu/zoro/tree/master/doc/TARO.md)
 * [接入wepy框架](https://github.com/FaureWu/zoro/tree/master/doc/WEPY.md)
 * [react-redux接入文档](https://github.com/FaureWu/zoro/tree/master/doc/REACT-REDUX.md)
+* [原生小程序接入文档](https://github.com/FaureWu/zoro/tree/master/doc/WEAPP.md)
 
 > 其他框架接入暂未整理，接入方式大同小异
 

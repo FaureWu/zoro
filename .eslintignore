@@ -1,5 +1,8 @@
 /node_modules
 /lib
+/dist
 index.js
 example.js
 plugin.js
+rollup.config.js
+/src/regenerator.js

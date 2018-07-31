@@ -1,4 +1,3 @@
-import 'regenerator-runtime/runtime'
 import Zoro from './lib/zoro'
 import dispatcherCreator from './lib/dispatcherCreator'
 import { assert } from './lib/util'

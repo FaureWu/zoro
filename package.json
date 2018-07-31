@@ -6,6 +6,7 @@
   "keywords": [
     "wx",
     "wx-redux",
+    "weapp",
     "redux",
     "roronoa",
     "zoro",
@@ -15,10 +16,14 @@
     "frontend"
   ],
   "scripts": {
-    "build": "babel src --out-dir ./ --copy-files",
+    "build": "npm run clean && npm run build:es && npm run build:cjs && npm run clean:free",
+    "build:es": "babel src --out-dir ./ --copy-files",
+    "build:cjs": "cross-env rollup -c",
+    "clean": "rm -rf ./dist ./lib ./example.js ./index.js ./plugin.js",
+    "clean:free": "rm -rf ./regenerator.js ./weapp-redux.js",
     "dev": "babel src --out-dir ./ --copy-files -w",
-    "example": "yarn build && node ./example.js",
-    "release": "yarn lint && yarn build && yarn publish",
+    "example": "npm run build && node ./example.js",
+    "release": "npm run lint && npm run build && npm run publish",
     "lint": "eslint src",
     "test": "jest"
   },
@@ -29,15 +34,21 @@
   "license": "MIT",
   "homepage": "https://github.com/FaureWu/zoro.git",
   "dependencies": {
-    "redux": "^4.0.0",
-    "regenerator-runtime": "^0.12.0"
+    "@babel/polyfill": "^7.0.0-beta.55",
+    "@babel/runtime": "^7.0.0-beta.55",
+    "promise-polyfill": "^8.0.0",
+    "redux": "^4.0.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.0.0-beta.51",
     "@babel/core": "^7.0.0-beta.52",
+    "@babel/plugin-proposal-async-generator-functions": "^7.0.0-beta.55",
+    "@babel/plugin-transform-runtime": "^7.0.0-beta.55",
     "@babel/preset-env": "^7.0.0-beta.51",
     "babel-core": "^7.0.0-0",
     "babel-jest": "^23.4.0",
+    "babel-plugin-external-helpers": "^6.22.0",
+    "cross-env": "^5.2.0",
     "eslint": "^4.19.1",
     "eslint-config-prettier": "^2.9.0",
     "eslint-config-standard": "^11.0.0",
@@ -49,6 +60,11 @@
     "eslint-plugin-standard": "^3.1.0",
     "jest": "^23.4.0",
     "node-dev": "^3.1.3",
-    "prettier": "^1.13.5"
+    "prettier": "^1.13.5",
+    "rollup": "^0.63.4",
+    "rollup-plugin-babel": "^4.0.0-beta.7",
+    "rollup-plugin-commonjs": "^9.1.4",
+    "rollup-plugin-node-resolve": "^3.3.0",
+    "rollup-plugin-replace": "^2.0.0"
   }
 }
