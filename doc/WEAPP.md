@@ -20,7 +20,7 @@ cd ./zoro
 yarn
 ```
 
-构建仓库
+构建仓库
 ```bash
 npm run build
 ```
@@ -34,7 +34,9 @@ yarn build
 dist目录下会生成三个文件:
 * `zoro` 本仓库主入口文件
 * `plugin` zoro plugin库文件，如果你不需要使用插件，无需导入
-* `weapp-redux` 用于链接redux和weapp的库，提供setStore，connect工具
+* `weapp-redux` 用于链接redux和weapp的库，提供setStore，connect工具
+  * `setStore` 设置store
+  * `connect(mapStateToProps, mapDispatchToProps)(pageConfig)` 只可用于链接到page中，无法链接到app中
 * `regenerator` 用于原生小程序支持async, await, 需要在每一个使用该特性的地方中引入
 
 #### `weapp/app.js`
@@ -61,7 +63,7 @@ App({
 
 ```
 
-由于微信原生小程序的wx.request不支持Promise化调用，需要进行一次封装
+由于微信原生小程序的wx.request不支持Promise化调用，需要进行一次封装
 
 #### `weapp/utils/request`
 
@@ -115,7 +117,7 @@ const demoDispatcher = createDispatcher('demo')
 // connect支持两个参数mapStateToProps, mapDispatchToProps
 // 使用方法参考，仅支持前两个参数https://github.com/reduxjs/react-redux/blob/HEAD/docs/api.md#connectmapstatetoprops-mapdispatchtoprops-mergeprops-options
 
-// connect会把数据合并到data中
+// connect会把数据合并到data中
 const config = connect(
   state => ({
     demo: state.demo,
