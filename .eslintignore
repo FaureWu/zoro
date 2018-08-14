@@ -4,5 +4,5 @@
 index.js
 example.js
 plugin.js
-rollup.config.js
+app.js
 /src/regenerator.js

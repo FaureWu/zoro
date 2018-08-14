@@ -19,7 +19,8 @@ export default function(namespace, model, zoro) {
           return zoro.store.dispatch(actions[name](...rest))
         },
       }
-    })
+    },
+    {})
   }
 
   return actionCache[namespace]

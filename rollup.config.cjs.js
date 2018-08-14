@@ -7,13 +7,7 @@ const babelOption = {
   babelrc: false,
   exclude: 'node_modules/**',
   presets: [['@babel/preset-env', { modules: false, loose: true }]],
-  plugins: [
-    "external-helpers",
-    "@babel/plugin-transform-runtime",
-    "@babel/plugin-proposal-async-generator-functions",
-  ],
-  runtimeHelpers: true,
-  externalHelpers: true,
+  plugins: ['@babel/plugin-proposal-async-generator-functions'],
 }
 
 const replaceOption = {
@@ -22,7 +16,7 @@ const replaceOption = {
 
 export default [
   {
-    input: 'src/index.js',
+    input: 'src/lib/app.js',
     output: {
       format: 'es',
       indent: false,
@@ -89,5 +83,5 @@ export default [
       replace(replaceOption),
       commonjs(),
     ],
-  }
+  },
 ]

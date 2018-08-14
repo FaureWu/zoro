@@ -1,6 +1,6 @@
 {
   "name": "roronoa-zoro",
-  "version": "1.1.8",
+  "version": "1.1.11",
   "description": "a redux framework, complete async await",
   "main": "index.js",
   "keywords": [
@@ -17,13 +17,14 @@
   ],
   "scripts": {
     "build": "npm run clean && npm run build:es && npm run build:cjs && npm run clean:free",
+    "build:es1": "rollup --config rollup.config.es.js",
     "build:es": "babel src --out-dir ./ --copy-files",
-    "build:cjs": "cross-env rollup -c",
+    "build:cjs": "rollup --config rollup.config.cjs.js",
     "clean": "rm -rf ./dist ./lib ./example.js ./index.js ./plugin.js",
     "clean:free": "rm -rf ./regenerator.js ./weapp-redux.js",
     "dev": "babel src --out-dir ./ --copy-files -w",
     "example": "npm run build && node ./example.js",
-    "release": "npm run lint && npm run build && npm run publish",
+    "release": "npm run lint && npm run build && npm publish",
     "lint": "eslint src",
     "test": "jest"
   },
@@ -34,20 +35,16 @@
   "license": "MIT",
   "homepage": "https://github.com/FaureWu/zoro.git",
   "dependencies": {
-    "@babel/polyfill": "^7.0.0-beta.55",
-    "@babel/runtime": "^7.0.0-beta.55",
-    "promise-polyfill": "^8.0.0",
-    "redux": "^4.0.0"
+    "redux": "^4.0.0",
+    "regenerator-runtime": "^0.12.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.0.0-beta.51",
     "@babel/core": "^7.0.0-beta.52",
     "@babel/plugin-proposal-async-generator-functions": "^7.0.0-beta.55",
-    "@babel/plugin-transform-runtime": "^7.0.0-beta.55",
     "@babel/preset-env": "^7.0.0-beta.51",
     "babel-core": "^7.0.0-0",
     "babel-jest": "^23.4.0",
-    "babel-plugin-external-helpers": "^6.22.0",
     "cross-env": "^5.2.0",
     "eslint": "^4.19.1",
     "eslint-config-prettier": "^2.9.0",
