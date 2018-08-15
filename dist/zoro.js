@@ -1041,7 +1041,7 @@ function () {
         _opts$onError = opts.onError,
         onError = _opts$onError === void 0 ? noop : _opts$onError;
     this.models = {};
-    this.modelOpts = {};
+    this.modelOpts = [];
     this.middlewares = [effectMiddlewareCreator(this)];
     this.handleError = onError;
     this.handleEffect = onEffect;
@@ -1097,19 +1097,19 @@ function () {
     var _this4 = this;
 
     assert(isArray(models), "the models must be an Array, but we get " + typeof models);
-    var newModels = {};
+    var newModelOpts = [];
     models.forEach(function (opts) {
       var modelOpts = _this4.plugin.emit(PLUGIN_EVENT.BEFORE_INJECT_MODEL, opts) || opts;
-      var model = new Model(modelOpts);
-      var namespace = model.getNamespace();
-      assertModelUnique(_this4, model);
-      _this4.models[namespace] = model;
-      newModels[namespace] = model;
+
+      _this4.modelOpts.push(modelOpts);
+
+      newModelOpts.push(modelOpts);
 
       _this4.plugin.emit(PLUGIN_EVENT.AFTER_INJECT_MODEL, modelOpts);
     });
 
     if (this.store) {
+      var newModels = this.createModels(newModelOpts);
       this.replaceReducer();
 
       if (this._isSetup) {
@@ -1121,6 +1121,20 @@ function () {
   _proto.injectMiddlewares = function injectMiddlewares(middlewares) {
     assert(isArray(middlewares), "the middlewares must be an Array, but we get " + typeof middlewares);
     this.middlewares = this.middlewares.concat(middlewares);
+  };
+
+  _proto.createModels = function createModels(modelOpts) {
+    var _this5 = this;
+
+    var models = {};
+    modelOpts.forEach(function (opts) {
+      var model = new Model(opts);
+      var namespace = model.getNamespace();
+      assertModelUnique(_this5, model);
+      _this5.models[namespace] = model;
+      models[namespace] = model;
+    });
+    return models;
   };
 
   _proto.createStore = function createStore$$1() {
@@ -1145,7 +1159,7 @@ function () {
   };
 
   _proto.setupModel = function setupModel(models) {
-    var _this5 = this;
+    var _this6 = this;
 
     if (models === void 0) {
       models = {};
@@ -1154,9 +1168,9 @@ function () {
     Object.keys(models).forEach(function (namespace) {
       var model = models[namespace];
       model.handleSetup.apply(undefined, [{
-        put: putCreator(_this5.store, namespace),
-        select: selectCreator(_this5.store, namespace),
-        selectAll: selectCreator(_this5.store)
+        put: putCreator(_this6.store, namespace),
+        select: selectCreator(_this6.store, namespace),
+        selectAll: selectCreator(_this6.store)
       }]);
     });
   };
@@ -1170,7 +1184,7 @@ function () {
   };
 
   _proto.start = function start(setup) {
-    var _this6 = this;
+    var _this7 = this;
 
     var pluginModels = this.plugin.emit(PLUGIN_EVENT.INJECT_MODELS);
 
@@ -1178,6 +1192,7 @@ function () {
       this.injectModels(pluginModels);
     }
 
+    this.createModels(this.modelOpts);
     var store = this.store = this.createStore();
 
     if (setup) {
@@ -1185,7 +1200,7 @@ function () {
     }
 
     store.subscribe(function () {
-      _this6.plugin.emit(PLUGIN_EVENT.ON_SUBSCRIBE, store);
+      _this7.plugin.emit(PLUGIN_EVENT.ON_SUBSCRIBE, store);
     });
     return store;
   };

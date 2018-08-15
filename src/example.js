@@ -22,20 +22,6 @@ const app = zoro({
 })
 
 app.use(createLoading())
-app.use(extendModel({
-  state: {
-    extendData: 0,
-  },
-
-  reducers: {
-    updateState(action, state) {
-      return { ...state, extendData: 111 }
-    },
-  },
-
-  excludeModels: ['eee'],
-}))
-
 app.model({
   namespace: 'test',
 
@@ -93,9 +79,23 @@ app.model({
   },
 })
 
-const dispatcher = createDispatcher('test')
+app.use(extendModel({
+  state: {
+    extendData: 0,
+  },
+
+  reducers: {
+    updateState(action, state) {
+      return { ...state, extendData: 111 }
+    },
+  },
+
+  excludeModels: ['eee'],
+}))
 
 const store = app.start(false)
+
+const dispatcher = createDispatcher('test')
 dispatcher.timeout({ data: 1 }, { meta: 1 }, false)
 store.subscribe(() => console.log('subscribe state: ', store.getState()))
 store

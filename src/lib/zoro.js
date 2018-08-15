@@ -41,7 +41,7 @@ export default class Zoro {
     } = opts
 
     this.models = {}
-    this.modelOpts = {}
+    this.modelOpts = []
     this.middlewares = [effectMiddlewareCreator(this)]
     this.handleError = onError
     this.handleEffect = onEffect
@@ -93,19 +93,17 @@ export default class Zoro {
       isArray(models),
       `the models must be an Array, but we get ${typeof models}`,
     )
-    const newModels = {}
+    const newModelOpts = []
     models.forEach(opts => {
       const modelOpts =
         this.plugin.emit(PLUGIN_EVENT.BEFORE_INJECT_MODEL, opts) || opts
-      const model = new Model(modelOpts)
-      const namespace = model.getNamespace()
-      assertModelUnique(this, model)
-      this.models[namespace] = model
-      newModels[namespace] = model
+      this.modelOpts.push(modelOpts)
+      newModelOpts.push(modelOpts)
       this.plugin.emit(PLUGIN_EVENT.AFTER_INJECT_MODEL, modelOpts)
     })
 
     if (this.store) {
+      const newModels = this.createModels(newModelOpts)
       this.replaceReducer()
 
       if (this._isSetup) {
@@ -120,6 +118,19 @@ export default class Zoro {
       `the middlewares must be an Array, but we get ${typeof middlewares}`,
     )
     this.middlewares = this.middlewares.concat(middlewares)
+  }
+
+  createModels(modelOpts) {
+    const models = {}
+    modelOpts.forEach(opts => {
+      const model = new Model(opts)
+      const namespace = model.getNamespace()
+      assertModelUnique(this, model)
+      this.models[namespace] = model
+      models[namespace] = model
+    })
+
+    return models
   }
 
   createStore() {
@@ -180,6 +191,7 @@ export default class Zoro {
     if (pluginModels instanceof Array) {
       this.injectModels(pluginModels)
     }
+    this.createModels(this.modelOpts)
     const store = (this.store = this.createStore())
     if (setup) {
       this.setup()

@@ -1,5 +1,9 @@
 ### 更新日志
 
+#### `2018-08-15`
+> version 1.2.0
+* 优化model生成时机，app.use和app.model不在需要注意调用顺序
+
 #### `2018-08-14`
 > version 1.1.11
 * 修复createDispatcher出错，需要使用createDispatcher请使用1.1.6， 1.1.7，或者1.1.11及以上
