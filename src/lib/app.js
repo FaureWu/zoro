@@ -1,6 +1,6 @@
 import Zoro from './zoro'
 import dispatcherCreator from './dispatcherCreator'
-import { assert, isFunction, isObject, isShallowEqual } from './util'
+import { assert, isFunction, isObject, isShallowInclude } from './util'
 
 let _zoro
 let _store
@@ -73,17 +73,15 @@ export const connectComponent = function(mapStateToProps, mapDispatchToProps) {
       ? mapDispatchToProps
       : defaultMapToProps
 
-    let prevMappedState = {}
     let unsubscribe = null
 
     function subscribe() {
       if (!isFunction(unsubscribe)) return null
 
       const mappedState = mapState(_store.getState())
-      if (isShallowEqual(mappedState, prevMappedState)) return null
+      if (isShallowInclude(this.data, mappedState)) return null
 
       this.setData(mappedState)
-      prevMappedState = mappedState
     }
 
     function attached() {

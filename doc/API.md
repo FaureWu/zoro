@@ -101,7 +101,7 @@ connect(mapStateToProps, null)(Com)
 
 #### `connectComponent(mapStateToData, mapDispatchToMethod)(componentConfig)`
 
-1.2.3版本新增api
+1.2.4版本新增api
 
 ```js
 import { connectComponent, createDispatcher } from 'roronoa-zoro'

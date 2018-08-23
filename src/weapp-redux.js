@@ -1,4 +1,4 @@
-import { assert, isFunction, isShallowEqual } from './lib/util'
+import { assert, isFunction, isShallowInclude } from './lib/util'
 
 function isReduxStore(store) {
   return ['subscribe', 'dispatch', 'getState'].every(method =>
@@ -31,17 +31,15 @@ export const connect = function(mapStateToProps, mapDispatchToProps) {
       ? mapDispatchToProps
       : defaultMapToProps
 
-    let prevMappedState = {}
     let unsubscribe = null
 
     function subscribe(options) {
       if (!isFunction(unsubscribe)) return null
 
       const mappedState = mapState(_store.getState(), options)
-      if (isShallowEqual(mappedState, prevMappedState)) return null
+      if (isShallowInclude(this.data, mappedState)) return null
 
       this.setData(mappedState)
-      prevMappedState = mappedState
     }
 
     function onLoad(options) {

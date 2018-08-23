@@ -103,3 +103,11 @@ export function isShallowEqual(a, b) {
     return b.hasOwnProperty(k) && a[k] === b[k]
   })
 }
+
+export function isShallowInclude(parent, child) {
+  const childks = Object.keys(child)
+
+  return childks.every(k => {
+    return parent.hasOwnProperty(k) && parent[k] === child[k]
+  })
+}

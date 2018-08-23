@@ -735,13 +735,10 @@ function selectCreator(store, namespace) {
     return handler(state);
   };
 }
-function isShallowEqual(a, b) {
-  if (a === b) return true;
-  var aks = Object.keys(a);
-  var bks = Object.keys(b);
-  if (aks.length !== bks.length) return false;
-  return aks.every(function (k) {
-    return b.hasOwnProperty(k) && a[k] === b[k];
+function isShallowInclude(parent, child) {
+  var childks = Object.keys(child);
+  return childks.every(function (k) {
+    return parent.hasOwnProperty(k) && parent[k] === child[k];
   });
 }
 
@@ -1320,15 +1317,13 @@ var connectComponent = function connectComponent(mapStateToProps, mapDispatchToP
   return function (config) {
     var mapState = shouldMapStateToProps ? mapStateToProps : defaultMapToProps;
     var mapDispatch = shouldMapDispatchToProps ? mapDispatchToProps : defaultMapToProps;
-    var prevMappedState = {};
     var unsubscribe = null;
 
     function subscribe() {
       if (!isFunction(unsubscribe)) return null;
       var mappedState = mapState(_store.getState());
-      if (isShallowEqual(mappedState, prevMappedState)) return null;
+      if (isShallowInclude(this.data, mappedState)) return null;
       this.setData(mappedState);
-      prevMappedState = mappedState;
     }
 
     function attached() {
