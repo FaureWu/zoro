@@ -735,6 +735,15 @@ function selectCreator(store, namespace) {
     return handler(state);
   };
 }
+function isShallowEqual(a, b) {
+  if (a === b) return true;
+  var aks = Object.keys(a);
+  var bks = Object.keys(b);
+  if (aks.length !== bks.length) return false;
+  return aks.every(function (k) {
+    return b.hasOwnProperty(k) && a[k] === b[k];
+  });
+}
 
 /*
  * createReducer
@@ -1244,6 +1253,8 @@ function dispatcherCreator (namespace, model, zoro) {
 
 var _zoro$1;
 
+var _store;
+
 function App(zoro) {
   _zoro$1 = zoro;
 }
@@ -1279,10 +1290,9 @@ App.prototype.start = function (setup) {
     setup = true;
   }
 
-  var store = _zoro$1.start.call(_zoro$1, setup);
-
-  this.store = store;
-  return store;
+  _store = _zoro$1.start.call(_zoro$1, setup);
+  this.store = _store;
+  return _store;
 };
 
 App.prototype.setup = function () {
@@ -1299,6 +1309,71 @@ var createDispatcher = function createDispatcher(namespace) {
   assert(!!models[namespace], "the " + namespace + " model not define");
   return dispatcherCreator(namespace, models[namespace], _zoro$1);
 };
+
+function defaultMapToProps() {
+  return {};
+}
+
+var connectComponent = function connectComponent(mapStateToProps, mapDispatchToProps) {
+  var shouldMapStateToProps = isFunction(mapStateToProps);
+  var shouldMapDispatchToProps = isFunction(mapDispatchToProps);
+  return function (config) {
+    var mapState = shouldMapStateToProps ? mapStateToProps : defaultMapToProps;
+    var mapDispatch = shouldMapDispatchToProps ? mapDispatchToProps : defaultMapToProps;
+    var prevMappedState = {};
+    var unsubscribe = null;
+
+    function subscribe() {
+      if (!isFunction(unsubscribe)) return null;
+      var mappedState = mapState(_store.getState());
+      if (isShallowEqual(mappedState, prevMappedState)) return null;
+      this.setData(mappedState);
+      prevMappedState = mappedState;
+    }
+
+    function attached() {
+      assert(_store !== null, 'we should call app.start() before the connectComponent');
+
+      if (shouldMapStateToProps) {
+        unsubscribe = _store.subscribe(subscribe.bind(this));
+        subscribe.call(this);
+      }
+
+      if (isObject(config.lifetimes) && isFunction(config.lifetimes.attached)) {
+        config.lifetimes.attached.call(this);
+      } else if (isFunction(config.attached)) {
+        config.attached.call(this);
+      }
+    }
+
+    function detached() {
+      if (isObject(config.lifetimes) && isFunction(config.lifetimes.detached)) {
+        config.lifetimes.detached.call(this);
+      } else if (isFunction(config.detached)) {
+        config.detached.call(this);
+      }
+
+      if (isFunction(unsubscribe)) {
+        unsubscribe();
+        unsubscribe = null;
+      }
+    }
+
+    var componentConfig = _extends({}, config, {
+      methods: _extends({}, config.methods, mapDispatch)
+    });
+
+    if (isObject(config.lifetimes)) {
+      componentConfig.lifetimes.attached = attached;
+      componentConfig.lifetimes.detached = detached;
+    } else {
+      componentConfig.attached = attached;
+      componentConfig.detached = detached;
+    }
+
+    return componentConfig;
+  };
+};
 var app = (function (opts) {
   if (opts === void 0) {
     opts = {};
@@ -1308,4 +1383,4 @@ var app = (function (opts) {
 });
 
 export default app;
-export { actions, createDispatcher };
+export { actions, createDispatcher, connectComponent };

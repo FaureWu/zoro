@@ -99,6 +99,28 @@ class Com extends PureComponent {
 connect(mapStateToProps, null)(Com)
 ```
 
+#### `connectComponent(mapStateToData, mapDispatchToMethod)(componentConfig)`
+
+1.2.3版本新增api
+
+```js
+import { connectComponent, createDispatcher } from 'roronoa-zoro'
+
+const model = createDispatcher('model')
+const mapStateToData = state => ({ ... })
+
+const config = connectComponent(mapStateToData)({
+  methods: {
+    handleQueryData(event) {
+      model.queryData(...)
+    },
+  },
+})
+
+Component(config)
+
+```
+
 ---
 
 #### `model` `<Object>`

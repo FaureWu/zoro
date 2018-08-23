@@ -1,5 +1,11 @@
 ### 更新日志
 
+该文件中所列的版本皆为稳定版本
+
+#### `2018-08-23`
+> version 1.2.3
+* 新增connectComponent用于链接redux到小程序原生组件中
+
 #### `2018-08-15`
 > version 1.2.0
 * 优化model生成时机，app.use和app.model不在需要注意调用顺序
