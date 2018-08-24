@@ -55,6 +55,7 @@ app.setup();
 立即启动初始化，该函数必须在app.start(false)执行之后执行
 
 #### `dispatcher` `<Object>`
+> version 1.3.1及以上版本新增
 
 dispatcher中定义了所有model的action触发器，代替createDispatcher的使用方式
 ```js
