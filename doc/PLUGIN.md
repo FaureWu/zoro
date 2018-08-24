@@ -31,14 +31,14 @@ pluginEvent.on('injectInitialState', function(initialState) {
 })
 ```
 
-#### `BEFORE_INJECT_MODEL` 注入model前执行，返回值为新的model定义
+#### `beforeInjectModel` 注入model前执行，返回值为新的model定义
 ```js
 pluginEvent.on('beforeInjectModel', function(model) {
   return { ...model, ...extraModel }
 })
 ```
 
-#### `AFTER_INJECT_MODEL` 注入model完成后
+#### `afterInjectModel` 注入model完成后
 ```js
 pluginEvent.on('afterInjectModel', function(model) {
   return { ...model, ...extraModel }
