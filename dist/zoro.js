@@ -647,6 +647,8 @@ var PLUGIN_EVENT = {
   INJECT_MODELS: 'injectModels',
   AFTER_INJECT_MODEL: 'afterInjectModel',
   INJECT_MIDDLEWARES: 'injectMiddlewares',
+  ON_CREATE_MODEL: 'onCreateModel',
+  ON_SETUP_MODEL: 'onSetupModel',
   ON_WILL_EFFECT: 'onWillEffect',
   ON_DID_EFFECT: 'onDidEffect',
   ON_WILL_ACTION: 'onWillAction',
@@ -1139,6 +1141,8 @@ function () {
       assertModelUnique(_this5, model);
       _this5.models[namespace] = model;
       models[namespace] = model;
+
+      _this5.plugin.emit(PLUGIN_EVENT.ON_CREATE_MODEL, model);
     });
     return models;
   };
@@ -1173,6 +1177,9 @@ function () {
 
     Object.keys(models).forEach(function (namespace) {
       var model = models[namespace];
+
+      _this6.plugin.emit(PLUGIN_EVENT.ON_SETUP_MODEL, model);
+
       model.handleSetup.apply(undefined, [{
         put: putCreator(_this6.store, namespace),
         select: selectCreator(_this6.store, namespace),
@@ -1248,12 +1255,30 @@ function dispatcherCreator (namespace, model, zoro) {
   return actionCache[namespace];
 }
 
+var dispatcher = {};
+
 var _zoro$1;
 
 var _store;
 
+function defineDispatcher(model) {
+  var namespace = model.getNamespace();
+  Object.defineProperty(dispatcher, namespace, {
+    get: function get() {
+      return dispatcherCreator(namespace, model, _zoro$1);
+    },
+    set: function set() {
+      assert(false, 'Cannot set the dispatcher');
+    }
+  });
+}
+
 function App(zoro) {
   _zoro$1 = zoro;
+
+  _zoro$1.plugin.on(PLUGIN_EVENT.ON_CREATE_MODEL, function (model) {
+    defineDispatcher(model);
+  });
 }
 
 App.prototype.model = function (models) {
@@ -1378,4 +1403,4 @@ var app = (function (opts) {
 });
 
 export default app;
-export { actions, createDispatcher, connectComponent };
+export { dispatcher, actions, createDispatcher, connectComponent };

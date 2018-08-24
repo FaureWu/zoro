@@ -54,6 +54,15 @@ app.setup();
 
 立即启动初始化，该函数必须在app.start(false)执行之后执行
 
+#### `dispatcher` `<Object>`
+
+dispatcher中定义了所有model的action触发器，代替createDispatcher的使用方式
+```js
+import { dispatcher } from 'roronoa-zoro'
+
+dispatcher.modelNamespace.queryData(params)
+```
+
 #### `actions(namespace)` `<Function>`
 
 根据命名空间获取model的actionCreators
@@ -76,7 +85,7 @@ connect(mapStateToProps, mapDispatchToProps)(Com)
 
 1.1.6版本新增api，`actions()` api升级版
 
-根据命名空间获取model的actionDispatcher
+根据命名空间获取model的actionDispatcher，1.3.1版本后建议使用dispatcher
 
 ```js
 import React, { PureComponent } from 'react'

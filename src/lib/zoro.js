@@ -128,6 +128,7 @@ export default class Zoro {
       assertModelUnique(this, model)
       this.models[namespace] = model
       models[namespace] = model
+      this.plugin.emit(PLUGIN_EVENT.ON_CREATE_MODEL, model)
     })
 
     return models
@@ -164,6 +165,7 @@ export default class Zoro {
   setupModel(models = {}) {
     Object.keys(models).forEach(namespace => {
       const model = models[namespace]
+      this.plugin.emit(PLUGIN_EVENT.ON_SETUP_MODEL, model)
       model.handleSetup.apply(undefined, [
         {
           put: putCreator(this.store, namespace),

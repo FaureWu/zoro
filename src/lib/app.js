@@ -1,11 +1,31 @@
 import Zoro from './zoro'
 import dispatcherCreator from './dispatcherCreator'
+import { PLUGIN_EVENT } from './constant'
 import { assert, isFunction, isObject, isShallowInclude } from './util'
+
+export const dispatcher = {}
 
 let _zoro
 let _store
+
+function defineDispatcher(model) {
+  const namespace = model.getNamespace()
+  Object.defineProperty(dispatcher, namespace, {
+    get() {
+      return dispatcherCreator(namespace, model, _zoro)
+    },
+    set() {
+      assert(false, 'Cannot set the dispatcher')
+    },
+  })
+}
+
 function App(zoro) {
   _zoro = zoro
+
+  _zoro.plugin.on(PLUGIN_EVENT.ON_CREATE_MODEL, function(model) {
+    defineDispatcher(model)
+  })
 }
 
 App.prototype.model = function(models) {

@@ -2,6 +2,10 @@
 
 该文件中所列的版本皆为稳定版本
 
+#### `2018-08-24`
+> version 1.3.1
+* 新增dispatcher，详见api文档
+
 #### `2018-08-23`
 > version 1.2.4
 * 新增connectComponent用于链接redux到小程序原生组件中

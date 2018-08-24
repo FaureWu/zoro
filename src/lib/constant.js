@@ -6,6 +6,8 @@ export const PLUGIN_EVENT = {
   INJECT_MODELS: 'injectModels',
   AFTER_INJECT_MODEL: 'afterInjectModel',
   INJECT_MIDDLEWARES: 'injectMiddlewares',
+  ON_CREATE_MODEL: 'onCreateModel',
+  ON_SETUP_MODEL: 'onSetupModel',
   ON_WILL_EFFECT: 'onWillEffect',
   ON_DID_EFFECT: 'onDidEffect',
   ON_WILL_ACTION: 'onWillAction',
