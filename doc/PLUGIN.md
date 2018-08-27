@@ -87,7 +87,7 @@ pluginEvent.on('onDidEffect', function(action, store) {
 })
 ``` 
 
-#### `onWillAction` 一个action（含effect）即将执行时调用
+#### `onWillAction` 一个action（含effect）即将执行时调用
 ```js
 pluginEvent.on('onWillAction', function(action, store) {
   console.log(action)
