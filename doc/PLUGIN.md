@@ -63,7 +63,7 @@ pluginEvent.on('injectMiddlewares', function() {
 })
 ```
 
-#### `onWillEffect` 即将要发起一个新的effect时调用
+#### `onWillEffect` 即将要发起一个新的effect时触发
 ```js
 pluginEvent.on('onWillEffect', function(action, store) {
   const { namespace, type } = splitType(action.type, DIVIDER)
@@ -75,7 +75,7 @@ pluginEvent.on('onWillEffect', function(action, store) {
 })
 ```  
 
-#### `onDidEffect` 一个effect执行完毕时调用
+#### `onDidEffect` 一个effect执行完毕时触发
 ```js
 pluginEvent.on('onDidEffect', function(action, store) {
   const { namespace, type } = splitType(action.type, DIVIDER)
@@ -87,35 +87,35 @@ pluginEvent.on('onDidEffect', function(action, store) {
 })
 ``` 
 
-#### `onWillAction` 一个action（含effect）即将执行时调用
+#### `onWillAction` 一个action（含effect）即将执行时触发
 ```js
 pluginEvent.on('onWillAction', function(action, store) {
   console.log(action)
 })
 ``` 
 
-#### `onDidAction` 一个action（含effect）执行完毕时调用
+#### `onDidAction` 一个action（含effect）执行完毕时触发
 ```js
 pluginEvent.on('onDidAction', function(action, store) {
   console.log(action)
 })
 ``` 
 
-#### `onSetup` 整个框架启动时调用
+#### `onSetup` 整个框架启动时触发
 ```js
 pluginEvent.on('onSetup', function(store) {
   store.dispatch(...)
 })
 ```
 
-#### `onSubscribe` redux state改变时调用
+#### `onSubscribe` redux state改变时触发
 ```js
 pluginEvent.on('onSubscribe', function(store) {
   console.log(store.getState())
 })
 ```
 
-#### `onError` redux state改变时调用
+#### `onError` redux effect抛出错误时触发
 ```js
 pluginEvent.on('onError', function(e, store) {
   console.log(e.message)
