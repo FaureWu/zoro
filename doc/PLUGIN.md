@@ -124,5 +124,5 @@ pluginEvent.on('onError', function(e, store) {
 
 
 更多自定义plugin的使用方法，请参考内置plugin源码
-[loading plugin](https://github.com/FaureWu/zoro/tree/master/src/lib/plugin/loadingPlugin.js) [extend plugin](https://github.com/FaureWu/zoro/tree/master/src/lib/plugin/extendPlugin.js)
+[loading plugin](https://github.com/FaureWu/zoro/tree/master/src/lib/plugin/loadingPlugin.js) [extend plugin](https://github.com/FaureWu/zoro/tree/master/src/lib/plugin/extendModelPlugin.js)
 
