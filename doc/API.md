@@ -26,8 +26,21 @@ ReactDom.render(
 #### `const app = zoro(opt)`
 
 * `opt.initialState` `<Object>` 初始化redux state，类似于redux preloadState
+* `opt.extraMiddlewares` `<Array>` 添加额外的redux middleware
+* `opt.extraEnhancers` `<Array>` 添加额外的redux enhancer
 * `opt.onEffect(action)` `<Function>` 监听用户调用model effect
 * `opt.onAction(action)` `<Function>` 监听用户调用model effect 和 reducer action
+* `opt.onReducer(modelName, reducer)` `<Function>` 用于对reducer进行扩展，比如redux-undo
+
+> 以redux-undo为例, 后期会考虑以plugin形式实现此功能
+```js
+import {  } from 'redux-undo'
+const app = zoro({
+  onReducer(modelName, reducer) {
+    return undoable(reducer)
+  },
+})
+```
 * `opt.onSetup(params)` `<Function>` redux应用启动时执行
   * `params.put(action)` `<Function>` 触发一个effect或者reducer
   * `params.select(handler)` `<Function>` 获取当前state的值，handler参数为state，未传递handler，默认直接获取整个全局state

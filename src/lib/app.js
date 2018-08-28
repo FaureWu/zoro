@@ -1,7 +1,8 @@
 import Zoro from './zoro'
 import dispatcherCreator from './dispatcherCreator'
 import { PLUGIN_EVENT } from './constant'
-import { assert, isFunction, isObject, isShallowInclude } from './util'
+import { assert } from './util'
+import createConnectComponent from './createConnectComponent'
 
 export const dispatcher = {}
 
@@ -79,71 +80,8 @@ export const createDispatcher = function(namespace) {
   return dispatcherCreator(namespace, models[namespace], _zoro)
 }
 
-function defaultMapToProps() {
-  return {}
-}
-
-export const connectComponent = function(mapStateToProps, mapDispatchToProps) {
-  const shouldMapStateToProps = isFunction(mapStateToProps)
-  const shouldMapDispatchToProps = isFunction(mapDispatchToProps)
-
-  return config => {
-    const mapState = shouldMapStateToProps ? mapStateToProps : defaultMapToProps
-    const mapDispatch = shouldMapDispatchToProps
-      ? mapDispatchToProps
-      : defaultMapToProps
-
-    let unsubscribe = null
-
-    function subscribe() {
-      if (!isFunction(unsubscribe)) return null
-
-      const mappedState = mapState(_store.getState())
-      if (isShallowInclude(this.data, mappedState)) return null
-
-      this.setData(mappedState)
-    }
-
-    function attached() {
-      assert(_store !== null, 'we should call app.start() before the connectComponent')
-
-      if (shouldMapStateToProps) {
-        unsubscribe = _store.subscribe(subscribe.bind(this))
-        subscribe.call(this)
-      }
-
-      if (isObject(config.lifetimes) && isFunction(config.lifetimes.attached)) {
-        config.lifetimes.attached.call(this)
-      } else if (isFunction(config.attached)) {
-        config.attached.call(this)
-      }
-    }
-
-    function detached() {
-      if (isObject(config.lifetimes) && isFunction(config.lifetimes.detached)) {
-        config.lifetimes.detached.call(this)
-      } else if (isFunction(config.detached)) {
-        config.detached.call(this)
-      }
-
-      if (isFunction(unsubscribe)) {
-        unsubscribe()
-        unsubscribe = null
-      }
-    }
-
-    const componentConfig = { ...config, methods: { ...config.methods, ...mapDispatch } }
-
-    if (isObject(config.lifetimes)) {
-      componentConfig.lifetimes.attached = attached
-      componentConfig.lifetimes.detached = detached
-    } else {
-      componentConfig.attached = attached
-      componentConfig.detached = detached
-    }
-
-    return componentConfig
-  }
+export const connectComponent = function() {
+  return createConnectComponent(_store)
 }
 
 export default (opts = {}) => new App(new Zoro(opts))

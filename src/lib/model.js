@@ -1,21 +1,32 @@
 import createReducer from './createReducer'
-import { assert, isFunction, noop } from './util'
+import { assert, isFunction, noop, isObject } from './util'
 import { NAMESPACE_DIVIDER } from './constant'
 
-const assertOpts = opts => {
-  const { namespace } = opts
-
+const assertOpts = ({ namespace, reducers, effects, setup }) => {
   assert(
     !!namespace,
     `the model's namespace is necessary, but we get ${namespace}`,
+  )
+  assert(
+    isObject(reducers),
+    `the ${namespace} model reducers must an Object, but we get ${typeof reducers}`,
+  )
+  assert(
+    isObject(effects),
+    `the ${namespace} model effects must an Object, but we get ${typeof effects}`,
+  )
+  assert(
+    isFunction(setup),
+    `the ${namespace} setup must be a Function, but we get ${typeof setup}`,
   )
 }
 
 class Model {
   constructor(opts) {
-    assertOpts(opts)
-
     const { namespace, state, reducers = {}, effects = {}, setup = noop } = opts
+
+    assertOpts({ namespace, reducers, effects, setup })
+
     this.namespace = namespace
     this.defaultState = state
     this.reducers = this.createReducer(reducers)

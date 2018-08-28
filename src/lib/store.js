@@ -3,7 +3,7 @@ import { createStore, applyMiddleware, compose } from 'redux'
 // eslint-disable-next-line
 const window = (function() { return this })() || Function("return this")();
 
-export default ({ rootReducer, middlewares, initialState }) => {
+export default ({ rootReducer, middlewares, initialState, enhancers }) => {
   // eslint-disable-next-line
   const composeEnhancers =
     window && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
@@ -12,7 +12,7 @@ export default ({ rootReducer, middlewares, initialState }) => {
   const store = createStore(
     rootReducer,
     initialState,
-    composeEnhancers(applyMiddleware(...middlewares)),
+    composeEnhancers(applyMiddleware(...middlewares), ...enhancers),
   )
   return store
 }

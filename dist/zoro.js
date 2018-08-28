@@ -647,6 +647,8 @@ var PLUGIN_EVENT = {
   INJECT_MODELS: 'injectModels',
   AFTER_INJECT_MODEL: 'afterInjectModel',
   INJECT_MIDDLEWARES: 'injectMiddlewares',
+  INJECT_ENHANCERS: 'injectEnhancers',
+  ON_REDUCER: 'onReducer',
   ON_CREATE_MODEL: 'onCreateModel',
   ON_SETUP_MODEL: 'onSetupModel',
   ON_WILL_EFFECT: 'onWillEffect',
@@ -774,16 +776,21 @@ var _createReducer = (function (initialState, handlers) {
   };
 });
 
-var assertOpts = function assertOpts(opts) {
-  var namespace = opts.namespace;
+var assertOpts = function assertOpts(_ref) {
+  var namespace = _ref.namespace,
+      reducers = _ref.reducers,
+      effects = _ref.effects,
+      setup = _ref.setup;
   assert(!!namespace, "the model's namespace is necessary, but we get " + namespace);
+  assert(isObject(reducers), "the " + namespace + " model reducers must an Object, but we get " + typeof reducers);
+  assert(isObject(effects), "the " + namespace + " model effects must an Object, but we get " + typeof effects);
+  assert(isFunction(setup), "the " + namespace + " setup must be a Function, but we get " + typeof setup);
 };
 
 var Model =
 /*#__PURE__*/
 function () {
   function Model(opts) {
-    assertOpts(opts);
     var namespace = opts.namespace,
         state = opts.state,
         _opts$reducers = opts.reducers,
@@ -792,6 +799,12 @@ function () {
         effects = _opts$effects === void 0 ? {} : _opts$effects,
         _opts$setup = opts.setup,
         setup = _opts$setup === void 0 ? noop : _opts$setup;
+    assertOpts({
+      namespace: namespace,
+      reducers: reducers,
+      effects: effects,
+      setup: setup
+    });
     this.namespace = namespace;
     this.defaultState = state;
     this.reducers = this.createReducer(reducers);
@@ -924,10 +937,11 @@ var window$1 = function () {
 var _createStore = (function (_ref) {
   var rootReducer = _ref.rootReducer,
       middlewares = _ref.middlewares,
-      initialState = _ref.initialState;
+      initialState = _ref.initialState,
+      enhancers = _ref.enhancers;
   // eslint-disable-next-line
   var composeEnhancers = window$1 && window$1.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ ? window$1.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : compose;
-  var store = createStore(rootReducer, initialState, composeEnhancers(applyMiddleware.apply(void 0, middlewares)));
+  var store = createStore(rootReducer, initialState, composeEnhancers.apply(void 0, [applyMiddleware.apply(void 0, middlewares)].concat(enhancers)));
   return store;
 });
 
@@ -956,7 +970,7 @@ var middleware = function middleware(_ref) {
                   handler = _zoro.getEffects()[type];
 
                   if (!isFunction(handler)) {
-                    _context.next = 23;
+                    _context.next = 24;
                     break;
                   }
 
@@ -991,21 +1005,23 @@ var middleware = function middleware(_ref) {
                 case 20:
                   _context.prev = 20;
 
+                  _zoro.plugin.emit(PLUGIN_EVENT.ON_DID_ACTION, action, _zoro.store);
+
                   _zoro.plugin.emit(PLUGIN_EVENT.ON_DID_EFFECT, action, _zoro.store);
 
                   return _context.finish(20);
 
-                case 23:
+                case 24:
                   _zoro.plugin.emit(PLUGIN_EVENT.ON_DID_ACTION, action, _zoro.store);
 
                   return _context.abrupt("return", next(action));
 
-                case 25:
+                case 26:
                 case "end":
                   return _context.stop();
               }
             }
-          }, _callee, this, [[5, 15, 20, 23]]);
+          }, _callee, this, [[5, 15, 20, 24]]);
         }));
 
         return function (_x) {
@@ -1022,8 +1038,21 @@ var effectMiddlewareCreator = (function (zoro) {
 });
 
 var assertOpts$1 = function assertOpts(_ref) {
-  var _ref$onError = _ref.onError,
-      onError = _ref$onError === void 0 ? noop : _ref$onError;
+  var initialState = _ref.initialState,
+      extraEnhancers = _ref.extraEnhancers,
+      extraMiddlewares = _ref.extraMiddlewares,
+      onEffect = _ref.onEffect,
+      onAction = _ref.onAction,
+      onReducer = _ref.onReducer,
+      onSetup = _ref.onSetup,
+      onError = _ref.onError;
+  assert(isObject(initialState), "initialState must be an Object, but we get " + typeof initialState);
+  assert(isArray(extraMiddlewares), "extraMiddlewares must be an Array, but we get " + typeof extraMiddlewares);
+  assert(isArray(extraEnhancers), "extraEnhancers must be an Array, but we get " + typeof extraEnhancers);
+  assert(isFunction(onEffect), "the onEffect must be an function handler, but we get " + typeof onEffect);
+  assert(isFunction(onAction), "the onAction must be an function handler, but we get " + typeof onAction);
+  assert(isFunction(onReducer), "the onReducer must be an function handler, but we get " + typeof onReducer);
+  assert(isFunction(onSetup), "the onSetup must be an function handler, but we get " + typeof onSetup);
   assert(isFunction(onError), "the onError must be an function handler, but we get " + typeof onError);
 };
 
@@ -1037,23 +1066,40 @@ var Zoro =
 /*#__PURE__*/
 function () {
   function Zoro(opts) {
-    assertOpts$1(opts);
     var _opts$initialState = opts.initialState,
         initialState = _opts$initialState === void 0 ? {} : _opts$initialState,
+        _opts$extraMiddleware = opts.extraMiddlewares,
+        extraMiddlewares = _opts$extraMiddleware === void 0 ? [] : _opts$extraMiddleware,
+        _opts$extraEnhancers = opts.extraEnhancers,
+        extraEnhancers = _opts$extraEnhancers === void 0 ? [] : _opts$extraEnhancers,
         _opts$onEffect = opts.onEffect,
         onEffect = _opts$onEffect === void 0 ? noop : _opts$onEffect,
         _opts$onAction = opts.onAction,
         onAction = _opts$onAction === void 0 ? noop : _opts$onAction,
+        _opts$onReducer = opts.onReducer,
+        onReducer = _opts$onReducer === void 0 ? noop : _opts$onReducer,
         _opts$onSetup = opts.onSetup,
         onSetup = _opts$onSetup === void 0 ? noop : _opts$onSetup,
         _opts$onError = opts.onError,
         onError = _opts$onError === void 0 ? noop : _opts$onError;
+    assertOpts$1({
+      initialState: initialState,
+      extraEnhancers: extraEnhancers,
+      extraMiddlewares: extraMiddlewares,
+      onEffect: onEffect,
+      onAction: onAction,
+      onReducer: onReducer,
+      onSetup: onSetup,
+      onError: onError
+    });
     this.models = {};
     this.modelOpts = [];
-    this.middlewares = [effectMiddlewareCreator(this)];
+    this.middlewares = [effectMiddlewareCreator(this)].concat(extraMiddlewares);
+    this.enhancers = extraEnhancers;
     this.handleError = onError;
     this.handleEffect = onEffect;
     this.handleAction = onAction;
+    this.handleReducer = onReducer;
     this.handleSetup = onSetup;
     this.initialState = initialState;
     this.plugin = new PluginEvent();
@@ -1070,7 +1116,20 @@ function () {
 
       var model = _this.models[namespace];
       var reducers = model.getReducers();
-      return _extends({}, combine, (_extends2 = {}, _extends2[namespace] = reducers, _extends2));
+
+      var resolveReducers = _this.plugin.emit(PLUGIN_EVENT.ON_REDUCER, namespace, reducers);
+
+      if (!isFunction(resolveReducers)) {
+        resolveReducers = reducers;
+      }
+
+      resolveReducers = _this.handleReducer.apply(undefined, [namespace, resolveReducers]);
+
+      if (!isFunction(resolveReducers)) {
+        resolveReducers = reducers;
+      }
+
+      return _extends({}, combine, (_extends2 = {}, _extends2[namespace] = resolveReducers, _extends2));
     }, {});
     return combineReducers(rootReducer);
   };
@@ -1131,6 +1190,11 @@ function () {
     this.middlewares = this.middlewares.concat(middlewares);
   };
 
+  _proto.injectEnhancers = function injectEnhancers(enhancers) {
+    assert(isArray(enhancers), "the enhancers must be an Array, but we get " + typeof enhancers);
+    this.enhancers = this.enhancers.concat(enhancers);
+  };
+
   _proto.createModels = function createModels(modelOpts) {
     var _this5 = this;
 
@@ -1151,14 +1215,21 @@ function () {
     var rootReducer = this.getRootReducer();
     var pluginMiddlewares = this.plugin.emit(PLUGIN_EVENT.INJECT_MIDDLEWARES);
 
-    if (pluginMiddlewares instanceof Array) {
+    if (isArray(pluginMiddlewares)) {
       this.injectMiddlewares(pluginMiddlewares);
+    }
+
+    var pluginEnhancers = this.plugin.emit(PLUGIN_EVENT.INJECT_ENHANCERS);
+
+    if (isArray(pluginEnhancers)) {
+      this.injectEnhancers(pluginEnhancers);
     }
 
     var pluginInitialState = this.plugin.emit(PLUGIN_EVENT.INJECT_INITIAL_STATE, this.initialState);
     return _createStore({
       rootReducer: rootReducer,
       middlewares: this.middlewares,
+      enhancers: this.enhancers,
       initialState: _extends({}, this.initialState, pluginInitialState || {}, this.getDefaultState())
     });
   };
@@ -1255,6 +1326,71 @@ function dispatcherCreator (namespace, model, zoro) {
   return actionCache[namespace];
 }
 
+function defaultMapToProps() {
+  return {};
+}
+
+function createConnectComponent (store) {
+  return function (mapStateToProps, mapDispatchToProps) {
+    var shouldMapStateToProps = isFunction(mapStateToProps);
+    var shouldMapDispatchToProps = isFunction(mapDispatchToProps);
+    return function (config) {
+      var mapState = shouldMapStateToProps ? mapStateToProps : defaultMapToProps;
+      var mapDispatch = shouldMapDispatchToProps ? mapDispatchToProps : defaultMapToProps;
+      var unsubscribe = null;
+
+      function subscribe() {
+        if (!isFunction(unsubscribe)) return null;
+        var mappedState = mapState(store.getState());
+        if (isShallowInclude(this.data, mappedState)) return null;
+        this.setData(mappedState);
+      }
+
+      function attached() {
+        assert(store !== null, 'we should call app.start() before the connectComponent');
+
+        if (shouldMapStateToProps) {
+          unsubscribe = store.subscribe(subscribe.bind(this));
+          subscribe.call(this);
+        }
+
+        if (isObject(config.lifetimes) && isFunction(config.lifetimes.attached)) {
+          config.lifetimes.attached.call(this);
+        } else if (isFunction(config.attached)) {
+          config.attached.call(this);
+        }
+      }
+
+      function detached() {
+        if (isObject(config.lifetimes) && isFunction(config.lifetimes.detached)) {
+          config.lifetimes.detached.call(this);
+        } else if (isFunction(config.detached)) {
+          config.detached.call(this);
+        }
+
+        if (isFunction(unsubscribe)) {
+          unsubscribe();
+          unsubscribe = null;
+        }
+      }
+
+      var componentConfig = _extends({}, config, {
+        methods: _extends({}, config.methods, mapDispatch)
+      });
+
+      if (isObject(config.lifetimes)) {
+        componentConfig.lifetimes.attached = attached;
+        componentConfig.lifetimes.detached = detached;
+      } else {
+        componentConfig.attached = attached;
+        componentConfig.detached = detached;
+      }
+
+      return componentConfig;
+    };
+  };
+}
+
 var dispatcher = {};
 
 var _zoro$1;
@@ -1331,68 +1467,8 @@ var createDispatcher = function createDispatcher(namespace) {
   assert(!!models[namespace], "the " + namespace + " model not define");
   return dispatcherCreator(namespace, models[namespace], _zoro$1);
 };
-
-function defaultMapToProps() {
-  return {};
-}
-
-var connectComponent = function connectComponent(mapStateToProps, mapDispatchToProps) {
-  var shouldMapStateToProps = isFunction(mapStateToProps);
-  var shouldMapDispatchToProps = isFunction(mapDispatchToProps);
-  return function (config) {
-    var mapState = shouldMapStateToProps ? mapStateToProps : defaultMapToProps;
-    var mapDispatch = shouldMapDispatchToProps ? mapDispatchToProps : defaultMapToProps;
-    var unsubscribe = null;
-
-    function subscribe() {
-      if (!isFunction(unsubscribe)) return null;
-      var mappedState = mapState(_store.getState());
-      if (isShallowInclude(this.data, mappedState)) return null;
-      this.setData(mappedState);
-    }
-
-    function attached() {
-      assert(_store !== null, 'we should call app.start() before the connectComponent');
-
-      if (shouldMapStateToProps) {
-        unsubscribe = _store.subscribe(subscribe.bind(this));
-        subscribe.call(this);
-      }
-
-      if (isObject(config.lifetimes) && isFunction(config.lifetimes.attached)) {
-        config.lifetimes.attached.call(this);
-      } else if (isFunction(config.attached)) {
-        config.attached.call(this);
-      }
-    }
-
-    function detached() {
-      if (isObject(config.lifetimes) && isFunction(config.lifetimes.detached)) {
-        config.lifetimes.detached.call(this);
-      } else if (isFunction(config.detached)) {
-        config.detached.call(this);
-      }
-
-      if (isFunction(unsubscribe)) {
-        unsubscribe();
-        unsubscribe = null;
-      }
-    }
-
-    var componentConfig = _extends({}, config, {
-      methods: _extends({}, config.methods, mapDispatch)
-    });
-
-    if (isObject(config.lifetimes)) {
-      componentConfig.lifetimes.attached = attached;
-      componentConfig.lifetimes.detached = detached;
-    } else {
-      componentConfig.attached = attached;
-      componentConfig.detached = detached;
-    }
-
-    return componentConfig;
-  };
+var connectComponent = function connectComponent() {
+  return createConnectComponent(_store);
 };
 var app = (function (opts) {
   if (opts === void 0) {

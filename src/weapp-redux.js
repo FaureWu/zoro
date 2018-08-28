@@ -1,4 +1,5 @@
 import { assert, isFunction, isShallowInclude } from './lib/util'
+import createConnectComponent from './lib/createConnectComponent'
 
 function isReduxStore(store) {
   return ['subscribe', 'dispatch', 'getState'].every(method =>
@@ -73,4 +74,8 @@ export const connect = function(mapStateToProps, mapDispatchToProps) {
       onUnload,
     }
   }
+}
+
+export const connectComponent = function() {
+  return createConnectComponent(_store)
 }

@@ -13,6 +13,9 @@ const app = zoro({
   onAction(action) {
     console.log('onAction: ', action)
   },
+  onReducer(namespace, reducer) {
+    console.log('onReducer', namespace, reducer)
+  },
   async onSetup({ put, select }) {
     console.log('onSetup')
     const { timeout3 } = actions('test')

@@ -16,6 +16,12 @@ function _extends() {
   return _extends.apply(this, arguments);
 }
 
+var isArray = function isArray(arr) {
+  return arr instanceof Array;
+};
+var isObject = function isObject(obj) {
+  return obj !== null && typeof obj === 'object' && !isArray(obj);
+};
 var isBoolean = function isBoolean(bool) {
   return typeof bool === 'boolean';
 };
@@ -34,6 +40,71 @@ function isShallowInclude(parent, child) {
   });
 }
 
+function defaultMapToProps() {
+  return {};
+}
+
+function createConnectComponent (store) {
+  return function (mapStateToProps, mapDispatchToProps) {
+    var shouldMapStateToProps = isFunction(mapStateToProps);
+    var shouldMapDispatchToProps = isFunction(mapDispatchToProps);
+    return function (config) {
+      var mapState = shouldMapStateToProps ? mapStateToProps : defaultMapToProps;
+      var mapDispatch = shouldMapDispatchToProps ? mapDispatchToProps : defaultMapToProps;
+      var unsubscribe = null;
+
+      function subscribe() {
+        if (!isFunction(unsubscribe)) return null;
+        var mappedState = mapState(store.getState());
+        if (isShallowInclude(this.data, mappedState)) return null;
+        this.setData(mappedState);
+      }
+
+      function attached() {
+        assert(store !== null, 'we should call app.start() before the connectComponent');
+
+        if (shouldMapStateToProps) {
+          unsubscribe = store.subscribe(subscribe.bind(this));
+          subscribe.call(this);
+        }
+
+        if (isObject(config.lifetimes) && isFunction(config.lifetimes.attached)) {
+          config.lifetimes.attached.call(this);
+        } else if (isFunction(config.attached)) {
+          config.attached.call(this);
+        }
+      }
+
+      function detached() {
+        if (isObject(config.lifetimes) && isFunction(config.lifetimes.detached)) {
+          config.lifetimes.detached.call(this);
+        } else if (isFunction(config.detached)) {
+          config.detached.call(this);
+        }
+
+        if (isFunction(unsubscribe)) {
+          unsubscribe();
+          unsubscribe = null;
+        }
+      }
+
+      var componentConfig = _extends({}, config, {
+        methods: _extends({}, config.methods, mapDispatch)
+      });
+
+      if (isObject(config.lifetimes)) {
+        componentConfig.lifetimes.attached = attached;
+        componentConfig.lifetimes.detached = detached;
+      } else {
+        componentConfig.attached = attached;
+        componentConfig.detached = detached;
+      }
+
+      return componentConfig;
+    };
+  };
+}
+
 function isReduxStore(store) {
   return ['subscribe', 'dispatch', 'getState'].every(function (method) {
     return store.hasOwnProperty(method);
@@ -46,7 +117,7 @@ var setStore = function setStore(store) {
   _store = store;
 };
 
-function defaultMapToProps() {
+function defaultMapToProps$1() {
   return {};
 }
 
@@ -54,8 +125,8 @@ var connect = function connect(mapStateToProps, mapDispatchToProps) {
   var shouldMapStateToProps = isFunction(mapStateToProps);
   var shouldMapDispatchToProps = isFunction(mapDispatchToProps);
   return function (config) {
-    var mapState = shouldMapStateToProps ? mapStateToProps : defaultMapToProps;
-    var mapDispatch = shouldMapDispatchToProps ? mapDispatchToProps : defaultMapToProps;
+    var mapState = shouldMapStateToProps ? mapStateToProps : defaultMapToProps$1;
+    var mapDispatch = shouldMapDispatchToProps ? mapDispatchToProps : defaultMapToProps$1;
     var unsubscribe = null;
 
     function subscribe(options) {
@@ -95,5 +166,8 @@ var connect = function connect(mapStateToProps, mapDispatchToProps) {
     });
   };
 };
+var connectComponent = function connectComponent() {
+  return createConnectComponent(_store);
+};
 
-export { setStore, connect };
+export { setStore, connect, connectComponent };

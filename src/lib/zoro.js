@@ -9,11 +9,49 @@ import {
   assert,
   isFunction,
   isArray,
+  isObject,
   putCreator,
   selectCreator,
 } from './util'
 
-const assertOpts = ({ onError = noop }) => {
+const assertOpts = ({
+  initialState,
+  extraEnhancers,
+  extraMiddlewares,
+  onEffect,
+  onAction,
+  onReducer,
+  onSetup,
+  onError,
+}) => {
+  assert(
+    isObject(initialState),
+    `initialState must be an Object, but we get ${typeof initialState}`,
+  )
+  assert(
+    isArray(extraMiddlewares),
+    `extraMiddlewares must be an Array, but we get ${typeof extraMiddlewares}`,
+  )
+  assert(
+    isArray(extraEnhancers),
+    `extraEnhancers must be an Array, but we get ${typeof extraEnhancers}`,
+  )
+  assert(
+    isFunction(onEffect),
+    `the onEffect must be an function handler, but we get ${typeof onEffect}`,
+  )
+  assert(
+    isFunction(onAction),
+    `the onAction must be an function handler, but we get ${typeof onAction}`,
+  )
+  assert(
+    isFunction(onReducer),
+    `the onReducer must be an function handler, but we get ${typeof onReducer}`,
+  )
+  assert(
+    isFunction(onSetup),
+    `the onSetup must be an function handler, but we get ${typeof onSetup}`,
+  )
   assert(
     isFunction(onError),
     `the onError must be an function handler, but we get ${typeof onError}`,
@@ -30,22 +68,36 @@ const assertModelUnique = ({ models }, model) => {
 
 export default class Zoro {
   constructor(opts) {
-    assertOpts(opts)
-
     const {
       initialState = {},
+      extraMiddlewares = [],
+      extraEnhancers = [],
       onEffect = noop,
       onAction = noop,
+      onReducer = noop,
       onSetup = noop,
       onError = noop,
     } = opts
 
+    assertOpts({
+      initialState,
+      extraEnhancers,
+      extraMiddlewares,
+      onEffect,
+      onAction,
+      onReducer,
+      onSetup,
+      onError,
+    })
+
     this.models = {}
     this.modelOpts = []
-    this.middlewares = [effectMiddlewareCreator(this)]
+    this.middlewares = [effectMiddlewareCreator(this)].concat(extraMiddlewares)
+    this.enhancers = extraEnhancers
     this.handleError = onError
     this.handleEffect = onEffect
     this.handleAction = onAction
+    this.handleReducer = onReducer
     this.handleSetup = onSetup
     this.initialState = initialState
     this.plugin = new PluginEvent()
@@ -58,9 +110,28 @@ export default class Zoro {
         const model = this.models[namespace]
         const reducers = model.getReducers()
 
+        let resolveReducers = this.plugin.emit(
+          PLUGIN_EVENT.ON_REDUCER,
+          namespace,
+          reducers,
+        )
+
+        if (!isFunction(resolveReducers)) {
+          resolveReducers = reducers
+        }
+
+        resolveReducers = this.handleReducer.apply(undefined, [
+          namespace,
+          resolveReducers,
+        ])
+
+        if (!isFunction(resolveReducers)) {
+          resolveReducers = reducers
+        }
+
         return {
           ...combine,
-          [namespace]: reducers,
+          [namespace]: resolveReducers,
         }
       },
       {},
@@ -120,6 +191,15 @@ export default class Zoro {
     this.middlewares = this.middlewares.concat(middlewares)
   }
 
+  injectEnhancers(enhancers) {
+    assert(
+      isArray(enhancers),
+      `the enhancers must be an Array, but we get ${typeof enhancers}`,
+    )
+
+    this.enhancers = this.enhancers.concat(enhancers)
+  }
+
   createModels(modelOpts) {
     const models = {}
     modelOpts.forEach(opts => {
@@ -137,8 +217,13 @@ export default class Zoro {
   createStore() {
     const rootReducer = this.getRootReducer()
     const pluginMiddlewares = this.plugin.emit(PLUGIN_EVENT.INJECT_MIDDLEWARES)
-    if (pluginMiddlewares instanceof Array) {
+    if (isArray(pluginMiddlewares)) {
       this.injectMiddlewares(pluginMiddlewares)
+    }
+
+    const pluginEnhancers = this.plugin.emit(PLUGIN_EVENT.INJECT_ENHANCERS)
+    if (isArray(pluginEnhancers)) {
+      this.injectEnhancers(pluginEnhancers)
     }
 
     const pluginInitialState = this.plugin.emit(
@@ -149,6 +234,7 @@ export default class Zoro {
     return createStore({
       rootReducer,
       middlewares: this.middlewares,
+      enhancers: this.enhancers,
       initialState: {
         ...this.initialState,
         ...(pluginInitialState || {}),

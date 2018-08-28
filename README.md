@@ -59,7 +59,7 @@ $ yarn add roronoa-zoro
 
 ## 开发交流
 
-请添加微信 `Faure5` 备注 `zoro` 咨询
+请添加微信 `Faure5` 备注 `zoro` 咨询，开源不易，如果好用，欢迎star
 
 ## License
 
