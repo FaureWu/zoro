@@ -2,6 +2,14 @@
 
 该文件中所列的版本皆为稳定版本
 
+#### `2018-08-28`
+> version 1.4.0
+* 新增配置属性extraMiddlewares
+* 配置属性extraEnhancers
+* 配置属性onReducer
+
+* 修复effect执行未触发plugin事件onDidAction
+
 #### `2018-08-24`
 > version 1.3.1
 * 新增dispatcher，详见api文档
