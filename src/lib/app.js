@@ -80,8 +80,8 @@ export const createDispatcher = function(namespace) {
   return dispatcherCreator(namespace, models[namespace], _zoro)
 }
 
-export const connectComponent = function() {
-  return createConnectComponent(_store)
+export const connectComponent = function(componentConfig) {
+  return createConnectComponent(_store)(componentConfig)
 }
 
 export default (opts = {}) => new App(new Zoro(opts))

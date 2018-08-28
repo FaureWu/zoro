@@ -1386,6 +1386,7 @@ function createConnectComponent (store) {
         componentConfig.detached = detached;
       }
 
+      console.log(config, componentConfig);
       return componentConfig;
     };
   };
@@ -1467,8 +1468,8 @@ var createDispatcher = function createDispatcher(namespace) {
   assert(!!models[namespace], "the " + namespace + " model not define");
   return dispatcherCreator(namespace, models[namespace], _zoro$1);
 };
-var connectComponent = function connectComponent() {
-  return createConnectComponent(_store);
+var connectComponent = function connectComponent(componentConfig) {
+  return createConnectComponent(_store)(componentConfig);
 };
 var app = (function (opts) {
   if (opts === void 0) {

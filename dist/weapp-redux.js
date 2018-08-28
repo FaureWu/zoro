@@ -100,6 +100,7 @@ function createConnectComponent (store) {
         componentConfig.detached = detached;
       }
 
+      console.log(config, componentConfig);
       return componentConfig;
     };
   };
@@ -166,8 +167,8 @@ var connect = function connect(mapStateToProps, mapDispatchToProps) {
     });
   };
 };
-var connectComponent = function connectComponent() {
-  return createConnectComponent(_store);
+var connectComponent = function connectComponent(componentConfig) {
+  return createConnectComponent(_store)(componentConfig);
 };
 
 export { setStore, connect, connectComponent };

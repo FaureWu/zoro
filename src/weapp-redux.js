@@ -76,6 +76,6 @@ export const connect = function(mapStateToProps, mapDispatchToProps) {
   }
 }
 
-export const connectComponent = function() {
-  return createConnectComponent(_store)
+export const connectComponent = function(componentConfig) {
+  return createConnectComponent(_store)(componentConfig)
 }

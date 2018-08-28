@@ -3,7 +3,7 @@
 该文件中所列的版本皆为稳定版本
 
 #### `2018-08-28`
-> version 1.4.0
+> version 1.4.1
 * 新增配置属性extraMiddlewares
 * 配置属性extraEnhancers
 * 配置属性onReducer
