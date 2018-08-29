@@ -22,7 +22,7 @@
     "clean": "rm -rf ./dist ./lib ./index.js ./plugin.js",
     "clean:free": "rm -rf ./regenerator.js ./weapp-redux.js",
     "dev": "babel src --out-dir ./ --copy-files -w",
-    "release": "npm run lint && npm run build && npm publish",
+    "release": "npm run lint && npm run build && npm publish --access=public",
     "lint": "eslint src",
     "test": "jest"
   },
