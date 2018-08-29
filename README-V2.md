@@ -43,7 +43,7 @@ $ yarn add @opcjs/zoro
 * [插件列表](https://github.com/FaureWu/zoro-plugin)
 
 ## 插件
-2.*版本的插件已经重zoro中独立出去，项目地址[zoro-plugin](https://github.com/FaureWu/zoro-plugin)
+2.*版本的插件已经重zoro中独立出去，项目地址[zoro-plugin](https://github.com/FaureWu/zoro-plugin)
 
 ## 快速接入
 
