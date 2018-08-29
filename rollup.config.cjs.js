@@ -33,22 +33,6 @@ export default [
     ],
   },
   {
-    input: 'src/plugin.js',
-    output: {
-      format: 'es',
-      indent: false,
-      file: 'dist/plugin.js',
-    },
-    plugins: [
-      nodeResolve({
-        jsnext: true,
-      }),
-      babel(babelOption),
-      replace(replaceOption),
-      commonjs(),
-    ],
-  },
-  {
     input: 'src/weapp-redux.js',
     output: {
       format: 'es',

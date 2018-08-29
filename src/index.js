@@ -1,11 +1,10 @@
 import 'regenerator-runtime/runtime'
-import app, { actions, createDispatcher, connectComponent, dispatcher } from './lib/app'
-
-export {
+import app, {
   actions,
-  dispatcher,
-  createDispatcher,
   connectComponent,
-}
+  dispatcher,
+} from './lib/app'
+
+export { actions, dispatcher, connectComponent }
 
 export default app

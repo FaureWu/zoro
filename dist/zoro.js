@@ -1420,26 +1420,26 @@ function App(zoro) {
 
 App.prototype.model = function (models) {
   if (models instanceof Array) {
-    _zoro$1.injectModels.call(_zoro$1, models);
+    _zoro$1.injectModels(models);
 
     return this;
   }
 
-  _zoro$1.injectModels.call(_zoro$1, [models]);
+  _zoro$1.injectModels([models]);
 
   return this;
 };
 
 App.prototype.use = function (plugins) {
   if (typeof plugins === 'function') {
-    _zoro$1.use.call(_zoro$1, plugins);
+    _zoro$1.use(plugins);
 
     return this;
   }
 
   assert(plugins instanceof Array, "the use param must be a function or a plugin Array, but we get " + typeof plugins);
   plugins.forEach(function (plugin) {
-    return _zoro$1.use.call(_zoro$1, plugin);
+    return _zoro$1.use(plugin);
   });
   return this;
 };
@@ -1449,24 +1449,19 @@ App.prototype.start = function (setup) {
     setup = true;
   }
 
-  _store = _zoro$1.start.call(_zoro$1, setup);
+  _store = _zoro$1.start(setup);
   this.store = _store;
   return _store;
 };
 
 App.prototype.setup = function () {
-  _zoro$1.setup.call(_zoro$1);
+  _zoro$1.setup();
 };
 
 var actions = function actions(namespace) {
   var models = _zoro$1.models;
   assert(!!models[namespace], "the " + namespace + " model not define");
   return models[namespace].getActions();
-};
-var createDispatcher = function createDispatcher(namespace) {
-  var models = _zoro$1.models;
-  assert(!!models[namespace], "the " + namespace + " model not define");
-  return dispatcherCreator(namespace, models[namespace], _zoro$1);
 };
 var connectComponent = function connectComponent(componentConfig) {
   return createConnectComponent(_store)(componentConfig);
@@ -1480,4 +1475,4 @@ var app = (function (opts) {
 });
 
 export default app;
-export { dispatcher, actions, createDispatcher, connectComponent };
+export { dispatcher, actions, connectComponent };
