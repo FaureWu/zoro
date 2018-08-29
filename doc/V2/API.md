@@ -5,7 +5,7 @@
 zoro核心只有6个api，你可以在很短的时间内上手框架，只需要如下简单的几步即可快速开始开发
 
 ```js
-import zoro from 'roronoa-zoro'
+import zoro from '@opcjs/zoro'
 import { Provider } from 'react-redux'
 
 const app = zoro() // 创建redux app
@@ -68,64 +68,14 @@ app.setup();
 立即启动初始化，该函数必须在app.start(false)执行之后执行
 
 #### `dispatcher` `<Object>`
-> version 1.3.1及以上版本新增
-
-dispatcher中定义了所有model的action触发器，代替createDispatcher的使用方式
+dispatcher中定义了所有model的action触发器
 ```js
 import { dispatcher } from 'roronoa-zoro'
 
-dispatcher.modelNamespace.queryData(params)
-```
-
-#### `actions(namespace)` `<Function>`
-
-根据命名空间获取model的actionCreators
-```js
-import { actions } from 'roronoa-zoro'
-import { connect } from 'react-redux'
-
-const modelActions = actions('namespace')
-const mapStateToProps = state => ({})
-const mapDispatchToProps = dispatch => ({
-  queryData: (params) => dispatch(modelActions.queryData(params))
-})
-
-connect(mapStateToProps, mapDispatchToProps)(Com)
-```
-
-> actionCreator(payload, meta, error)
-
-#### `createDispatcher(namespace)` `<Function>`
-
-1.1.6版本新增api，`actions()` api升级版
-
-根据命名空间获取model的actionDispatcher，1.3.1版本后建议使用dispatcher
-
-```js
-import React, { PureComponent } from 'react'
-import { createDispatcher } from 'roronoa-zoro'
-import { connect } from 'react-redux'
-
-const model = createDispatcher('model')
-const mapStateToProps = state => ({ ... })
-
-class Com extends PureComponent {
-  componentDidMount() {
-    model.queryData(...)
-  }
-
-  render() {
-    return ...
-  }
-}
-
-connect(mapStateToProps, null)(Com)
+dispatcher.modelNamespace.queryData(payload, meta, error)
 ```
 
 #### `connectComponent(mapStateToData, mapDispatchToMethod)(componentConfig)`
-
-1.2.4版本新增api
-
 ```js
 import { connectComponent, createDispatcher } from 'roronoa-zoro'
 

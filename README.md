@@ -1,3 +1,5 @@
+1.* 文档 | [2.* 文档](./README-V2.md)
+
 # zoro
 
 [![](https://img.shields.io/npm/v/roronoa-zoro.svg?style=flat-square)](https://npmjs.org/package/roronoa-zoro)

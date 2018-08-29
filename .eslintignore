@@ -2,7 +2,3 @@
 /lib
 /dist
 index.js
-example.js
-plugin.js
-app.js
-/src/regenerator.js
