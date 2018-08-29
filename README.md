@@ -1,4 +1,4 @@
-2.* 文档 | [1.* 文档](./README-V1.md)
+2.* 文档 | [1.* 文档](https://github.com/FaureWu/zoro/blob/master/README-V1.md)
 
 # zoro
 
