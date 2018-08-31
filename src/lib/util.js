@@ -9,6 +9,8 @@ export const isBoolean = bool => typeof bool === 'boolean'
 
 export const isFunction = func => typeof func === 'function'
 
+export const isUndefined = undef => typeof undef === 'undefined'
+
 export const assert = (validate, message) => {
   if (
     (isBoolean(validate) && !validate) ||

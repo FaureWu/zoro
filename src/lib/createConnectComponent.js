@@ -78,8 +78,6 @@ export default function(store) {
         componentConfig.detached = detached
       }
 
-      console.log(config, componentConfig)
-
       return componentConfig
     }
   }

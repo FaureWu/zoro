@@ -100,7 +100,6 @@ function createConnectComponent (store) {
         componentConfig.detached = detached;
       }
 
-      console.log(config, componentConfig);
       return componentConfig;
     };
   };

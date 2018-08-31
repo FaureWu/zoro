@@ -110,7 +110,7 @@ export default class Zoro {
         const model = this.models[namespace]
         const reducers = model.getReducers()
 
-        let resolveReducers = this.plugin.emit(
+        let resolveReducers = this.plugin.emitLoop(
           PLUGIN_EVENT.ON_REDUCER,
           namespace,
           reducers,
@@ -167,7 +167,7 @@ export default class Zoro {
     const newModelOpts = []
     models.forEach(opts => {
       const modelOpts =
-        this.plugin.emit(PLUGIN_EVENT.BEFORE_INJECT_MODEL, opts) || opts
+        this.plugin.emitLoop(PLUGIN_EVENT.BEFORE_INJECT_MODEL, opts) || opts
       this.modelOpts.push(modelOpts)
       newModelOpts.push(modelOpts)
       this.plugin.emit(PLUGIN_EVENT.AFTER_INJECT_MODEL, modelOpts)
@@ -216,17 +216,21 @@ export default class Zoro {
 
   createStore() {
     const rootReducer = this.getRootReducer()
-    const pluginMiddlewares = this.plugin.emit(PLUGIN_EVENT.INJECT_MIDDLEWARES)
+    const pluginMiddlewares = this.plugin.emitCombine(
+      PLUGIN_EVENT.INJECT_MIDDLEWARES,
+    )
     if (isArray(pluginMiddlewares)) {
       this.injectMiddlewares(pluginMiddlewares)
     }
 
-    const pluginEnhancers = this.plugin.emit(PLUGIN_EVENT.INJECT_ENHANCERS)
+    const pluginEnhancers = this.plugin.emitCombine(
+      PLUGIN_EVENT.INJECT_ENHANCERS,
+    )
     if (isArray(pluginEnhancers)) {
       this.injectEnhancers(pluginEnhancers)
     }
 
-    const pluginInitialState = this.plugin.emit(
+    const pluginInitialState = this.plugin.emitLoop(
       PLUGIN_EVENT.INJECT_INITIAL_STATE,
       this.initialState,
     )
@@ -275,7 +279,7 @@ export default class Zoro {
   }
 
   start(setup) {
-    const pluginModels = this.plugin.emit(PLUGIN_EVENT.INJECT_MODELS)
+    const pluginModels = this.plugin.emitCombine(PLUGIN_EVENT.INJECT_MODELS)
     if (pluginModels instanceof Array) {
       this.injectModels(pluginModels)
     }

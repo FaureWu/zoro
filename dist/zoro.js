@@ -672,6 +672,9 @@ var isBoolean = function isBoolean(bool) {
 var isFunction = function isFunction(func) {
   return typeof func === 'function';
 };
+var isUndefined = function isUndefined(undef) {
+  return typeof undef === 'undefined';
+};
 var assert = function assert(validate, message) {
   if (isBoolean(validate) && !validate || isFunction(validate) && !validate()) {
     throw new Error(message);
@@ -917,6 +920,57 @@ function () {
     }, undefined);
   };
 
+  _proto.emitCombine = function emitCombine(name) {
+    for (var _len2 = arguments.length, rest = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+      rest[_key2 - 1] = arguments[_key2];
+    }
+
+    assert(typeof name === 'string', "the plugin event's name is necessary, but we get " + name);
+    var handlers = this.handlers[name];
+
+    if (!(handlers instanceof Array)) {
+      return undefined;
+    }
+
+    return handlers.reduce(function (result, handler) {
+      var data = handler.apply(undefined, rest);
+
+      if (isArray(data)) {
+        return result.concat(data);
+      }
+
+      return result;
+    }, []);
+  };
+
+  _proto.emitLoop = function emitLoop(name) {
+    for (var _len3 = arguments.length, rest = new Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
+      rest[_key3 - 1] = arguments[_key3];
+    }
+
+    assert(typeof name === 'string', "the plugin event's name is necessary, but we get " + name);
+    var handlers = this.handlers[name];
+
+    if (!(handlers instanceof Array)) {
+      return undefined;
+    }
+
+    var preData;
+    return handlers.reduce(function (result, handler) {
+      if (!isUndefined(preData)) {
+        rest[0] = preData;
+      }
+
+      var data = handler.apply(undefined, rest);
+
+      if (!isUndefined(data)) {
+        preData = data;
+      }
+
+      return data;
+    }, undefined);
+  };
+
   _proto.on = function on(name, handler) {
     assert(typeof name === 'string', "the plugin event's name is necessary, but we get " + name);
 
@@ -1117,7 +1171,7 @@ function () {
       var model = _this.models[namespace];
       var reducers = model.getReducers();
 
-      var resolveReducers = _this.plugin.emit(PLUGIN_EVENT.ON_REDUCER, namespace, reducers);
+      var resolveReducers = _this.plugin.emitLoop(PLUGIN_EVENT.ON_REDUCER, namespace, reducers);
 
       if (!isFunction(resolveReducers)) {
         resolveReducers = reducers;
@@ -1166,7 +1220,7 @@ function () {
     assert(isArray(models), "the models must be an Array, but we get " + typeof models);
     var newModelOpts = [];
     models.forEach(function (opts) {
-      var modelOpts = _this4.plugin.emit(PLUGIN_EVENT.BEFORE_INJECT_MODEL, opts) || opts;
+      var modelOpts = _this4.plugin.emitLoop(PLUGIN_EVENT.BEFORE_INJECT_MODEL, opts) || opts;
 
       _this4.modelOpts.push(modelOpts);
 
@@ -1213,19 +1267,19 @@ function () {
 
   _proto.createStore = function createStore$$1() {
     var rootReducer = this.getRootReducer();
-    var pluginMiddlewares = this.plugin.emit(PLUGIN_EVENT.INJECT_MIDDLEWARES);
+    var pluginMiddlewares = this.plugin.emitCombine(PLUGIN_EVENT.INJECT_MIDDLEWARES);
 
     if (isArray(pluginMiddlewares)) {
       this.injectMiddlewares(pluginMiddlewares);
     }
 
-    var pluginEnhancers = this.plugin.emit(PLUGIN_EVENT.INJECT_ENHANCERS);
+    var pluginEnhancers = this.plugin.emitCombine(PLUGIN_EVENT.INJECT_ENHANCERS);
 
     if (isArray(pluginEnhancers)) {
       this.injectEnhancers(pluginEnhancers);
     }
 
-    var pluginInitialState = this.plugin.emit(PLUGIN_EVENT.INJECT_INITIAL_STATE, this.initialState);
+    var pluginInitialState = this.plugin.emitLoop(PLUGIN_EVENT.INJECT_INITIAL_STATE, this.initialState);
     return _createStore({
       rootReducer: rootReducer,
       middlewares: this.middlewares,
@@ -1270,7 +1324,7 @@ function () {
   _proto.start = function start(setup) {
     var _this7 = this;
 
-    var pluginModels = this.plugin.emit(PLUGIN_EVENT.INJECT_MODELS);
+    var pluginModels = this.plugin.emitCombine(PLUGIN_EVENT.INJECT_MODELS);
 
     if (pluginModels instanceof Array) {
       this.injectModels(pluginModels);
@@ -1386,7 +1440,6 @@ function createConnectComponent (store) {
         componentConfig.detached = detached;
       }
 
-      console.log(config, componentConfig);
       return componentConfig;
     };
   };
