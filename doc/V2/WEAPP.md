@@ -36,7 +36,8 @@ dist目录下会生成三个文件:
 * `weapp-redux` 用于链接redux和weapp的库，提供setStore，connect工具
   * `setStore` 设置store
   * `connect(mapStateToProps, mapDispatchToProps)(pageConfig)` 只可用于链接到page中，无法链接到app中
-* `regenerator` 用于原生小程序支持async, await, 需要在每一个使用该特性的地方中引入
+  * `connectComponent(mapStateToProps, mapDispatchToProps)(componentConfig)` 用于链接到原生小程序component组件中
+  * `regenerator` 用于原生小程序支持async, await, 需要在每一个使用该特性的地方中引入
 
 #### `weapp/app.js`
 ```js
