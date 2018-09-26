@@ -28,7 +28,7 @@ export default function(store) {
         this.setData(mappedState)
       }
 
-      function created() {
+      function attached() {
         assert(
           store !== null,
           'we should call app.start() before the connectComponent',
@@ -41,11 +41,11 @@ export default function(store) {
 
         if (
           isObject(config.lifetimes) &&
-          isFunction(config.lifetimes.created)
+          isFunction(config.lifetimes.attached)
         ) {
-          config.lifetimes.created.call(this)
-        } else if (isFunction(config.created)) {
-          config.created.call(this)
+          config.lifetimes.attached.call(this)
+        } else if (isFunction(config.attached)) {
+          config.attached.call(this)
         }
       }
 
@@ -69,9 +69,9 @@ export default function(store) {
       }
 
       if (isObject(config.lifetimes)) {
-        componentConfig.lifetimes.created = created
+        componentConfig.lifetimes.attached = attached
       } else {
-        componentConfig.created = created
+        componentConfig.attached = attached
       }
 
       if (!isObject(config.pageLifetimes)) {

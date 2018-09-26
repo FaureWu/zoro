@@ -1400,7 +1400,7 @@ function createConnectComponent (store) {
         this.setData(mappedState);
       }
 
-      function created() {
+      function attached() {
         assert(store !== null, 'we should call app.start() before the connectComponent');
 
         if (shouldMapStateToProps) {
@@ -1408,10 +1408,10 @@ function createConnectComponent (store) {
           subscribe.call(this);
         }
 
-        if (isObject(config.lifetimes) && isFunction(config.lifetimes.created)) {
-          config.lifetimes.created.call(this);
-        } else if (isFunction(config.created)) {
-          config.created.call(this);
+        if (isObject(config.lifetimes) && isFunction(config.lifetimes.attached)) {
+          config.lifetimes.attached.call(this);
+        } else if (isFunction(config.attached)) {
+          config.attached.call(this);
         }
       }
 
@@ -1431,9 +1431,9 @@ function createConnectComponent (store) {
       });
 
       if (isObject(config.lifetimes)) {
-        componentConfig.lifetimes.created = created;
+        componentConfig.lifetimes.attached = attached;
       } else {
-        componentConfig.created = created;
+        componentConfig.attached = attached;
       }
 
       if (!isObject(config.pageLifetimes)) {
