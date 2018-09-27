@@ -1435,11 +1435,13 @@ function createConnectComponent (store) {
         }
 
         if (isObject(config.pageLifetimes) && isFunction(config.pageLifetimes.show)) {
-          config.lifetimes.show.call(this);
+          config.pageLifetimes.show.call(this);
         }
       }
 
       var componentConfig = _extends({}, config, {
+        pageLifetimes: _extends({}, config.pageLifetimes),
+        lifetimes: _extends({}, config.lifetimes),
         methods: _extends({}, config.methods, mapDispatch)
       });
 

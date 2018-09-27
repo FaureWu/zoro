@@ -78,12 +78,14 @@ export default function(store) {
           isObject(config.pageLifetimes) &&
           isFunction(config.pageLifetimes.show)
         ) {
-          config.lifetimes.show.call(this)
+          config.pageLifetimes.show.call(this)
         }
       }
 
       const componentConfig = {
         ...config,
+        pageLifetimes: { ...config.pageLifetimes },
+        lifetimes: { ...config.lifetimes },
         methods: { ...config.methods, ...mapDispatch },
       }
 
