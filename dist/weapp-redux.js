@@ -86,6 +86,19 @@ function createConnectComponent (store) {
         }
       }
 
+      function show() {
+        assert(store !== null, 'we should call app.start() before the connectComponent');
+
+        if (shouldMapStateToProps) {
+          unsubscribe = store.subscribe(subscribe.bind(this));
+          subscribe.call(this);
+        }
+
+        if (isObject(config.pageLifetimes) && isFunction(config.pageLifetimes.show)) {
+          config.lifetimes.show.call(this);
+        }
+      }
+
       var componentConfig = _extends({}, config, {
         methods: _extends({}, config.methods, mapDispatch)
       });
@@ -101,6 +114,7 @@ function createConnectComponent (store) {
       }
 
       componentConfig.pageLifetimes.hide = hide;
+      componentConfig.pageLifetimes.show = show;
       return componentConfig;
     };
   };

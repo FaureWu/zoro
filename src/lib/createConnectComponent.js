@@ -63,6 +63,25 @@ export default function(store) {
         }
       }
 
+      function show() {
+        assert(
+          store !== null,
+          'we should call app.start() before the connectComponent',
+        )
+
+        if (shouldMapStateToProps) {
+          unsubscribe = store.subscribe(subscribe.bind(this))
+          subscribe.call(this)
+        }
+
+        if (
+          isObject(config.pageLifetimes) &&
+          isFunction(config.pageLifetimes.show)
+        ) {
+          config.lifetimes.show.call(this)
+        }
+      }
+
       const componentConfig = {
         ...config,
         methods: { ...config.methods, ...mapDispatch },
@@ -78,6 +97,7 @@ export default function(store) {
         componentConfig.pageLifetimes = {}
       }
       componentConfig.pageLifetimes.hide = hide
+      componentConfig.pageLifetimes.show = show
 
       return componentConfig
     }
