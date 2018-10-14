@@ -93,23 +93,22 @@ export function selectCreator(store, namespace) {
   }
 }
 
-export function isShallowEqual(a, b) {
-  if (a === b) return true
-
-  const aks = Object.keys(a)
-  const bks = Object.keys(b)
-
-  if (aks.length !== bks.length) return false
-
-  return aks.every(k => {
-    return b.hasOwnProperty(k) && a[k] === b[k]
-  })
-}
-
 export function isShallowInclude(parent, child) {
   const childks = Object.keys(child)
 
   return childks.every(k => {
     return parent.hasOwnProperty(k) && parent[k] === child[k]
   })
+}
+
+export function getConnectStoreData(pre, current) {
+  const childks = Object.keys(current)
+
+  return childks.reduce(
+    (result, key) => ({
+      ...result,
+      [key]: pre[key],
+    }),
+    {},
+  )
 }
