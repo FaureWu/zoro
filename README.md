@@ -27,7 +27,7 @@ $ yarn add @opcjs/zoro
 
 ## 简介
 
-> 个人维护项目，长期维护，目前主要使用于个人项目中
+> 该项目已于实际项目中使用，且正式上线
 
 * **快速入手** 仅有 6 个 [api](https://github.com/FaureWu/zoro/blob/master/doc/V2/API.md)
 * **可扩展** 支持插件机制，可实现自定义开发插件
@@ -57,6 +57,10 @@ $ yarn add @opcjs/zoro
 ## 模版
 
 * [iwepy](https://github.com/FaureWu/iwepy) 一套基于wepy, iview-weapp, zoro的完整的小程序开发解决方案
+
+## 应用案例
+
+![案例](https://img.baobeicang.com/user_upload/rc-upload-1539675472967-2.jpeg)
 
 ## 开发交流
 
