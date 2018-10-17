@@ -60,7 +60,7 @@ $ yarn add @opcjs/zoro
 
 ## 应用案例
 
-![小美拼购](https://img.baobeicang.com/user_upload/rc-upload-1539741270100-2.jpeg)
+<img src="https://img.baobeicang.com/user_upload/rc-upload-1539741270100-2.jpeg" width="150" />
 
 ## 开发交流
 
