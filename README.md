@@ -36,6 +36,10 @@ $ yarn add @opcjs/zoro
 
 `查看目前可用的所有插`[@opcjs/zoro-plugin](https://github.com/FaureWu/zoro-plugin)
 
+## 教程
+
+* [打造前端大秘宝之状态处理框架ZORO](https://www.jianshu.com/p/19f852252500)
+
 ## 文档链接
 
 * [api文档](https://github.com/FaureWu/zoro/blob/master/doc/V2/API.md)
