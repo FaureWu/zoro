@@ -21,7 +21,7 @@ const middleware = ({ dispatch }) => next => async action => {
       return Promise.resolve(result)
     } catch (e) {
       _zoro.handleError.apply(undefined, [e])
-      _zoro.plugin.emit(PLUGIN_EVENT.ON_ERROR, e, _zoro.store)
+      _zoro.plugin.emit(PLUGIN_EVENT.ON_ERROR, e, action, _zoro.store)
       return Promise.reject(e)
     } finally {
       _zoro.plugin.emit(PLUGIN_EVENT.ON_DID_ACTION, action, _zoro.store)

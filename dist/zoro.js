@@ -1054,7 +1054,7 @@ var middleware = function middleware(_ref) {
 
                   _zoro.handleError.apply(undefined, [_context.t0]);
 
-                  _zoro.plugin.emit(PLUGIN_EVENT.ON_ERROR, _context.t0, _zoro.store);
+                  _zoro.plugin.emit(PLUGIN_EVENT.ON_ERROR, _context.t0, action, _zoro.store);
 
                   return _context.abrupt("return", Promise.reject(_context.t0));
 
