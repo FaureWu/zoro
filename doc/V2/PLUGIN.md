@@ -137,7 +137,7 @@ pluginEvent.on('onSubscribe', function(store) {
 
 #### `onError` redux effect抛出错误时触发
 ```js
-pluginEvent.on('onError', function(e, store) {
+pluginEvent.on('onError', function(e, action, store) {
   console.log(e.message)
 })
 ```
