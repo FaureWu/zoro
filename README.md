@@ -38,7 +38,8 @@ $ yarn add @opcjs/zoro
 
 ## 教程
 
-* [打造前端大秘宝之状态处理框架ZORO](https://www.jianshu.com/p/19f852252500)
+* [打造前端大秘宝系列之REDUX状态处理框架ZORO-基本简介](https://www.jianshu.com/p/19f852252500)
+* [打造前端大秘宝系列之REDUX状态处理框架ZORO-插件介绍](https://www.jianshu.com/p/d262c2920537)
 
 ## 文档链接
 
