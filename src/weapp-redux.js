@@ -1,5 +1,4 @@
-import { assert, isFunction, getConnectStoreData } from './lib/util'
-import diff from './lib/diff'
+import { assert, isFunction, isShallowInclude } from './lib/util'
 import createConnectComponent from './lib/createConnectComponent'
 
 function isReduxStore(store) {
@@ -39,14 +38,9 @@ export const connect = function(mapStateToProps, mapDispatchToProps) {
       if (!isFunction(unsubscribe)) return null
 
       const mappedState = mapState(_store.getState(), options)
-      const differents = diff(
-        mappedState,
-        getConnectStoreData(this.data, mappedState),
-      )
+      if (isShallowInclude(this.data, mappedState)) return null
 
-      if (Object.keys(differents).length > 0) {
-        this.setData(differents)
-      }
+      this.setData(mappedState)
     }
 
     function onLoad(options) {

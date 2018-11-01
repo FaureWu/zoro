@@ -1,5 +1,4 @@
-import diff from './diff'
-import { isFunction, getConnectStoreData, assert, isObject } from './util'
+import { isFunction, isShallowInclude, assert, isObject } from './util'
 
 function defaultMapToProps() {
   return {}
@@ -24,14 +23,9 @@ export default function(store) {
         if (!isFunction(unsubscribe)) return null
 
         const mappedState = mapState(store.getState())
-        const differents = diff(
-          mappedState,
-          getConnectStoreData(this.data, mappedState),
-        )
+        if (isShallowInclude(this.data, mappedState)) return null
 
-        if (Object.keys(differents).length > 0) {
-          this.setData(differents)
-        }
+        this.setData(mappedState)
       }
 
       function attached() {
