@@ -62,6 +62,7 @@ $ yarn add @opcjs/zoro
 ## 模版
 
 * [iwepy](https://github.com/FaureWu/iwepy) 一套基于wepy, iview-weapp, zoro的完整的小程序开发解决方案
+* [ztaro](https://github.com/FaureWu/ztaro) 一套基于taro, zoro的完整微信小程序，h5开发解决方案
 
 ## 应用案例
 
