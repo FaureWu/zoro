@@ -40,6 +40,7 @@ $ yarn add @opcjs/zoro
 
 * [打造前端大秘宝系列之REDUX状态处理框架ZORO-基本简介](https://www.jianshu.com/p/19f852252500)
 * [打造前端大秘宝系列之REDUX状态处理框架ZORO-插件介绍](https://www.jianshu.com/p/d262c2920537)
+* [微信小程序及h5,基于taro，zoro最佳实践探索](https://www.jianshu.com/p/7c27dbbc080f)
 
 ## 文档链接
 
