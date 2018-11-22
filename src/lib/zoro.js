@@ -2,7 +2,7 @@ import { combineReducers } from 'redux'
 import Model from './model'
 import PluginEvent from './pluginEvent'
 import createStore from './store'
-import { PLUGIN_EVENT, NAMESPACE_DIVIDER } from './constant'
+import { PLUGIN_EVENT, NAMESPACE_DIVIDER, INTERCEPT_TYPE } from './constant'
 import effectMiddlewareCreator from './effectMiddleware'
 import {
   noop,
@@ -99,6 +99,7 @@ export default class Zoro {
     this.handleAction = onAction
     this.handleReducer = onReducer
     this.handleSetup = onSetup
+    this.handleIntercepts = {}
     this.initialState = initialState
     this.plugin = new PluginEvent()
     this._isSetup = false
@@ -120,18 +121,18 @@ export default class Zoro {
           resolveReducers = reducers
         }
 
-        resolveReducers = this.handleReducer.apply(undefined, [
+        let targetResolveReducers = this.handleReducer.apply(undefined, [
           namespace,
           resolveReducers,
         ])
 
-        if (!isFunction(resolveReducers)) {
-          resolveReducers = reducers
+        if (!isFunction(targetResolveReducers)) {
+          targetResolveReducers = resolveReducers
         }
 
         return {
           ...combine,
-          [namespace]: resolveReducers,
+          [namespace]: targetResolveReducers,
         }
       },
       {},
@@ -157,6 +158,25 @@ export default class Zoro {
       }
       return defaultState
     }, {})
+  }
+
+  setIntercept(type, handler) {
+    assert(
+      INTERCEPT_TYPE.indexOf(type) !== -1,
+      `we get an unkown intercept type, it's ${type}`,
+    )
+
+    assert(
+      isFunction(handler),
+      `the intercept must be a Function, but we get ${typeof handler}`,
+    )
+
+    assert(
+      !isFunction(this.handleIntercepts[type]),
+      'you can only set an one intercept for one type',
+    )
+
+    this.handleIntercepts[type] = handler
   }
 
   injectModels(models) {
@@ -268,7 +288,7 @@ export default class Zoro {
 
   use(creator) {
     assert(
-      typeof creator === 'function',
+      isFunction(creator),
       `the use plugin must be a function, but we get ${typeof creator}`,
     )
 

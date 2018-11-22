@@ -18,3 +18,8 @@ export const PLUGIN_EVENT = {
   ON_SUBSCRIBE: 'onSubscribe',
   ON_ERROR: 'onError',
 }
+
+export const INTERCEPT_ACTION = 'INTERCEPT_ACTION'
+export const INTERCEPT_EFFECT = 'INTERCEPT_EFFECT'
+
+export const INTERCEPT_TYPE = [INTERCEPT_ACTION, INTERCEPT_EFFECT]

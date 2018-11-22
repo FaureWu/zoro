@@ -659,6 +659,9 @@ var PLUGIN_EVENT = {
   ON_SUBSCRIBE: 'onSubscribe',
   ON_ERROR: 'onError'
 };
+var INTERCEPT_ACTION = 'INTERCEPT_ACTION';
+var INTERCEPT_EFFECT = 'INTERCEPT_EFFECT';
+var INTERCEPT_TYPE = [INTERCEPT_ACTION, INTERCEPT_EFFECT];
 
 var isArray = function isArray(arr) {
   return arr instanceof Array;
@@ -674,6 +677,12 @@ var isFunction = function isFunction(func) {
 };
 var isUndefined = function isUndefined(undef) {
   return typeof undef === 'undefined';
+};
+var isString = function isString(str) {
+  return typeof str === 'string';
+};
+var isAction = function isAction(action) {
+  return isObject(action) && isString(action.type);
 };
 var assert = function assert(validate, message) {
   if (isBoolean(validate) && !validate || isFunction(validate) && !validate()) {
@@ -1010,47 +1019,56 @@ var middleware = function middleware(_ref) {
         var _ref2 = _asyncToGenerator(
         /*#__PURE__*/
         regeneratorRuntime.mark(function _callee(action) {
-          var type, handler, _splitType, namespace, result;
+          var type, handler, effectIntercept, _resolveAction, _targetAction, _splitType, namespace, result, actionIntercept, resolveAction, targetAction;
 
           return regeneratorRuntime.wrap(function _callee$(_context) {
             while (1) {
               switch (_context.prev = _context.next) {
                 case 0:
-                  _zoro.plugin.emit(PLUGIN_EVENT.ON_WILL_ACTION, action, _zoro.store);
-
-                  _zoro.handleAction.apply(undefined, [action]);
-
                   type = action.type;
                   handler = _zoro.getEffects()[type];
 
                   if (!isFunction(handler)) {
-                    _context.next = 25;
+                    _context.next = 28;
                     break;
                   }
 
-                  _context.prev = 5;
+                  _context.prev = 3;
 
                   _zoro.plugin.emit(PLUGIN_EVENT.ON_WILL_EFFECT, action, _zoro.store);
 
-                  _context.next = 9;
+                  _context.next = 7;
                   return _zoro.handleEffect.apply(undefined, [action]);
 
-                case 9:
+                case 7:
+                  effectIntercept = _zoro.handleIntercepts[INTERCEPT_EFFECT] || noop;
+                  _context.next = 10;
+                  return effectIntercept(action, {
+                    store: _zoro.store,
+                    NAMESPACE_DIVIDER: NAMESPACE_DIVIDER
+                  });
+
+                case 10:
+                  _resolveAction = _context.sent;
+                  assert(isUndefined(_resolveAction) || isAction(_resolveAction), 'the effect intercept return must be an action or none');
+                  _targetAction = _extends({}, action, _resolveAction, {
+                    type: type
+                  });
                   _splitType = splitType(type), namespace = _splitType.namespace;
-                  _context.next = 12;
-                  return handler(action, {
+                  _context.next = 16;
+                  return handler(_targetAction, {
                     selectAll: selectCreator(_zoro.store),
                     select: selectCreator(_zoro.store, namespace),
                     put: putCreator(_zoro.store, namespace)
                   });
 
-                case 12:
+                case 16:
                   result = _context.sent;
                   return _context.abrupt("return", Promise.resolve(result));
 
-                case 16:
-                  _context.prev = 16;
-                  _context.t0 = _context["catch"](5);
+                case 20:
+                  _context.prev = 20;
+                  _context.t0 = _context["catch"](3);
 
                   _zoro.plugin.emit(PLUGIN_EVENT.ON_ERROR, _context.t0, action, _zoro.store);
 
@@ -1058,26 +1076,38 @@ var middleware = function middleware(_ref) {
 
                   return _context.abrupt("return", Promise.reject(_context.t0));
 
-                case 21:
-                  _context.prev = 21;
-
-                  _zoro.plugin.emit(PLUGIN_EVENT.ON_DID_ACTION, action, _zoro.store);
+                case 25:
+                  _context.prev = 25;
 
                   _zoro.plugin.emit(PLUGIN_EVENT.ON_DID_EFFECT, action, _zoro.store);
 
-                  return _context.finish(21);
+                  return _context.finish(25);
 
-                case 25:
-                  _zoro.plugin.emit(PLUGIN_EVENT.ON_DID_ACTION, action, _zoro.store);
+                case 28:
+                  _zoro.plugin.emit(PLUGIN_EVENT.ON_WILL_ACTION, action, _zoro.store);
 
-                  return _context.abrupt("return", next(action));
+                  _zoro.handleAction.apply(undefined, [action]);
 
-                case 27:
+                  actionIntercept = _zoro.handleIntercepts[INTERCEPT_ACTION] || noop;
+                  resolveAction = actionIntercept(action, {
+                    store: _zoro.store,
+                    NAMESPACE_DIVIDER: NAMESPACE_DIVIDER
+                  });
+                  assert(isUndefined(resolveAction) || isAction(resolveAction), 'the action intercept return must be an action or none');
+                  targetAction = _extends({}, action, resolveAction, {
+                    type: type
+                  });
+
+                  _zoro.plugin.emit(PLUGIN_EVENT.ON_DID_ACTION, targetAction, _zoro.store);
+
+                  return _context.abrupt("return", next(targetAction));
+
+                case 36:
                 case "end":
                   return _context.stop();
               }
             }
-          }, _callee, this, [[5, 16, 21, 25]]);
+          }, _callee, this, [[3, 20, 25, 28]]);
         }));
 
         return function (_x) {
@@ -1157,6 +1187,7 @@ function () {
     this.handleAction = onAction;
     this.handleReducer = onReducer;
     this.handleSetup = onSetup;
+    this.handleIntercepts = {};
     this.initialState = initialState;
     this.plugin = new PluginEvent();
     this._isSetup = false;
@@ -1179,13 +1210,13 @@ function () {
         resolveReducers = reducers;
       }
 
-      resolveReducers = _this.handleReducer.apply(undefined, [namespace, resolveReducers]);
+      var targetResolveReducers = _this.handleReducer.apply(undefined, [namespace, resolveReducers]);
 
-      if (!isFunction(resolveReducers)) {
-        resolveReducers = reducers;
+      if (!isFunction(targetResolveReducers)) {
+        targetResolveReducers = resolveReducers;
       }
 
-      return _extends({}, combine, (_extends2 = {}, _extends2[namespace] = resolveReducers, _extends2));
+      return _extends({}, combine, (_extends2 = {}, _extends2[namespace] = targetResolveReducers, _extends2));
     }, {});
     return combineReducers(rootReducer);
   };
@@ -1214,6 +1245,13 @@ function () {
 
       return defaultState;
     }, {});
+  };
+
+  _proto.setIntercept = function setIntercept(type, handler) {
+    assert(INTERCEPT_TYPE.indexOf(type) !== -1, "we get an unkown intercept type, it's " + type);
+    assert(isFunction(handler), "the intercept must be a Function, but we get " + typeof handler);
+    assert(!isFunction(this.handleIntercepts[type]), 'you can only set an one intercept for one type');
+    this.handleIntercepts[type] = handler;
   };
 
   _proto.injectModels = function injectModels(models) {
@@ -1316,7 +1354,7 @@ function () {
   };
 
   _proto.use = function use(creator) {
-    assert(typeof creator === 'function', "the use plugin must be a function, but we get " + typeof creator);
+    assert(isFunction(creator), "the use plugin must be a function, but we get " + typeof creator);
     creator(this.plugin, {
       DIVIDER: NAMESPACE_DIVIDER,
       PLUGIN_EVENT: PLUGIN_EVENT
@@ -1516,6 +1554,15 @@ App.prototype.use = function (plugins) {
   return this;
 };
 
+App.prototype.intercept = {
+  action: function action(handler) {
+    _zoro$1.setIntercept(INTERCEPT_ACTION, handler);
+  },
+  effect: function effect(handler) {
+    _zoro$1.setIntercept(INTERCEPT_EFFECT, handler);
+  }
+};
+
 App.prototype.start = function (setup) {
   if (setup === void 0) {
     setup = true;
@@ -1528,7 +1575,8 @@ App.prototype.start = function (setup) {
 
 App.prototype.setup = function () {
   _zoro$1.setup();
-};
+}; // 该接口将于v3.0.0废弃，请使用dispatcher
+
 
 var actions = function actions(namespace) {
   var models = _zoro$1.models;

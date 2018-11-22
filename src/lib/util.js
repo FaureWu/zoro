@@ -11,6 +11,10 @@ export const isFunction = func => typeof func === 'function'
 
 export const isUndefined = undef => typeof undef === 'undefined'
 
+export const isString = str => typeof str === 'string'
+
+export const isAction = action => isObject(action) && isString(action.type)
+
 export const assert = (validate, message) => {
   if (
     (isBoolean(validate) && !validate) ||
