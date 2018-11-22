@@ -16,9 +16,9 @@ class PluginEvent {
       return undefined
     }
 
-    return handlers.reduce((result, handler) => {
-      return handler.apply(undefined, rest)
-    }, undefined)
+    handlers.forEach(handler => {
+      handler.apply(undefined, rest)
+    })
   }
 
   emitCombine(name, ...rest) {

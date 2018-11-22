@@ -12,6 +12,10 @@
 
 ---
 
+## 更新日志
+
+[版本更新记录](https://github.com/FaureWu/zoro/releases)
+
 ## 如何安装
 ```bash
 $ npm install --save @opcjs/zoro
