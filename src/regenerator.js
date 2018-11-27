@@ -6,7 +6,6 @@
  */
 
 /* eslint-disable */
-var regeneratorRuntime = null;
 var global = {};
 var Op = Object.prototype;
 var hasOwn = Op.hasOwnProperty;

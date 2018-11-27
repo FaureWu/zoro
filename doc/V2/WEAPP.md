@@ -31,13 +31,12 @@ yarn build
 
 以上命令会生成一个dist文件夹，拷贝整个dist文件夹到原生小程序根目录下，重命名为 `zoro`
 
-dist目录下会生成三个文件:
+dist目录下会生成两个文件:
 * `zoro` 本仓库主入口文件
 * `weapp-redux` 用于链接redux和weapp的库，提供setStore，connect工具
   * `setStore` 设置store
   * `connect(mapStateToProps, mapDispatchToProps)(pageConfig)` 只可用于链接到page中，无法链接到app中
   * `connectComponent(mapStateToProps, mapDispatchToProps)(componentConfig)` 用于链接到原生小程序component组件中
-  * `regenerator` 用于原生小程序支持async, await, 需要在每一个使用该特性的地方中引入
 
 #### `weapp/app.js`
 ```js
@@ -80,7 +79,7 @@ export default params =>
 #### `weapp/models/testModel.js`
 
 ```js
-import regeneratorRuntime from '../zoro/regenerator' // 该文件中需要使用async, await，因此必须引入该文件
+import { regeneratorRuntime } from '../zoro/zoro' // 需要在使用到async, await的文件中引入regeneratorRuntime
 import request from '../utils/request'
 
 export default {

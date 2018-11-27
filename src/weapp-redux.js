@@ -69,13 +69,13 @@ export const connect = function(mapStateToProps, mapDispatchToProps) {
 
     return {
       ...config,
-      ...mapDispatch,
+      ...mapDispatch(_store.dispatch),
       onLoad,
       onUnload,
     }
   }
 }
 
-export const connectComponent = function(componentConfig) {
-  return createConnectComponent(_store)(componentConfig)
+export const connectComponent = function(mapStateToProps, mapDispatchToProps) {
+  return createConnectComponent(_store)(mapStateToProps, mapDispatchToProps)
 }

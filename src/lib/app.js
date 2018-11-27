@@ -84,8 +84,8 @@ export const actions = function(namespace) {
   return models[namespace].getActions()
 }
 
-export const connectComponent = function(componentConfig) {
-  return createConnectComponent(_store)(componentConfig)
+export const connectComponent = function(mapStateToProps, mapDispatchToProps) {
+  return createConnectComponent(_store)(mapStateToProps, mapDispatchToProps)
 }
 
 export default (opts = {}) => new App(new Zoro(opts))

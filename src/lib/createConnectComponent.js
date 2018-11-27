@@ -86,7 +86,7 @@ export default function(store) {
         ...config,
         pageLifetimes: { ...config.pageLifetimes },
         lifetimes: { ...config.lifetimes },
-        methods: { ...config.methods, ...mapDispatch },
+        methods: { ...config.methods, ...mapDispatch(store.dispatch) },
       }
 
       if (isObject(config.lifetimes)) {

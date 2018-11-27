@@ -7,16 +7,16 @@ const babelOption = {
   babelrc: false,
   exclude: 'node_modules/**',
   presets: [['@babel/preset-env', { modules: false, loose: true }]],
-  plugins: ['@babel/plugin-proposal-async-generator-functions'],
 }
 
 const replaceOption = {
   'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
+  'process.env.CODE': JSON.stringify('var regeneratorRuntime=runtime;'),
 }
 
 export default [
   {
-    input: 'src/lib/app.js',
+    input: 'src/weapp-zoro.js',
     output: {
       format: 'es',
       indent: false,
@@ -44,26 +44,6 @@ export default [
         jsnext: true,
       }),
       babel(babelOption),
-      replace(replaceOption),
-      commonjs(),
-    ],
-  },
-  {
-    input: 'src/regenerator.js',
-    output: {
-      format: 'es',
-      indent: false,
-      file: 'dist/regenerator.js',
-    },
-    plugins: [
-      nodeResolve({
-        jsnext: true,
-      }),
-      babel({
-        babelrc: false,
-        exclude: 'node_modules/**',
-        presets: [['@babel/preset-env', { modules: false, loose: true }]],
-      }),
       replace(replaceOption),
       commonjs(),
     ],

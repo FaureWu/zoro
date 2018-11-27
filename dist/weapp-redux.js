@@ -102,7 +102,7 @@ function createConnectComponent (store) {
       var componentConfig = _extends({}, config, {
         pageLifetimes: _extends({}, config.pageLifetimes),
         lifetimes: _extends({}, config.lifetimes),
-        methods: _extends({}, config.methods, mapDispatch)
+        methods: _extends({}, config.methods, mapDispatch(store.dispatch))
       });
 
       if (isObject(config.lifetimes)) {
@@ -177,14 +177,14 @@ var connect = function connect(mapStateToProps, mapDispatchToProps) {
       }
     }
 
-    return _extends({}, config, mapDispatch, {
+    return _extends({}, config, mapDispatch(_store.dispatch), {
       onLoad: onLoad,
       onUnload: onUnload
     });
   };
 };
-var connectComponent = function connectComponent(componentConfig) {
-  return createConnectComponent(_store)(componentConfig);
+var connectComponent = function connectComponent(mapStateToProps, mapDispatchToProps) {
+  return createConnectComponent(_store)(mapStateToProps, mapDispatchToProps);
 };
 
 export { setStore, connect, connectComponent };
