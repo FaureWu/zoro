@@ -33,6 +33,7 @@ export const connect = function(mapStateToProps, mapDispatchToProps) {
       : defaultMapToProps
 
     let unsubscribe = null
+    let ready = false
 
     function subscribe(options) {
       if (!isFunction(unsubscribe)) return null
@@ -54,11 +55,35 @@ export const connect = function(mapStateToProps, mapDispatchToProps) {
       if (isFunction(config.onLoad)) {
         config.onLoad.call(this, options)
       }
+
+      ready = true
+    }
+
+    function onShow() {
+      if (ready && !isFunction(unsubscribe) && shouldMapStateToProps) {
+        unsubscribe = _store.subscribe(subscribe.bind(this))
+        subscribe.call(this)
+      }
+
+      if (isFunction(config.onShow)) {
+        config.onShow.call(this)
+      }
     }
 
     function onUnload() {
       if (isFunction(config.onUnload)) {
-        config.onUnload.call()
+        config.onUnload.call(this)
+      }
+
+      if (isFunction(unsubscribe)) {
+        unsubscribe()
+        unsubscribe = null
+      }
+    }
+
+    function onHide() {
+      if (isFunction(config.onHide)) {
+        config.onHide.call(this)
       }
 
       if (isFunction(unsubscribe)) {
@@ -72,6 +97,8 @@ export const connect = function(mapStateToProps, mapDispatchToProps) {
       ...mapDispatch(_store.dispatch),
       onLoad,
       onUnload,
+      onShow,
+      onHide,
     }
   }
 }

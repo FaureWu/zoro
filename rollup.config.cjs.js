@@ -11,7 +11,6 @@ const babelOption = {
 
 const replaceOption = {
   'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
-  'process.env.CODE': JSON.stringify('var regeneratorRuntime=runtime;'),
 }
 
 export default [

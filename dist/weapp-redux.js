@@ -52,6 +52,7 @@ function createConnectComponent (store) {
       var mapState = shouldMapStateToProps ? mapStateToProps : defaultMapToProps;
       var mapDispatch = shouldMapDispatchToProps ? mapDispatchToProps : defaultMapToProps;
       var unsubscribe = null;
+      var ready = false;
 
       function subscribe() {
         if (!isFunction(unsubscribe)) return null;
@@ -73,6 +74,8 @@ function createConnectComponent (store) {
         } else if (isFunction(config.attached)) {
           config.attached.call(this);
         }
+
+        ready = true;
       }
 
       function hide() {
@@ -86,10 +89,21 @@ function createConnectComponent (store) {
         }
       }
 
-      function show() {
-        assert(store !== null, 'we should call app.start() before the connectComponent');
+      function detached() {
+        if (isObject(config.lifetimes) && isFunction(config.lifetimes.detached)) {
+          config.lifetimes.detached.call(this);
+        } else if (isFunction(config.detached)) {
+          config.detached.call(this);
+        }
 
-        if (shouldMapStateToProps) {
+        if (isFunction(unsubscribe)) {
+          unsubscribe();
+          unsubscribe = null;
+        }
+      }
+
+      function show() {
+        if (ready && !isFunction(unsubscribe) && shouldMapStateToProps) {
           unsubscribe = store.subscribe(subscribe.bind(this));
           subscribe.call(this);
         }
@@ -109,6 +123,12 @@ function createConnectComponent (store) {
         componentConfig.lifetimes.attached = attached;
       } else {
         componentConfig.attached = attached;
+      }
+
+      if (isObject(config.lifetimes)) {
+        componentConfig.lifetimes.detached = detached;
+      } else {
+        componentConfig.detached = detached;
       }
 
       if (!isObject(config.pageLifetimes)) {
@@ -145,6 +165,7 @@ var connect = function connect(mapStateToProps, mapDispatchToProps) {
     var mapState = shouldMapStateToProps ? mapStateToProps : defaultMapToProps$1;
     var mapDispatch = shouldMapDispatchToProps ? mapDispatchToProps : defaultMapToProps$1;
     var unsubscribe = null;
+    var ready = false;
 
     function subscribe(options) {
       if (!isFunction(unsubscribe)) return null;
@@ -164,11 +185,35 @@ var connect = function connect(mapStateToProps, mapDispatchToProps) {
       if (isFunction(config.onLoad)) {
         config.onLoad.call(this, options);
       }
+
+      ready = true;
+    }
+
+    function onShow() {
+      if (ready && !isFunction(unsubscribe) && shouldMapStateToProps) {
+        unsubscribe = _store.subscribe(subscribe.bind(this));
+        subscribe.call(this);
+      }
+
+      if (isFunction(config.onShow)) {
+        config.onShow.call(this);
+      }
     }
 
     function onUnload() {
       if (isFunction(config.onUnload)) {
-        config.onUnload.call();
+        config.onUnload.call(this);
+      }
+
+      if (isFunction(unsubscribe)) {
+        unsubscribe();
+        unsubscribe = null;
+      }
+    }
+
+    function onHide() {
+      if (isFunction(config.onHide)) {
+        config.onHide.call(this);
       }
 
       if (isFunction(unsubscribe)) {
@@ -179,7 +224,9 @@ var connect = function connect(mapStateToProps, mapDispatchToProps) {
 
     return _extends({}, config, mapDispatch(_store.dispatch), {
       onLoad: onLoad,
-      onUnload: onUnload
+      onUnload: onUnload,
+      onShow: onShow,
+      onHide: onHide
     });
   };
 };

@@ -18,6 +18,7 @@ export default function(store) {
         : defaultMapToProps
 
       let unsubscribe = null
+      let ready = false
 
       function subscribe() {
         if (!isFunction(unsubscribe)) return null
@@ -47,6 +48,8 @@ export default function(store) {
         } else if (isFunction(config.attached)) {
           config.attached.call(this)
         }
+
+        ready = true
       }
 
       function hide() {
@@ -63,13 +66,24 @@ export default function(store) {
         }
       }
 
-      function show() {
-        assert(
-          store !== null,
-          'we should call app.start() before the connectComponent',
-        )
+      function detached() {
+        if (
+          isObject(config.lifetimes) &&
+          isFunction(config.lifetimes.detached)
+        ) {
+          config.lifetimes.detached.call(this)
+        } else if (isFunction(config.detached)) {
+          config.detached.call(this)
+        }
 
-        if (shouldMapStateToProps) {
+        if (isFunction(unsubscribe)) {
+          unsubscribe()
+          unsubscribe = null
+        }
+      }
+
+      function show() {
+        if (ready && !isFunction(unsubscribe) && shouldMapStateToProps) {
           unsubscribe = store.subscribe(subscribe.bind(this))
           subscribe.call(this)
         }
@@ -93,6 +107,12 @@ export default function(store) {
         componentConfig.lifetimes.attached = attached
       } else {
         componentConfig.attached = attached
+      }
+
+      if (isObject(config.lifetimes)) {
+        componentConfig.lifetimes.detached = detached
+      } else {
+        componentConfig.detached = detached
       }
 
       if (!isObject(config.pageLifetimes)) {
