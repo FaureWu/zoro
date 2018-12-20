@@ -1743,7 +1743,7 @@ var middleware = function middleware(_ref) {
         var _ref2 = _asyncToGenerator(
         /*#__PURE__*/
         regeneratorRuntime.mark(function _callee(action) {
-          var type, handler, effectIntercept, _resolveAction, _targetAction, _splitType, namespace, result, actionIntercept, resolveAction, targetAction;
+          var type, handler, effectIntercept, _resolveAction, _targetAction, _splitType, namespace, actionIntercept, resolveAction, targetAction;
 
           return regeneratorRuntime.wrap(function _callee$(_context) {
             while (1) {
@@ -1753,61 +1753,49 @@ var middleware = function middleware(_ref) {
                   handler = _zoro.getEffects()[type];
 
                   if (!isFunction(handler)) {
-                    _context.next = 28;
+                    _context.next = 14;
                     break;
                   }
 
-                  _context.prev = 3;
-
                   _zoro.plugin.emit(PLUGIN_EVENT.ON_WILL_EFFECT, action, _zoro.store);
 
-                  _context.next = 7;
+                  _context.next = 6;
                   return _zoro.handleEffect.apply(undefined, [action]);
 
-                case 7:
+                case 6:
                   effectIntercept = _zoro.handleIntercepts[INTERCEPT_EFFECT] || noop;
-                  _context.next = 10;
+                  _context.next = 9;
                   return effectIntercept(action, {
                     store: _zoro.store,
                     NAMESPACE_DIVIDER: NAMESPACE_DIVIDER
                   });
 
-                case 10:
+                case 9:
                   _resolveAction = _context.sent;
                   assert(isUndefined(_resolveAction) || isAction(_resolveAction), 'the effect intercept return must be an action or none');
                   _targetAction = _extends({}, action, _resolveAction, {
                     type: type
                   });
                   _splitType = splitType(type), namespace = _splitType.namespace;
-                  _context.next = 16;
-                  return handler(_targetAction, {
+                  return _context.abrupt("return", handler(_targetAction, {
                     selectAll: selectCreator(_zoro.store),
                     select: selectCreator(_zoro.store, namespace),
                     put: putCreator(_zoro.store, namespace)
-                  });
+                  }).then(function (result) {
+                    _zoro.plugin.emit(PLUGIN_EVENT.ON_DID_EFFECT, action, _zoro.store);
 
-                case 16:
-                  result = _context.sent;
-                  return _context.abrupt("return", Promise.resolve(result));
+                    return result;
+                  }).catch(function (e) {
+                    _zoro.plugin.emit(PLUGIN_EVENT.ON_DID_EFFECT, action, _zoro.store);
 
-                case 20:
-                  _context.prev = 20;
-                  _context.t0 = _context["catch"](3);
+                    _zoro.plugin.emit(PLUGIN_EVENT.ON_ERROR, e, action, _zoro.store);
 
-                  _zoro.plugin.emit(PLUGIN_EVENT.ON_ERROR, _context.t0, action, _zoro.store);
+                    _zoro.handleError.apply(undefined, [e]);
 
-                  _zoro.handleError.apply(undefined, [_context.t0]);
+                    throw e;
+                  }));
 
-                  return _context.abrupt("return", Promise.reject(_context.t0));
-
-                case 25:
-                  _context.prev = 25;
-
-                  _zoro.plugin.emit(PLUGIN_EVENT.ON_DID_EFFECT, action, _zoro.store);
-
-                  return _context.finish(25);
-
-                case 28:
+                case 14:
                   _zoro.plugin.emit(PLUGIN_EVENT.ON_WILL_ACTION, action, _zoro.store);
 
                   _zoro.handleAction.apply(undefined, [action]);
@@ -1826,12 +1814,12 @@ var middleware = function middleware(_ref) {
 
                   return _context.abrupt("return", next(targetAction));
 
-                case 36:
+                case 22:
                 case "end":
                   return _context.stop();
               }
             }
-          }, _callee, this, [[3, 20, 25, 28]]);
+          }, _callee, this);
         }));
 
         return function (_x) {
