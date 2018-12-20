@@ -37,21 +37,21 @@ const middleware = ({ dispatch }) => next => async action => {
     const targetAction = { ...action, ...resolveAction, type }
     const { namespace } = splitType(type)
 
-    return handler(targetAction, {
-      selectAll: selectCreator(_zoro.store),
-      select: selectCreator(_zoro.store, namespace),
-      put: putCreator(_zoro.store, namespace),
-    })
-      .then(result => {
-        _zoro.plugin.emit(PLUGIN_EVENT.ON_DID_EFFECT, action, _zoro.store)
-        return result
+    try {
+      const result = await handler(targetAction, {
+        selectAll: selectCreator(_zoro.store),
+        select: selectCreator(_zoro.store, namespace),
+        put: putCreator(_zoro.store, namespace),
       })
-      .catch(e => {
-        _zoro.plugin.emit(PLUGIN_EVENT.ON_DID_EFFECT, action, _zoro.store)
-        _zoro.plugin.emit(PLUGIN_EVENT.ON_ERROR, e, action, _zoro.store)
-        _zoro.handleError.apply(undefined, [e])
-        throw e
-      })
+
+      return Promise.resolve(result)
+    } catch (e) {
+      _zoro.plugin.emit(PLUGIN_EVENT.ON_ERROR, e, action, _zoro.store)
+      _zoro.handleError.apply(undefined, [e])
+      return Promise.reject(e)
+    } finally {
+      _zoro.plugin.emit(PLUGIN_EVENT.ON_DID_EFFECT, action, _zoro.store)
+    }
   }
   _zoro.plugin.emit(PLUGIN_EVENT.ON_WILL_ACTION, action, _zoro.store)
   _zoro.handleAction.apply(undefined, [action])

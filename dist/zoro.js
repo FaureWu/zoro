@@ -1743,7 +1743,7 @@ var middleware = function middleware(_ref) {
         var _ref2 = _asyncToGenerator(
         /*#__PURE__*/
         regeneratorRuntime.mark(function _callee(action) {
-          var type, handler, effectIntercept, _resolveAction, _targetAction, _splitType, namespace, actionIntercept, resolveAction, targetAction;
+          var type, handler, effectIntercept, _resolveAction, _targetAction, _splitType, namespace, result, actionIntercept, resolveAction, targetAction;
 
           return regeneratorRuntime.wrap(function _callee$(_context) {
             while (1) {
@@ -1753,7 +1753,7 @@ var middleware = function middleware(_ref) {
                   handler = _zoro.getEffects()[type];
 
                   if (!isFunction(handler)) {
-                    _context.next = 14;
+                    _context.next = 28;
                     break;
                   }
 
@@ -1777,25 +1777,36 @@ var middleware = function middleware(_ref) {
                     type: type
                   });
                   _splitType = splitType(type), namespace = _splitType.namespace;
-                  return _context.abrupt("return", handler(_targetAction, {
+                  _context.prev = 13;
+                  _context.next = 16;
+                  return handler(_targetAction, {
                     selectAll: selectCreator(_zoro.store),
                     select: selectCreator(_zoro.store, namespace),
                     put: putCreator(_zoro.store, namespace)
-                  }).then(function (result) {
-                    _zoro.plugin.emit(PLUGIN_EVENT.ON_DID_EFFECT, action, _zoro.store);
+                  });
 
-                    return result;
-                  }).catch(function (e) {
-                    _zoro.plugin.emit(PLUGIN_EVENT.ON_DID_EFFECT, action, _zoro.store);
+                case 16:
+                  result = _context.sent;
+                  return _context.abrupt("return", Promise.resolve(result));
 
-                    _zoro.plugin.emit(PLUGIN_EVENT.ON_ERROR, e, action, _zoro.store);
+                case 20:
+                  _context.prev = 20;
+                  _context.t0 = _context["catch"](13);
 
-                    _zoro.handleError.apply(undefined, [e]);
+                  _zoro.plugin.emit(PLUGIN_EVENT.ON_ERROR, _context.t0, action, _zoro.store);
 
-                    throw e;
-                  }));
+                  _zoro.handleError.apply(undefined, [_context.t0]);
 
-                case 14:
+                  return _context.abrupt("return", Promise.reject(_context.t0));
+
+                case 25:
+                  _context.prev = 25;
+
+                  _zoro.plugin.emit(PLUGIN_EVENT.ON_DID_EFFECT, action, _zoro.store);
+
+                  return _context.finish(25);
+
+                case 28:
                   _zoro.plugin.emit(PLUGIN_EVENT.ON_WILL_ACTION, action, _zoro.store);
 
                   _zoro.handleAction.apply(undefined, [action]);
@@ -1814,12 +1825,12 @@ var middleware = function middleware(_ref) {
 
                   return _context.abrupt("return", next(targetAction));
 
-                case 22:
+                case 36:
                 case "end":
                   return _context.stop();
               }
             }
-          }, _callee, this);
+          }, _callee, this, [[13, 20, 25, 28]]);
         }));
 
         return function (_x) {
