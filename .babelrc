@@ -1,4 +1,6 @@
 {
   "presets": [["@babel/preset-env", { "loose": true }]],
-  "plugins": ["@babel/plugin-proposal-async-generator-functions"]
+  "plugins": [
+    "@babel/plugin-proposal-async-generator-functions",
+  ]
 }
