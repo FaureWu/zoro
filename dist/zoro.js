@@ -1734,110 +1734,110 @@ var _createStore = (function (_ref) {
 
 var _zoro;
 
+function doneEffect(_x, _x2) {
+  return _doneEffect.apply(this, arguments);
+}
+
+function _doneEffect() {
+  _doneEffect = _asyncToGenerator(
+  /*#__PURE__*/
+  regeneratorRuntime.mark(function _callee(action, effect) {
+    var effectIntercept, resolveAction, targetAction, _splitType, namespace, result;
+
+    return regeneratorRuntime.wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            _zoro.plugin.emit(PLUGIN_EVENT.ON_WILL_EFFECT, action, _zoro.store);
+
+            _context.next = 3;
+            return _zoro.handleEffect.apply(undefined, [action]);
+
+          case 3:
+            effectIntercept = _zoro.handleIntercepts[INTERCEPT_EFFECT] || noop;
+            _context.next = 6;
+            return effectIntercept(action, {
+              store: _zoro.store,
+              NAMESPACE_DIVIDER: NAMESPACE_DIVIDER
+            });
+
+          case 6:
+            resolveAction = _context.sent;
+            assert(isUndefined(resolveAction) || isAction(resolveAction), 'the effect intercept return must be an action or none');
+            targetAction = _extends({}, action, resolveAction, {
+              type: action.type
+            });
+            _splitType = splitType(action.type), namespace = _splitType.namespace;
+            _context.prev = 10;
+            _context.next = 13;
+            return effect(targetAction, {
+              selectAll: selectCreator(_zoro.store),
+              select: selectCreator(_zoro.store, namespace),
+              put: putCreator(_zoro.store, namespace)
+            });
+
+          case 13:
+            result = _context.sent;
+            return _context.abrupt("return", Promise.resolve(result));
+
+          case 17:
+            _context.prev = 17;
+            _context.t0 = _context["catch"](10);
+
+            _zoro.plugin.emit(PLUGIN_EVENT.ON_ERROR, _context.t0, action, _zoro.store);
+
+            _zoro.handleError.apply(undefined, [_context.t0]);
+
+            return _context.abrupt("return", Promise.reject(_context.t0));
+
+          case 22:
+            _context.prev = 22;
+
+            _zoro.plugin.emit(PLUGIN_EVENT.ON_DID_EFFECT, action, _zoro.store);
+
+            return _context.finish(22);
+
+          case 25:
+          case "end":
+            return _context.stop();
+        }
+      }
+    }, _callee, this, [[10, 17, 22, 25]]);
+  }));
+  return _doneEffect.apply(this, arguments);
+}
+
 var middleware = function middleware(_ref) {
   var dispatch = _ref.dispatch;
   return function (next) {
-    return (
-      /*#__PURE__*/
-      function () {
-        var _ref2 = _asyncToGenerator(
-        /*#__PURE__*/
-        regeneratorRuntime.mark(function _callee(action) {
-          var type, handler, effectIntercept, _resolveAction, _targetAction, _splitType, namespace, result, actionIntercept, resolveAction, targetAction;
+    return function (action) {
+      var type = action.type;
 
-          return regeneratorRuntime.wrap(function _callee$(_context) {
-            while (1) {
-              switch (_context.prev = _context.next) {
-                case 0:
-                  type = action.type;
-                  handler = _zoro.getEffects()[type];
+      var handler = _zoro.getEffects()[type];
 
-                  if (!isFunction(handler)) {
-                    _context.next = 28;
-                    break;
-                  }
+      if (isFunction(handler)) {
+        return doneEffect(action, handler);
+      }
 
-                  _zoro.plugin.emit(PLUGIN_EVENT.ON_WILL_EFFECT, action, _zoro.store);
+      _zoro.plugin.emit(PLUGIN_EVENT.ON_WILL_ACTION, action, _zoro.store);
 
-                  _context.next = 6;
-                  return _zoro.handleEffect.apply(undefined, [action]);
+      _zoro.handleAction.apply(undefined, [action]);
 
-                case 6:
-                  effectIntercept = _zoro.handleIntercepts[INTERCEPT_EFFECT] || noop;
-                  _context.next = 9;
-                  return effectIntercept(action, {
-                    store: _zoro.store,
-                    NAMESPACE_DIVIDER: NAMESPACE_DIVIDER
-                  });
+      var actionIntercept = _zoro.handleIntercepts[INTERCEPT_ACTION] || noop;
+      var resolveAction = actionIntercept(action, {
+        store: _zoro.store,
+        NAMESPACE_DIVIDER: NAMESPACE_DIVIDER
+      });
+      assert(isUndefined(resolveAction) || isAction(resolveAction), 'the action intercept return must be an action or none');
 
-                case 9:
-                  _resolveAction = _context.sent;
-                  assert(isUndefined(_resolveAction) || isAction(_resolveAction), 'the effect intercept return must be an action or none');
-                  _targetAction = _extends({}, action, _resolveAction, {
-                    type: type
-                  });
-                  _splitType = splitType(type), namespace = _splitType.namespace;
-                  _context.prev = 13;
-                  _context.next = 16;
-                  return handler(_targetAction, {
-                    selectAll: selectCreator(_zoro.store),
-                    select: selectCreator(_zoro.store, namespace),
-                    put: putCreator(_zoro.store, namespace)
-                  });
+      var targetAction = _extends({}, action, resolveAction, {
+        type: type
+      });
 
-                case 16:
-                  result = _context.sent;
-                  return _context.abrupt("return", Promise.resolve(result));
+      _zoro.plugin.emit(PLUGIN_EVENT.ON_DID_ACTION, targetAction, _zoro.store);
 
-                case 20:
-                  _context.prev = 20;
-                  _context.t0 = _context["catch"](13);
-
-                  _zoro.plugin.emit(PLUGIN_EVENT.ON_ERROR, _context.t0, action, _zoro.store);
-
-                  _zoro.handleError.apply(undefined, [_context.t0]);
-
-                  return _context.abrupt("return", Promise.reject(_context.t0));
-
-                case 25:
-                  _context.prev = 25;
-
-                  _zoro.plugin.emit(PLUGIN_EVENT.ON_DID_EFFECT, action, _zoro.store);
-
-                  return _context.finish(25);
-
-                case 28:
-                  _zoro.plugin.emit(PLUGIN_EVENT.ON_WILL_ACTION, action, _zoro.store);
-
-                  _zoro.handleAction.apply(undefined, [action]);
-
-                  actionIntercept = _zoro.handleIntercepts[INTERCEPT_ACTION] || noop;
-                  resolveAction = actionIntercept(action, {
-                    store: _zoro.store,
-                    NAMESPACE_DIVIDER: NAMESPACE_DIVIDER
-                  });
-                  assert(isUndefined(resolveAction) || isAction(resolveAction), 'the action intercept return must be an action or none');
-                  targetAction = _extends({}, action, resolveAction, {
-                    type: type
-                  });
-
-                  _zoro.plugin.emit(PLUGIN_EVENT.ON_DID_ACTION, targetAction, _zoro.store);
-
-                  return _context.abrupt("return", next(targetAction));
-
-                case 36:
-                case "end":
-                  return _context.stop();
-              }
-            }
-          }, _callee, this, [[13, 20, 25, 28]]);
-        }));
-
-        return function (_x) {
-          return _ref2.apply(this, arguments);
-        };
-      }()
-    );
+      return next(targetAction);
+    };
   };
 };
 
