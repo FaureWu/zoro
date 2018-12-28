@@ -10,6 +10,8 @@
 
 > 目前不支持创建多个实例
 
+## [zoro官方文档](https://faurewu.github.io/zoro/)
+
 ---
 
 ## 更新日志
