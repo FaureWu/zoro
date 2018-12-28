@@ -16,58 +16,19 @@
 
 [版本更新记录](https://github.com/FaureWu/zoro/releases)
 
-## 如何安装
-```bash
-$ npm install --save @opcjs/zoro
-```
+## 特性
 
-or
-
-```bash
-$ yarn add @opcjs/zoro
-```
-
-> 微信原生小程序中引入请查看 [快速接入原生小程序文档](https://github.com/FaureWu/zoro/blob/master/doc/V2/WEAPP.md)
-
-## 简介
-
-> 该项目已于实际项目中使用，且正式上线
-
-* **快速入手** 仅有 6 个 [api](https://github.com/FaureWu/zoro/blob/master/doc/V2/API.md)
-* **可扩展** 支持插件机制，可实现自定义开发插件
-* **插件机制** 框架内置多个实用插件
-* **全局错误处理** 不用一次次重复的书写错误处理代码
-
-`查看目前可用的所有插`[@opcjs/zoro-plugin](https://github.com/FaureWu/zoro-plugin)
+* 轻量化，api少，可快速接入
+* 可扩展，完整的插件机制，支持自定义插件编写
+* 框架提供多个内置常用插件，如全局loading插件，mixins扩展插件
+* 全局错误捕获，统一处理
+* 拦截器机制实现
 
 ## 教程
 
 * [打造前端大秘宝系列之REDUX状态处理框架ZORO-基本简介](https://www.jianshu.com/p/19f852252500)
 * [打造前端大秘宝系列之REDUX状态处理框架ZORO-插件介绍](https://www.jianshu.com/p/d262c2920537)
 * [微信小程序及h5,基于taro，zoro最佳实践探索](https://www.jianshu.com/p/7c27dbbc080f)
-
-## 文档链接
-
-* [api文档](https://github.com/FaureWu/zoro/blob/master/doc/V2/API.md)
-* [如何开发自定义的plugin](https://github.com/FaureWu/zoro/blob/master/doc/V2/PLUGIN.md)
-* [插件列表](https://github.com/FaureWu/zoro-plugin)
-
-## 插件
-2.*版本的插件已经重zoro中独立出去，项目地址[zoro-plugin](https://github.com/FaureWu/zoro-plugin)
-
-## 快速接入
-
-* [接入taro框架](https://github.com/FaureWu/zoro/blob/master/doc/V2/TARO.md)
-* [接入wepy框架](https://github.com/FaureWu/zoro/blob/master/doc/V2/WEPY.md)
-* [react-redux接入文档](https://github.com/FaureWu/zoro/blob/master/doc/V2/REACT_REDUX.md)
-* [原生小程序接入文档](https://github.com/FaureWu/zoro/blob/master/doc/V2/WEAPP.md)
-
-> 其他框架接入暂未整理，接入方式大同小异
-
-## 模版
-
-* [iwepy](https://github.com/FaureWu/iwepy) 一套基于wepy, iview-weapp, zoro的完整的小程序开发解决方案
-* [ztaro](https://github.com/FaureWu/ztaro) 一套基于taro, zoro的完整微信小程序，h5开发解决方案
 
 ## 应用案例
 

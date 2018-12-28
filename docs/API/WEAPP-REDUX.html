@@ -1,0 +1,493 @@
+
+<!DOCTYPE HTML>
+<html lang="" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>微信原生小程序结合REDUX API · GitBook</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 3.2.3">
+        
+        
+        
+    
+    <link rel="stylesheet" href="../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    
+    <link rel="prev" href="MODEL.html" />
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../">
+            
+                <a href="../">
+            
+                    
+                    前言
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2" data-path="../INSTALL.html">
+            
+                <a href="../INSTALL.html">
+            
+                    
+                    安装
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3" >
+            
+                <span>
+            
+                    
+                    教程
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.3.1" data-path="../GUIDE/QUIKE_START.html">
+            
+                <a href="../GUIDE/QUIKE_START.html">
+            
+                    
+                    快速开始
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.2" data-path="../GUIDE/CREATE_REACT_APP.html">
+            
+                <a href="../GUIDE/CREATE_REACT_APP.html">
+            
+                    
+                    接入create-react-app
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.3" data-path="../GUIDE/TARO.html">
+            
+                <a href="../GUIDE/TARO.html">
+            
+                    
+                    接入taro
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.4" data-path="../GUIDE/WEPY.html">
+            
+                <a href="../GUIDE/WEPY.html">
+            
+                    
+                    接入wepy
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.5" data-path="../GUIDE/WEAPP.html">
+            
+                <a href="../GUIDE/WEAPP.html">
+            
+                    
+                    接入微信原生小程序
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4" >
+            
+                <span>
+            
+                    
+                    API
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.4.1" data-path="./">
+            
+                <a href="./">
+            
+                    
+                    ZORO API
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.2" data-path="MODEL.html">
+            
+                <a href="MODEL.html">
+            
+                    
+                    MODEL API文档
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="1.4.3" data-path="WEAPP-REDUX.html">
+            
+                <a href="WEAPP-REDUX.html">
+            
+                    
+                    微信原生小程序结合REDUX API
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5" >
+            
+                <span>
+            
+                    
+                    插件
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.5.1" data-path="../PLUGIN/">
+            
+                <a href="../PLUGIN/">
+            
+                    
+                    插件介绍
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5.2" data-path="../PLUGIN/LOADING.html">
+            
+                <a href="../PLUGIN/LOADING.html">
+            
+                    
+                    loading插件
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5.3" data-path="../PLUGIN/MIXIN.html">
+            
+                <a href="../PLUGIN/MIXIN.html">
+            
+                    
+                    mixin插件
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5.4" data-path="../PLUGIN/DEVELOPMENT.html">
+            
+                <a href="../PLUGIN/DEVELOPMENT.html">
+            
+                    
+                    插件开发
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+            Published with GitBook
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href=".." >微信原生小程序结合REDUX API</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h1 id="&#x5FAE;&#x4FE1;&#x539F;&#x751F;&#x5C0F;&#x7A0B;&#x5E8F;&#x7ED3;&#x5408;redux-api&#x4ECB;&#x7ECD;">&#x5FAE;&#x4FE1;&#x539F;&#x751F;&#x5C0F;&#x7A0B;&#x5E8F;&#x7ED3;&#x5408;redux API&#x4ECB;&#x7ECD;</h1>
+<p>&#x5FAE;&#x4FE1;&#x539F;&#x751F;&#x5C0F;&#x7A0B;&#x5E8F;&#x5B89;&#x88C5;zoro&#xFF0C;&#x8BF7;&#x67E5;&#x770B;<a href="../INSTALL.html">&#x5B89;&#x88C5;&#x6587;&#x6863;</a>&#x4E2D;&#x7684;&#x5FAE;&#x4FE1;&#x539F;&#x751F;&#x5C0F;&#x7A0B;&#x5E8F;&#x90E8;&#x5206;</p>
+<p>&#x5982;&#x4F55;&#x5728;&#x5FAE;&#x4FE1;&#x539F;&#x751F;&#x5C0F;&#x7A0B;&#x5E8F;&#x4F7F;&#x7528;zoro&#xFF0C;&#x8BF7;&#x67E5;&#x770B;<a href="../GUIDE/WEAPP.html">&#x5FAE;&#x4FE1;&#x539F;&#x751F;&#x5C0F;&#x7A0B;&#x5E8F;&#x4E2D;&#x4F7F;&#x7528;zoro</a></p>
+<p>&#x5F53;&#x6211;&#x4EEC;&#x5B8C;&#x6210;&#x5FAE;&#x4FE1;&#x539F;&#x751F;&#x5C0F;&#x7A0B;&#x5E8F;&#x5B89;&#x88C5;zoro&#x6B65;&#x9AA4;&#x540E;&#xFF0C;&#x6211;&#x4EEC;&#x4F1A;&#x5F97;&#x5230;&#x4E24;&#x4E2A;&#x6587;&#x4EF6;</p>
+<ul>
+<li>zoro.js zoro&#x4E3B;&#x5E93;&#x6587;&#x4EF6;&#xFF0C;&#x76F8;&#x5173;api&#xFF0C;&#x8BF7;&#x79FB;&#x6B65;<a href="./">ZORO API</a></li>
+<li>weapp-redux.js &#x8FD9;&#x91CC;&#x4E3B;&#x8981;&#x4ECB;&#x7ECD;&#x7684;&#x8BE5;&#x6587;&#x4EF6;&#x4E2D;API&#x4F7F;&#x7528;&#xFF0C;&#x8BE5;&#x6587;&#x4EF6;&#x7528;&#x4E8E;&#x7ED3;&#x5408;&#x5FAE;&#x4FE1;&#x539F;&#x751F;&#x5C0F;&#x7A0B;&#x5E8F;&#x548C;redux</li>
+</ul>
+<h2 id="setstorestore-function">setStore(store) <code>&lt;Function&gt;</code></h2>
+<p>&#x8BBE;&#x7F6E;redux store</p>
+<pre><code class="lang-js"><span class="hljs-keyword">import</span> { setStore } <span class="hljs-keyword">from</span> <span class="hljs-string">&apos;./weapp-redux&apos;</span>
+setStore(store)
+</code></pre>
+<h2 id="connectmapstatetopage-mapdispatchtopagepageconfig-function">connect(mapStateToPage, mapDispatchToPage)(pageConfig) <code>&lt;Function&gt;</code></h2>
+<p>&#x94FE;&#x63A5;redux state&#xFF0C;redux action&#x5230;&#x9875;&#x9762;&#x7EC4;&#x4EF6;&#x4E2D;</p>
+<pre><code class="lang-js"><span class="hljs-keyword">import</span> { connect } <span class="hljs-keyword">from</span> <span class="hljs-string">&apos;./weapp-redux&apos;</span>
+<span class="hljs-keyword">const</span> config = connect(mapStateToPage, mapDispatchToPage)(pageConfig)
+Page(config)
+</code></pre>
+<ul>
+<li><p>mapStateToPage(handler) <code>&lt;Function&gt;</code></p>
+<pre><code class="lang-js"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">mapStateToPage</span>(<span class="hljs-params">state</span>) </span>{ <span class="hljs-keyword">return</span> { counter: state.counter } }
+</code></pre>
+</li>
+<li><p>mapDispatchToPage(handler) <code>&lt;Function&gt;</code></p>
+<p>&#x7B2C;&#x4E8C;&#x4E2A;&#x53C2;&#x6570;&#x57FA;&#x672C;&#x65E0;&#x9700;&#x4F7F;&#x7528;&#xFF0C;&#x8BF7;&#x4F7F;&#x7528;<code>dispatcher</code>&#x4EE3;&#x66FF;</p>
+<pre><code class="lang-js"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">mapDispatchToPage</span>(<span class="hljs-params">dispatch</span>) </span>{ <span class="hljs-keyword">return</span> { add: () =&gt; dispatch({ type: <span class="hljs-string">&apos;counter/add&apos;</span> }) } }
+</code></pre>
+</li>
+</ul>
+<h2 id="connectcomponentmapstatetocom-mapdispatchtocomcomconfig-function">connectComponent(mapStateToCom, mapDispatchToCom)(comConfig) <code>&lt;Function&gt;</code></h2>
+<p>&#x94FE;&#x63A5;redux state&#xFF0C;redux action&#x5230;&#x81EA;&#x5B9A;&#x4E49;&#x7EC4;&#x4EF6;&#x4E2D;</p>
+<pre><code class="lang-js"><span class="hljs-keyword">import</span> { connectComponent } <span class="hljs-keyword">from</span> <span class="hljs-string">&apos;./weapp-redux&apos;</span>
+<span class="hljs-keyword">const</span> config = connectComponent(mapStateToCom, mapDispatchToCom)(comConfig)
+Component(config)
+</code></pre>
+<ul>
+<li>mapStateToCom(handler) <code>&lt;Function&gt;</code> &#x4F7F;&#x7528;&#x65B9;&#x6CD5;&#x540C;<code>mapStateToPage</code></li>
+<li>mapDispatchToCom(handler) <code>&lt;Function&gt;</code> &#x4F7F;&#x7528;&#x65B9;&#x6CD5;&#x540C;<code>mapDispatchToPage</code>&#xFF0C;&#x8BF7;&#x4F7F;&#x7528;<code>dispatcher</code>&#x4EE3;&#x66FF;</li>
+</ul>
+
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="MODEL.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page: MODEL API文档">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"微信原生小程序结合REDUX API","level":"1.4.3","depth":2,"next":{"title":"插件","level":"1.5","depth":1,"ref":"","articles":[{"title":"插件介绍","level":"1.5.1","depth":2,"path":"PLUGIN/README.md","ref":"PLUGIN/README.md","articles":[]},{"title":"loading插件","level":"1.5.2","depth":2,"path":"PLUGIN/LOADING.md","ref":"PLUGIN/LOADING.md","articles":[]},{"title":"mixin插件","level":"1.5.3","depth":2,"path":"PLUGIN/MIXIN.md","ref":"PLUGIN/MIXIN.md","articles":[]},{"title":"插件开发","level":"1.5.4","depth":2,"path":"PLUGIN/DEVELOPMENT.md","ref":"PLUGIN/DEVELOPMENT.md","articles":[]}]},"previous":{"title":"MODEL API文档","level":"1.4.2","depth":2,"path":"API/MODEL.md","ref":"API/MODEL.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["livereload"],"pluginsConfig":{"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"API/WEAPP-REDUX.md","mtime":"2018-12-28T09:31:51.000Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-12-28T09:47:25.217Z"},"basePath":"..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="../gitbook/gitbook.js"></script>
+    <script src="../gitbook/theme.js"></script>
+    
+        
+        <script src="../gitbook/gitbook-plugin-livereload/plugin.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-sharing/buttons.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+
