@@ -49,7 +49,7 @@ function(event, { DIVIDER, PLUGIN_EVENT }) {
   }
 ```
 
-loading model的具体实现，这里不列出了，有兴趣的可以直接去[loading源码](https://github.com/FaureWu/zoro-plugin/blob/master/src/loading.js)
+loading model的具体实现，这里不列出了，有兴趣的可以直接去[LOADING插件源码](https://github.com/FaureWu/zoro-plugin/blob/master/src/loading.js)
 
 ## PLUGIN_EVENT
 

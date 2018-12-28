@@ -2,7 +2,7 @@
 
 create-react-app脚手架的搭建使用，请移步[create-react-app](https://facebook.github.io/create-react-app/docs/getting-started)
 
-成功创建项目后除了参照[ZORO安装文档](/INSTALL.md)安装zoro以外，我们还需要安装如下依赖
+成功创建项目后除了参照[安装文档](/INSTALL.md)安装zoro以外，我们还需要安装如下依赖
 
 ```bash
 $ npm install --save react-redux
@@ -14,5 +14,5 @@ $ npm install --save react-redux
 $ yarn add react-redux
 ```
 
-参照[快速开始](GUIDE/QUIKE_START.md)
+参照[快速开始](/GUIDE/QUIKE_START.md)
 

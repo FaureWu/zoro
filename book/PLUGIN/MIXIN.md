@@ -27,7 +27,7 @@ app.use(createMixin({
 const store = app.start()
 ```
 
-可以发现mixin的定义结构除开setup外，定义方法与model一致，详细查看[model API](API/MODEL.md)，优先级如下：
+可以发现mixin的定义结构除开setup外，定义方法与model一致，详细查看[MODEL API](/API/MODEL.md)，优先级如下：
 
 model > 后定义的mixin > 先定义的mixin
 

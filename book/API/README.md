@@ -86,7 +86,7 @@ const app = zoro({
 
 ### options.onError(error) `<Function>`
 
-用于捕获所有的effect中抛出的异常，常用于全局错误处理，详见[全局错误处理](GUIDE/GLOBAL_ERROR.md)
+用于捕获所有的effect中抛出的异常，常用于全局错误处理，详见[全局错误处理](/GUIDE/GLOBAL_ERROR.md)
 
 ---
 
@@ -193,7 +193,7 @@ dispatcher.counter.asyncAdd().then(...).catch(...)
 
 ## connectComponent(mapStateToCom, mapDispatchToCom) `<Function>`
 
-详细使用方法查看[微信原生小程序weapp-redux文档](/API/WEAPP-REDUX.md)
+详细使用方法查看[微信原生小程序WEAPP REDUX文档](/API/WEAPP-REDUX.md)
 
 对于taro，wepy支持微信原生小程序组件，因此提供该函数用于连接微信原生组件
 
