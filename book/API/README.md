@@ -168,13 +168,13 @@ app.intercept.effect(async function(action, { store, NAMESPACE_DIVIDER }) {
 
 ```js
 import { dispatcher } from '@opcjs/zoro'
-dispatcher.counter.add()
+dispatcher.counter.add(payload, meta, error)
 ```
 
 对于异步类型的action可以结合await使用
 
 ```js
-const result = await dispatcher.counter.asyncAdd()
+const result = await dispatcher.counter.asyncAdd(payload, meta, error)
 ```
 
 > result为异步action的返回值，更多信息查看[MODEL API](/API/MODEL.md)
@@ -182,7 +182,7 @@ const result = await dispatcher.counter.asyncAdd()
  同时也支持Promise语法
 
 ```js
-dispatcher.counter.asyncAdd().then(...).catch(...)
+dispatcher.counter.asyncAdd(payload, meta, error).then(...).catch(...)
 ```
 
 同步类型的action至2.2.5版本之后不再支持.then(...)

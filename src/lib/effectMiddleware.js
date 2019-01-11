@@ -15,14 +15,14 @@ import {
   NAMESPACE_DIVIDER,
 } from './constant'
 
-let _zoro
+async function doneEffect(zoro, action, effect) {
+  const { store, handleEffect, handleIntercepts, handleError } = zoro
 
-async function doneEffect(action, effect) {
-  _zoro.plugin.emit(PLUGIN_EVENT.ON_WILL_EFFECT, action, _zoro.store)
-  await _zoro.handleEffect.apply(undefined, [action])
-  const effectIntercept = _zoro.handleIntercepts[INTERCEPT_EFFECT] || noop
+  zoro.plugin.emit(PLUGIN_EVENT.ON_WILL_EFFECT, action, store)
+  handleEffect(action)
+  const effectIntercept = handleIntercepts[INTERCEPT_EFFECT] || noop
   const resolveAction = await effectIntercept(action, {
-    store: _zoro.store,
+    store,
     NAMESPACE_DIVIDER,
   })
 
@@ -33,50 +33,49 @@ async function doneEffect(action, effect) {
 
   const targetAction = { ...action, ...resolveAction, type: action.type }
   const { namespace } = splitType(action.type)
+
   try {
     const result = await effect(targetAction, {
-      selectAll: selectCreator(_zoro.store),
-      select: selectCreator(_zoro.store, namespace),
-      put: putCreator(_zoro.store, namespace),
+      selectAll: selectCreator(store),
+      select: selectCreator(store, namespace),
+      put: putCreator(store, namespace),
     })
-
     return Promise.resolve(result)
   } catch (e) {
-    _zoro.plugin.emit(PLUGIN_EVENT.ON_ERROR, e, action, _zoro.store)
-    _zoro.handleError.apply(undefined, [e])
+    handleError(e)
+    zoro.plugin.emit(PLUGIN_EVENT.ON_ERROR, e, action, store)
     return Promise.reject(e)
   } finally {
-    _zoro.plugin.emit(PLUGIN_EVENT.ON_DID_EFFECT, action, _zoro.store)
+    zoro.plugin.emit(PLUGIN_EVENT.ON_DID_EFFECT, action, store)
   }
 }
 
-const middleware = ({ dispatch }) => next => action => {
-  const { type } = action
-  const handler = _zoro.getEffects()[type]
-  if (isFunction(handler)) {
-    return doneEffect(action, handler)
+export default function(zoro) {
+  return ({ dispatch }) => next => action => {
+    const { store, handleAction, handleIntercepts, effects } = zoro
+
+    const { type } = action
+    const handler = effects[type]
+    if (isFunction(handler)) {
+      return doneEffect(zoro, action, handler)
+    }
+    zoro.plugin.emit(PLUGIN_EVENT.ON_WILL_ACTION, action, store)
+    handleAction(action)
+
+    const actionIntercept = handleIntercepts[INTERCEPT_ACTION] || noop
+    const resolveAction = actionIntercept(action, {
+      store,
+      NAMESPACE_DIVIDER,
+    })
+
+    assert(
+      isUndefined(resolveAction) || isAction(resolveAction),
+      'the action intercept return must be an action or none',
+    )
+
+    const targetAction = { ...action, ...resolveAction, type }
+    zoro.plugin.emit(PLUGIN_EVENT.ON_DID_ACTION, targetAction, store)
+
+    return next(targetAction)
   }
-  _zoro.plugin.emit(PLUGIN_EVENT.ON_WILL_ACTION, action, _zoro.store)
-  _zoro.handleAction.apply(undefined, [action])
-
-  const actionIntercept = _zoro.handleIntercepts[INTERCEPT_ACTION] || noop
-  const resolveAction = actionIntercept(action, {
-    store: _zoro.store,
-    NAMESPACE_DIVIDER,
-  })
-
-  assert(
-    isUndefined(resolveAction) || isAction(resolveAction),
-    'the action intercept return must be an action or none',
-  )
-
-  const targetAction = { ...action, ...resolveAction, type }
-  _zoro.plugin.emit(PLUGIN_EVENT.ON_DID_ACTION, targetAction, _zoro.store)
-
-  return next(targetAction)
-}
-
-export default zoro => {
-  _zoro = zoro
-  return middleware
 }

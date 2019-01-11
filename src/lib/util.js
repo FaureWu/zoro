@@ -126,3 +126,7 @@ export function getConnectStoreData(pre, current) {
     {},
   )
 }
+
+export function isSupportProxy() {
+  return typeof Proxy === 'function'
+}

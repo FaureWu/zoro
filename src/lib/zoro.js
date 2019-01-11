@@ -92,6 +92,7 @@ export default class Zoro {
 
     this.models = {}
     this.modelOpts = []
+    this.effects = {}
     this.middlewares = [effectMiddlewareCreator(this)].concat(extraMiddlewares)
     this.enhancers = extraEnhancers
     this.handleError = onError
@@ -139,13 +140,6 @@ export default class Zoro {
     )
 
     return combineReducers(rootReducer)
-  }
-
-  getEffects() {
-    return Object.keys(this.models).reduce((effects, namespace) => {
-      const model = this.models[namespace]
-      return { ...effects, ...model.getEffects() }
-    }, {})
   }
 
   getDefaultState() {
@@ -228,6 +222,7 @@ export default class Zoro {
       assertModelUnique(this, model)
       this.models[namespace] = model
       models[namespace] = model
+      this.effects = { ...this.effects, ...model.getEffects() }
       this.plugin.emit(PLUGIN_EVENT.ON_CREATE_MODEL, model)
     })
 
