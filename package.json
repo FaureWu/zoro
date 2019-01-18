@@ -1,6 +1,6 @@
 {
   "name": "@opcjs/zoro",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "description": "a redux framework, complete async await",
   "main": "index.js",
   "keywords": [

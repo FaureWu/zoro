@@ -16,6 +16,27 @@ function _extends() {
   return _extends.apply(this, arguments);
 }
 
+var PLUGIN_EVENT = {
+  INJECT_INITIAL_STATE: 'injectInitialState',
+  BEFORE_INJECT_MODEL: 'beforeInjectModel',
+  INJECT_MODELS: 'injectModels',
+  AFTER_INJECT_MODEL: 'afterInjectModel',
+  INJECT_MIDDLEWARES: 'injectMiddlewares',
+  INJECT_ENHANCERS: 'injectEnhancers',
+  ON_REDUCER: 'onReducer',
+  ON_CREATE_MODEL: 'onCreateModel',
+  ON_SETUP_MODEL: 'onSetupModel',
+  ON_WILL_EFFECT: 'onWillEffect',
+  ON_DID_EFFECT: 'onDidEffect',
+  ON_WILL_ACTION: 'onWillAction',
+  ON_DID_ACTION: 'onDidAction',
+  ON_SETUP: 'onSetup',
+  ON_SUBSCRIBE: 'onSubscribe',
+  ON_ERROR: 'onError',
+  ON_WILL_CONNECT: 'onWillConnect',
+  ON_DID_CONNECT: 'onDidConnect'
+};
+
 var isArray = function isArray(arr) {
   return arr instanceof Array;
 };
@@ -39,12 +60,19 @@ function isShallowInclude(parent, child) {
     return parent.hasOwnProperty(k) && parent[k] === child[k];
   });
 }
+function uuid() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (placeholder) {
+    var random = Math.floor(Math.random() * 16);
+    var value = placeholder === 'x' ? random : random & 0x3 | 0x8;
+    return value.toString(16);
+  });
+}
 
 function defaultMapToProps() {
   return {};
 }
 
-function createConnectComponent (store) {
+function createConnectComponent (store, zoro) {
   return function (mapStateToProps, mapDispatchToProps) {
     var shouldMapStateToProps = isFunction(mapStateToProps);
     var shouldMapDispatchToProps = isFunction(mapDispatchToProps);
@@ -55,10 +83,24 @@ function createConnectComponent (store) {
       var ready = false;
 
       function subscribe() {
+        var _this = this;
+
         if (!isFunction(unsubscribe)) return null;
         var mappedState = mapState(store.getState());
         if (isShallowInclude(this.data, mappedState)) return null;
-        this.setData(mappedState);
+        var key = uuid();
+        zoro.plugin.emit(PLUGIN_EVENT.ON_WILL_CONNECT, store, {
+          key: key,
+          name: this.is,
+          currentData: this.data,
+          nextData: mappedState
+        });
+        this.setData(mappedState, function () {
+          zoro.plugin.emit(PLUGIN_EVENT.ON_DID_CONNECT, store, {
+            key: key,
+            name: _this.is
+          });
+        });
       }
 
       function attached() {

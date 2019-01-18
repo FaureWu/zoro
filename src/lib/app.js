@@ -7,7 +7,7 @@ import createConnectComponent from './createConnectComponent'
 let _zoro
 let _store
 
-let dispatcher
+let dispatcher = {}
 
 function defineDispatcher(zoro, model) {
   const namespace = model.getNamespace()
@@ -106,7 +106,10 @@ export const actions = function(namespace) {
 }
 
 export const connectComponent = function(mapStateToProps, mapDispatchToProps) {
-  return createConnectComponent(_store)(mapStateToProps, mapDispatchToProps)
+  return createConnectComponent(_store, _zoro)(
+    mapStateToProps,
+    mapDispatchToProps,
+  )
 }
 
 export default function(options) {

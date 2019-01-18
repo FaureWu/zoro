@@ -17,6 +17,8 @@ export const PLUGIN_EVENT = {
   ON_SETUP: 'onSetup',
   ON_SUBSCRIBE: 'onSubscribe',
   ON_ERROR: 'onError',
+  ON_WILL_CONNECT: 'onWillConnect',
+  ON_DID_CONNECT: 'onDidConnect',
 }
 
 export const INTERCEPT_ACTION = 'INTERCEPT_ACTION'

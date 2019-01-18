@@ -7,6 +7,7 @@ import {
   assert,
   isAction,
   isUndefined,
+  uuid,
 } from './util'
 import {
   PLUGIN_EVENT,
@@ -18,7 +19,8 @@ import {
 async function doneEffect(zoro, action, effect) {
   const { store, handleEffect, handleIntercepts, handleError } = zoro
 
-  zoro.plugin.emit(PLUGIN_EVENT.ON_WILL_EFFECT, action, store)
+  const key = uuid()
+  zoro.plugin.emit(PLUGIN_EVENT.ON_WILL_EFFECT, action, store, { key })
   handleEffect(action)
   const effectIntercept = handleIntercepts[INTERCEPT_EFFECT] || noop
   const resolveAction = await effectIntercept(action, {
@@ -46,7 +48,7 @@ async function doneEffect(zoro, action, effect) {
     zoro.plugin.emit(PLUGIN_EVENT.ON_ERROR, e, action, store)
     return Promise.reject(e)
   } finally {
-    zoro.plugin.emit(PLUGIN_EVENT.ON_DID_EFFECT, action, store)
+    zoro.plugin.emit(PLUGIN_EVENT.ON_DID_EFFECT, action, store, { key })
   }
 }
 
@@ -59,7 +61,8 @@ export default function(zoro) {
     if (isFunction(handler)) {
       return doneEffect(zoro, action, handler)
     }
-    zoro.plugin.emit(PLUGIN_EVENT.ON_WILL_ACTION, action, store)
+    const key = uuid()
+    zoro.plugin.emit(PLUGIN_EVENT.ON_WILL_ACTION, action, store, { key })
     handleAction(action)
 
     const actionIntercept = handleIntercepts[INTERCEPT_ACTION] || noop
@@ -74,7 +77,7 @@ export default function(zoro) {
     )
 
     const targetAction = { ...action, ...resolveAction, type }
-    zoro.plugin.emit(PLUGIN_EVENT.ON_DID_ACTION, targetAction, store)
+    zoro.plugin.emit(PLUGIN_EVENT.ON_DID_ACTION, targetAction, store, { key })
 
     return next(targetAction)
   }

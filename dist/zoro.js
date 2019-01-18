@@ -1343,7 +1343,9 @@ var PLUGIN_EVENT = {
   ON_DID_ACTION: 'onDidAction',
   ON_SETUP: 'onSetup',
   ON_SUBSCRIBE: 'onSubscribe',
-  ON_ERROR: 'onError'
+  ON_ERROR: 'onError',
+  ON_WILL_CONNECT: 'onWillConnect',
+  ON_DID_CONNECT: 'onDidConnect'
 };
 var INTERCEPT_ACTION = 'INTERCEPT_ACTION';
 var INTERCEPT_EFFECT = 'INTERCEPT_EFFECT';
@@ -1439,6 +1441,13 @@ function selectCreator(store, namespace) {
 }
 function isSupportProxy() {
   return typeof Proxy === 'function';
+}
+function uuid() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (placeholder) {
+    var random = Math.floor(Math.random() * 16);
+    var value = placeholder === 'x' ? random : random & 0x3 | 0x8;
+    return value.toString(16);
+  });
 }
 
 /*
@@ -1699,59 +1708,64 @@ function _doneEffect() {
   _doneEffect = _asyncToGenerator(
   /*#__PURE__*/
   regeneratorRuntime.mark(function _callee(zoro, action, effect) {
-    var store, handleEffect, handleIntercepts, handleError, effectIntercept, resolveAction, targetAction, _splitType, namespace, result;
+    var store, handleEffect, handleIntercepts, handleError, key, effectIntercept, resolveAction, targetAction, _splitType, namespace, result;
 
     return regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
             store = zoro.store, handleEffect = zoro.handleEffect, handleIntercepts = zoro.handleIntercepts, handleError = zoro.handleError;
-            zoro.plugin.emit(PLUGIN_EVENT.ON_WILL_EFFECT, action, store);
+            key = uuid();
+            zoro.plugin.emit(PLUGIN_EVENT.ON_WILL_EFFECT, action, store, {
+              key: key
+            });
             handleEffect(action);
             effectIntercept = handleIntercepts[INTERCEPT_EFFECT] || noop;
-            _context.next = 6;
+            _context.next = 7;
             return effectIntercept(action, {
               store: store,
               NAMESPACE_DIVIDER: NAMESPACE_DIVIDER
             });
 
-          case 6:
+          case 7:
             resolveAction = _context.sent;
             assert(isUndefined(resolveAction) || isAction(resolveAction), 'the effect intercept return must be an action or none');
             targetAction = _extends({}, action, resolveAction, {
               type: action.type
             });
             _splitType = splitType(action.type), namespace = _splitType.namespace;
-            _context.prev = 10;
-            _context.next = 13;
+            _context.prev = 11;
+            _context.next = 14;
             return effect(targetAction, {
               selectAll: selectCreator(store),
               select: selectCreator(store, namespace),
               put: putCreator(store, namespace)
             });
 
-          case 13:
+          case 14:
             result = _context.sent;
             return _context.abrupt("return", Promise.resolve(result));
 
-          case 17:
-            _context.prev = 17;
-            _context.t0 = _context["catch"](10);
+          case 18:
+            _context.prev = 18;
+            _context.t0 = _context["catch"](11);
             handleError(_context.t0);
             zoro.plugin.emit(PLUGIN_EVENT.ON_ERROR, _context.t0, action, store);
             return _context.abrupt("return", Promise.reject(_context.t0));
 
-          case 22:
-            _context.prev = 22;
-            zoro.plugin.emit(PLUGIN_EVENT.ON_DID_EFFECT, action, store);
-            return _context.finish(22);
+          case 23:
+            _context.prev = 23;
+            zoro.plugin.emit(PLUGIN_EVENT.ON_DID_EFFECT, action, store, {
+              key: key
+            });
+            return _context.finish(23);
 
-          case 25:
+          case 26:
           case "end":
             return _context.stop();
         }
       }
-    }, _callee, this, [[10, 17, 22, 25]]);
+    }, _callee, this, [[11, 18, 23, 26]]);
   }));
   return _doneEffect.apply(this, arguments);
 }
@@ -1772,7 +1786,10 @@ function effectMiddlewareCreator (zoro) {
           return doneEffect(zoro, action, handler);
         }
 
-        zoro.plugin.emit(PLUGIN_EVENT.ON_WILL_ACTION, action, store);
+        var key = uuid();
+        zoro.plugin.emit(PLUGIN_EVENT.ON_WILL_ACTION, action, store, {
+          key: key
+        });
         handleAction(action);
         var actionIntercept = handleIntercepts[INTERCEPT_ACTION] || noop;
         var resolveAction = actionIntercept(action, {
@@ -1785,7 +1802,9 @@ function effectMiddlewareCreator (zoro) {
           type: type
         });
 
-        zoro.plugin.emit(PLUGIN_EVENT.ON_DID_ACTION, targetAction, store);
+        zoro.plugin.emit(PLUGIN_EVENT.ON_DID_ACTION, targetAction, store, {
+          key: key
+        });
         return next(targetAction);
       };
     };
@@ -2086,7 +2105,7 @@ var _zoro;
 
 var _store;
 
-var dispatcher;
+var dispatcher = {};
 
 function defineDispatcher(zoro, model) {
   var namespace = model.getNamespace();

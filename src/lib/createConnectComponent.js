@@ -1,10 +1,11 @@
-import { isFunction, isShallowInclude, assert, isObject } from './util'
+import { isFunction, isShallowInclude, assert, isObject, uuid } from './util'
+import { PLUGIN_EVENT } from './constant'
 
 function defaultMapToProps() {
   return {}
 }
 
-export default function(store) {
+export default function(store, zoro) {
   return function(mapStateToProps, mapDispatchToProps) {
     const shouldMapStateToProps = isFunction(mapStateToProps)
     const shouldMapDispatchToProps = isFunction(mapDispatchToProps)
@@ -25,8 +26,19 @@ export default function(store) {
 
         const mappedState = mapState(store.getState())
         if (isShallowInclude(this.data, mappedState)) return null
-
-        this.setData(mappedState)
+        const key = uuid()
+        zoro.plugin.emit(PLUGIN_EVENT.ON_WILL_CONNECT, store, {
+          key,
+          name: this.is,
+          currentData: this.data,
+          nextData: mappedState,
+        })
+        this.setData(mappedState, () => {
+          zoro.plugin.emit(PLUGIN_EVENT.ON_DID_CONNECT, store, {
+            key,
+            name: this.is,
+          })
+        })
       }
 
       function attached() {
