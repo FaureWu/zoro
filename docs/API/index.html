@@ -308,7 +308,20 @@
             
         </li>
     
-        <li class="chapter " data-level="1.5.4" data-path="../PLUGIN/DEVELOPMENT.html">
+        <li class="chapter " data-level="1.5.4" data-path="../PLUGIN/PERF.html">
+            
+                <a href="../PLUGIN/PERF.html">
+            
+                    
+                    perf插件
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5.5" data-path="../PLUGIN/DEVELOPMENT.html">
             
                 <a href="../PLUGIN/DEVELOPMENT.html">
             
@@ -487,16 +500,16 @@ app.use(createLoading())
 <h2 id="dispatcher-object">dispatcher <code>&lt;Object&gt;</code></h2>
 <p>&#x7528;&#x4E8E;&#x5916;&#x90E8;&#x5FEB;&#x6377;&#x89E6;&#x53D1;action</p>
 <pre><code class="lang-js"><span class="hljs-keyword">import</span> { dispatcher } <span class="hljs-keyword">from</span> <span class="hljs-string">&apos;@opcjs/zoro&apos;</span>
-dispatcher.counter.add()
+dispatcher.counter.add(payload, meta, error)
 </code></pre>
 <p>&#x5BF9;&#x4E8E;&#x5F02;&#x6B65;&#x7C7B;&#x578B;&#x7684;action&#x53EF;&#x4EE5;&#x7ED3;&#x5408;await&#x4F7F;&#x7528;</p>
-<pre><code class="lang-js"><span class="hljs-keyword">const</span> result = <span class="hljs-keyword">await</span> dispatcher.counter.asyncAdd()
+<pre><code class="lang-js"><span class="hljs-keyword">const</span> result = <span class="hljs-keyword">await</span> dispatcher.counter.asyncAdd(payload, meta, error)
 </code></pre>
 <blockquote>
 <p>result&#x4E3A;&#x5F02;&#x6B65;action&#x7684;&#x8FD4;&#x56DE;&#x503C;&#xFF0C;&#x66F4;&#x591A;&#x4FE1;&#x606F;&#x67E5;&#x770B;<a href="MODEL.html">MODEL API</a></p>
 </blockquote>
 <p> &#x540C;&#x65F6;&#x4E5F;&#x652F;&#x6301;Promise&#x8BED;&#x6CD5;</p>
-<pre><code class="lang-js">dispatcher.counter.asyncAdd().then(...).catch(...)
+<pre><code class="lang-js">dispatcher.counter.asyncAdd(payload, meta, error).then(...).catch(...)
 </code></pre>
 <p>&#x540C;&#x6B65;&#x7C7B;&#x578B;&#x7684;action&#x81F3;2.2.5&#x7248;&#x672C;&#x4E4B;&#x540E;&#x4E0D;&#x518D;&#x652F;&#x6301;.then(...)</p>
 <hr>
@@ -542,7 +555,7 @@ dispatcher.counter.add()
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"ZORO API","level":"1.4.1","depth":2,"next":{"title":"MODEL API文档","level":"1.4.2","depth":2,"path":"API/MODEL.md","ref":"API/MODEL.md","articles":[]},"previous":{"title":"API","level":"1.4","depth":1,"ref":"","articles":[{"title":"ZORO API","level":"1.4.1","depth":2,"path":"API/README.md","ref":"API/README.md","articles":[]},{"title":"MODEL API文档","level":"1.4.2","depth":2,"path":"API/MODEL.md","ref":"API/MODEL.md","articles":[]},{"title":"微信原生小程序结合REDUX API","level":"1.4.3","depth":2,"path":"API/WEAPP-REDUX.md","ref":"API/WEAPP-REDUX.md","articles":[]}]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["livereload"],"pluginsConfig":{"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"API/README.md","mtime":"2018-12-28T10:15:27.000Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-12-28T10:19:17.864Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"ZORO API","level":"1.4.1","depth":2,"next":{"title":"MODEL API文档","level":"1.4.2","depth":2,"path":"API/MODEL.md","ref":"API/MODEL.md","articles":[]},"previous":{"title":"API","level":"1.4","depth":1,"ref":"","articles":[{"title":"ZORO API","level":"1.4.1","depth":2,"path":"API/README.md","ref":"API/README.md","articles":[]},{"title":"MODEL API文档","level":"1.4.2","depth":2,"path":"API/MODEL.md","ref":"API/MODEL.md","articles":[]},{"title":"微信原生小程序结合REDUX API","level":"1.4.3","depth":2,"path":"API/WEAPP-REDUX.md","ref":"API/WEAPP-REDUX.md","articles":[]}]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["livereload"],"pluginsConfig":{"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"API/README.md","mtime":"2019-01-05T07:03:39.000Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2019-01-23T16:01:06.815Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

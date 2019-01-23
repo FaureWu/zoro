@@ -308,7 +308,20 @@
             
         </li>
     
-        <li class="chapter " data-level="1.5.4" data-path="PLUGIN/DEVELOPMENT.html">
+        <li class="chapter " data-level="1.5.4" data-path="PLUGIN/PERF.html">
+            
+                <a href="PLUGIN/PERF.html">
+            
+                    
+                    perf插件
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5.5" data-path="PLUGIN/DEVELOPMENT.html">
             
                 <a href="PLUGIN/DEVELOPMENT.html">
             
@@ -377,7 +390,13 @@
 <p>&#x5982;&#x679C;&#x4F60;&#x4E60;&#x60EF;&#x4E8E;&#x4F7F;&#x7528;yarn&#xFF0C;&#x53EF;&#x4EE5;&#x6267;&#x884C;&#x5982;&#x4E0B;&#x547D;&#x4EE4;</p>
 <pre><code class="lang-bash">$ yarn add @opcjs/zoro
 </code></pre>
-<h2 id="&#x5FAE;&#x4FE1;&#x539F;&#x751F;&#x5C0F;&#x7A0B;&#x5E8F;">&#x5FAE;&#x4FE1;&#x539F;&#x751F;&#x5C0F;&#x7A0B;&#x5E8F;</h2>
+<h2 id="&#x63D2;&#x4EF6;&#x5B89;&#x88C5;">&#x63D2;&#x4EF6;&#x5B89;&#x88C5;</h2>
+<pre><code class="lang-bash">$ npm install --save @opcjs/zoro-plugin
+</code></pre>
+<p>&#x6216;&#x8005;&#x901A;&#x8FC7;yarn</p>
+<pre><code class="lang-bash">$ yarn add @opcjs/zoro-plugin
+</code></pre>
+<h2 id="&#x5FAE;&#x4FE1;&#x539F;&#x751F;&#x5C0F;&#x7A0B;&#x5E8F;&#x5B89;&#x88C5;">&#x5FAE;&#x4FE1;&#x539F;&#x751F;&#x5C0F;&#x7A0B;&#x5E8F;&#x5B89;&#x88C5;</h2>
 <p>&#x5728;&#x5FAE;&#x4FE1;&#x539F;&#x751F;&#x5C0F;&#x7A0B;&#x5E8F;&#x4E2D;&#x4F7F;&#x7528;zoro&#xFF0C;&#x65E0;&#x9700;&#x6267;&#x884C;&#x5B89;&#x88C5;&#x547D;&#x4EE4;&#xFF0C;&#x76F4;&#x63A5;&#x62F7;&#x8D1D;<a href="https://github.com/FaureWu/zoro" target="_blank">zoro&#x4ED3;&#x5E93;</a>&#x76EE;&#x5F55;&#x4E0B;&#x7684;dist&#x6587;&#x4EF6;&#x5230;&#x5C0F;&#x7A0B;&#x5E8F;&#x4E2D;&#x5373;&#x53EF;</p>
 <p>dist&#x76EE;&#x5F55;&#x4E0B;&#x5305;&#x542B;&#x4E24;&#x4E2A;&#x6587;&#x4EF6;&#xFF1A;</p>
 <ul>
@@ -389,13 +408,8 @@
 <ul>
 <li>zoro-loading.js &#x5168;&#x5C40;loading&#x63D2;&#x4EF6;</li>
 <li>zoro-mixin.js &#x7528;&#x4E8E;&#x63D0;&#x53D6;model&#x5171;&#x7528;&#x903B;&#x8F91;&#x63D2;&#x4EF6;</li>
+<li>zoro-perf.js &#x6536;&#x96C6;&#x67E5;&#x770B;&#x76F8;&#x5173;&#x6027;&#x80FD;&#x6570;&#x636E;&#xFF0C;&#x7528;&#x4E8E;&#x8F85;&#x52A9;&#x6027;&#x80FD;&#x4F18;&#x5316;</li>
 </ul>
-<h2 id="&#x63D2;&#x4EF6;&#x5B89;&#x88C5;">&#x63D2;&#x4EF6;&#x5B89;&#x88C5;</h2>
-<pre><code class="lang-bash">$ npm install --save @opcjs/zoro-plugin
-</code></pre>
-<p>&#x6216;&#x8005;&#x901A;&#x8FC7;yarn</p>
-<pre><code class="lang-bash">$ yarn add @opcjs/zoro-plugin
-</code></pre>
 
                                 
                                 </section>
@@ -435,7 +449,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"安装","level":"1.2","depth":1,"next":{"title":"教程","level":"1.3","depth":1,"ref":"","articles":[{"title":"快速开始","level":"1.3.1","depth":2,"path":"GUIDE/QUIKE_START.md","ref":"GUIDE/QUIKE_START.md","articles":[]},{"title":"接入create-react-app","level":"1.3.2","depth":2,"path":"GUIDE/CREATE_REACT_APP.md","ref":"GUIDE/CREATE_REACT_APP.md","articles":[]},{"title":"接入taro","level":"1.3.3","depth":2,"path":"GUIDE/TARO.md","ref":"GUIDE/TARO.md","articles":[]},{"title":"接入wepy","level":"1.3.4","depth":2,"path":"GUIDE/WEPY.md","ref":"GUIDE/WEPY.md","articles":[]},{"title":"接入微信原生小程序","level":"1.3.5","depth":2,"path":"GUIDE/WEAPP.md","ref":"GUIDE/WEAPP.md","articles":[]}]},"previous":{"title":"前言","level":"1.1","depth":1,"path":"README.md","ref":"README.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["livereload"],"pluginsConfig":{"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"INSTALL.md","mtime":"2018-12-28T01:40:35.000Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2018-12-28T10:19:17.864Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"安装","level":"1.2","depth":1,"next":{"title":"教程","level":"1.3","depth":1,"ref":"","articles":[{"title":"快速开始","level":"1.3.1","depth":2,"path":"GUIDE/QUIKE_START.md","ref":"GUIDE/QUIKE_START.md","articles":[]},{"title":"接入create-react-app","level":"1.3.2","depth":2,"path":"GUIDE/CREATE_REACT_APP.md","ref":"GUIDE/CREATE_REACT_APP.md","articles":[]},{"title":"接入taro","level":"1.3.3","depth":2,"path":"GUIDE/TARO.md","ref":"GUIDE/TARO.md","articles":[]},{"title":"接入wepy","level":"1.3.4","depth":2,"path":"GUIDE/WEPY.md","ref":"GUIDE/WEPY.md","articles":[]},{"title":"接入微信原生小程序","level":"1.3.5","depth":2,"path":"GUIDE/WEAPP.md","ref":"GUIDE/WEAPP.md","articles":[]}]},"previous":{"title":"前言","level":"1.1","depth":1,"path":"README.md","ref":"README.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["livereload"],"pluginsConfig":{"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"INSTALL.md","mtime":"2019-01-23T15:59:01.000Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2019-01-23T16:01:06.815Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>

@@ -16,5 +16,6 @@
   * [插件介绍](PLUGIN/README.md)
   * [loading插件](PLUGIN/LOADING.md)
   * [mixin插件](PLUGIN/MIXIN.md)
+  * [perf插件](PLUGIN/PERF.md)
   * [插件开发](PLUGIN/DEVELOPMENT.md)
 

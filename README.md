@@ -12,11 +12,8 @@
 
 ---
 
-## [官方文档](https://faurewu.github.io/zoro/)
-
-## 更新日志
-
-[版本更新记录](https://github.com/FaureWu/zoro/releases)
+## 文档
+* [API文档](https://faurewu.github.io/zoro/)
 
 ## 特性
 
@@ -35,6 +32,10 @@
 ## 应用案例
 
 <img src="https://img.baobeicang.com/user_upload/rc-upload-1539741270100-2.jpeg" width="150" />
+
+## 更新日志
+
+[版本更新记录](https://github.com/FaureWu/zoro/releases)
 
 ## 开发交流
 
