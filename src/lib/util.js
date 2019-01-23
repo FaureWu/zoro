@@ -115,7 +115,7 @@ export function isShallowInclude(parent, child) {
   })
 }
 
-export function getConnectStoreData(pre, current) {
+export function getConnectStoreData(current, pre) {
   const childks = Object.keys(current)
 
   return childks.reduce(
@@ -140,4 +140,19 @@ export function uuid() {
       return value.toString(16)
     },
   )
+}
+
+export function diff(current, next) {
+  let empty = true
+  const data = Object.keys(current).reduce((result, key) => {
+    if (current[key] === next[key]) {
+      return result
+    }
+
+    empty = false
+    result[key] = next[key]
+    return result
+  }, {})
+
+  return { empty, data }
 }

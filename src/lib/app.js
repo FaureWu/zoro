@@ -40,11 +40,10 @@ export { dispatcher }
 
 function App(zoro) {
   this.zoro = zoro
-
   _zoro = zoro
 
   if (!isSupportProxy()) {
-    this.zoro.plugin.on(PLUGIN_EVENT.ON_CREATE_MODEL, function(model) {
+    _zoro.plugin.on(PLUGIN_EVENT.ON_CREATE_MODEL, function(model) {
       defineDispatcher(zoro, model)
     })
   }
@@ -52,18 +51,18 @@ function App(zoro) {
 
 App.prototype.model = function(models) {
   if (models instanceof Array) {
-    this.zoro.injectModels(models)
+    _zoro.injectModels(models)
 
     return this
   }
 
-  this.zoro.injectModels([models])
+  _zoro.injectModels([models])
   return this
 }
 
 App.prototype.use = function(plugins) {
   if (typeof plugins === 'function') {
-    this.zoro.use(plugins)
+    _zoro.use(plugins)
 
     return this
   }
@@ -73,7 +72,7 @@ App.prototype.use = function(plugins) {
     `the use param must be a function or a plugin Array, but we get ${typeof plugins}`,
   )
 
-  plugins.forEach(plugin => this.zoro.use(plugin))
+  plugins.forEach(plugin => _zoro.use(plugin))
 
   return this
 }
@@ -88,14 +87,13 @@ App.prototype.intercept = {
 }
 
 App.prototype.start = function(setup = true) {
-  _store = this.zoro.start(setup)
-  this.store = _store
+  _store = _zoro.start(setup)
 
   return _store
 }
 
 App.prototype.setup = function() {
-  this.zoro.setup()
+  _zoro.setup()
 }
 
 // 该接口将于v3.0.0废弃，请使用dispatcher
@@ -112,6 +110,6 @@ export const connectComponent = function(mapStateToProps, mapDispatchToProps) {
   )
 }
 
-export default function(options) {
+export default function(options = {}) {
   return new App(new Zoro(options))
 }

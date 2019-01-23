@@ -54,11 +54,13 @@ var assert = function assert(validate, message) {
     throw new Error(message);
   }
 };
-function isShallowInclude(parent, child) {
-  var childks = Object.keys(child);
-  return childks.every(function (k) {
-    return parent.hasOwnProperty(k) && parent[k] === child[k];
-  });
+function getConnectStoreData(current, pre) {
+  var childks = Object.keys(current);
+  return childks.reduce(function (result, key) {
+    var _extends2;
+
+    return _extends({}, result, (_extends2 = {}, _extends2[key] = pre[key], _extends2));
+  }, {});
 }
 function uuid() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (placeholder) {
@@ -66,6 +68,22 @@ function uuid() {
     var value = placeholder === 'x' ? random : random & 0x3 | 0x8;
     return value.toString(16);
   });
+}
+function diff(current, next) {
+  var empty = true;
+  var data = Object.keys(current).reduce(function (result, key) {
+    if (current[key] === next[key]) {
+      return result;
+    }
+
+    empty = false;
+    result[key] = next[key];
+    return result;
+  }, {});
+  return {
+    empty: empty,
+    data: data
+  };
 }
 
 function defaultMapToProps() {
@@ -87,15 +105,21 @@ function createConnectComponent (store, zoro) {
 
         if (!isFunction(unsubscribe)) return null;
         var mappedState = mapState(store.getState());
-        if (isShallowInclude(this.data, mappedState)) return null;
+        var currentState = getConnectStoreData(mappedState, this.data);
+
+        var _diff = diff(currentState, mappedState),
+            data = _diff.data,
+            empty = _diff.empty;
+
+        if (empty) return null;
         var key = uuid();
         zoro.plugin.emit(PLUGIN_EVENT.ON_WILL_CONNECT, store, {
           key: key,
           name: this.is,
-          currentData: this.data,
+          currentData: currentState,
           nextData: mappedState
         });
-        this.setData(mappedState, function () {
+        this.setData(data, function () {
           zoro.plugin.emit(PLUGIN_EVENT.ON_DID_CONNECT, store, {
             key: key,
             name: _this.is
@@ -191,9 +215,11 @@ function isReduxStore(store) {
 }
 
 var _store = null;
-var setStore = function setStore(store) {
+var _app = null;
+var setStore = function setStore(store, app) {
   assert(isReduxStore(store), 'the store you provider not a standrand redux store');
   _store = store;
+  _app = app;
 };
 
 function defaultMapToProps$1() {
@@ -210,10 +236,36 @@ var connect = function connect(mapStateToProps, mapDispatchToProps) {
     var ready = false;
 
     function subscribe(options) {
+      var _this = this;
+
       if (!isFunction(unsubscribe)) return null;
       var mappedState = mapState(_store.getState(), options);
-      if (isShallowInclude(this.data, mappedState)) return null;
-      this.setData(mappedState);
+      var currentState = getConnectStoreData(mappedState, this.data);
+
+      var _diff = diff(currentState, mappedState),
+          data = _diff.data,
+          empty = _diff.empty;
+
+      if (empty) return null;
+      var key = uuid();
+
+      if (_app.zoro) {
+        _app.zoro.plugin.emit(PLUGIN_EVENT.ON_WILL_CONNECT, _store, {
+          key: key,
+          name: this.route,
+          currentData: currentState,
+          nextData: mappedState
+        });
+      }
+
+      this.setData(data, function () {
+        if (_app.zoro) {
+          _app.zoro.plugin.emit(PLUGIN_EVENT.ON_DID_CONNECT, _store, {
+            key: key,
+            name: _this.route
+          });
+        }
+      });
     }
 
     function onLoad(options) {

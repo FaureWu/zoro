@@ -1,4 +1,11 @@
-import { isFunction, isShallowInclude, assert, isObject, uuid } from './util'
+import {
+  isFunction,
+  assert,
+  isObject,
+  uuid,
+  getConnectStoreData,
+  diff,
+} from './util'
 import { PLUGIN_EVENT } from './constant'
 
 function defaultMapToProps() {
@@ -25,15 +32,20 @@ export default function(store, zoro) {
         if (!isFunction(unsubscribe)) return null
 
         const mappedState = mapState(store.getState())
-        if (isShallowInclude(this.data, mappedState)) return null
+        const currentState = getConnectStoreData(mappedState, this.data)
+
+        const { data, empty } = diff(currentState, mappedState)
+        if (empty) return null
+
         const key = uuid()
         zoro.plugin.emit(PLUGIN_EVENT.ON_WILL_CONNECT, store, {
           key,
           name: this.is,
-          currentData: this.data,
+          currentData: currentState,
           nextData: mappedState,
         })
-        this.setData(mappedState, () => {
+
+        this.setData(data, () => {
           zoro.plugin.emit(PLUGIN_EVENT.ON_DID_CONNECT, store, {
             key,
             name: this.is,

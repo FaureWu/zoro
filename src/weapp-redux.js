@@ -1,5 +1,6 @@
-import { assert, isFunction, isShallowInclude } from './lib/util'
+import { assert, isFunction, getConnectStoreData, diff, uuid } from './lib/util'
 import createConnectComponent from './lib/createConnectComponent'
+import { PLUGIN_EVENT } from './lib/constant'
 
 function isReduxStore(store) {
   return ['subscribe', 'dispatch', 'getState'].every(method =>
@@ -8,14 +9,16 @@ function isReduxStore(store) {
 }
 
 let _store = null
+let _app = null
 
-export const setStore = function(store) {
+export const setStore = function(store, app) {
   assert(
     isReduxStore(store),
     'the store you provider not a standrand redux store',
   )
 
   _store = store
+  _app = app
 }
 
 function defaultMapToProps() {
@@ -39,9 +42,28 @@ export const connect = function(mapStateToProps, mapDispatchToProps) {
       if (!isFunction(unsubscribe)) return null
 
       const mappedState = mapState(_store.getState(), options)
-      if (isShallowInclude(this.data, mappedState)) return null
+      const currentState = getConnectStoreData(mappedState, this.data)
+      const { data, empty } = diff(currentState, mappedState)
+      if (empty) return null
 
-      this.setData(mappedState)
+      const key = uuid()
+      if (_app.zoro) {
+        _app.zoro.plugin.emit(PLUGIN_EVENT.ON_WILL_CONNECT, _store, {
+          key,
+          name: this.route,
+          currentData: currentState,
+          nextData: mappedState,
+        })
+      }
+
+      this.setData(data, () => {
+        if (_app.zoro) {
+          _app.zoro.plugin.emit(PLUGIN_EVENT.ON_DID_CONNECT, _store, {
+            key,
+            name: this.route,
+          })
+        }
+      })
     }
 
     function onLoad(options) {
