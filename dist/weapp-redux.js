@@ -16,6 +16,21 @@ function _extends() {
   return _extends.apply(this, arguments);
 }
 
+function _objectWithoutPropertiesLoose(source, excluded) {
+  if (source == null) return {};
+  var target = {};
+  var sourceKeys = Object.keys(source);
+  var key, i;
+
+  for (i = 0; i < sourceKeys.length; i++) {
+    key = sourceKeys[i];
+    if (excluded.indexOf(key) >= 0) continue;
+    target[key] = source[key];
+  }
+
+  return target;
+}
+
 var PLUGIN_EVENT = {
   INJECT_INITIAL_STATE: 'injectInitialState',
   BEFORE_INJECT_MODEL: 'beforeInjectModel',
@@ -86,6 +101,78 @@ function diff(current, next) {
   };
 }
 
+function getValue(key, newValue, oldValue, props, data) {
+  var _extends2, _extends3;
+
+  var values = Object.keys(props).reduce(function (result, key) {
+    result[key] = data[key];
+    return result;
+  }, {});
+  return {
+    newValues: _extends({}, values, (_extends2 = {}, _extends2[key] = newValue, _extends2)),
+    oldValues: _extends({}, values, (_extends3 = {}, _extends3[key] = oldValue, _extends3))
+  };
+}
+
+function connectObserver(config, mergeState) {
+  var properties = config.properties,
+      onObserver = config.onObserver,
+      rest = _objectWithoutPropertiesLoose(config, ["properties", "onObserver"]);
+
+  if (!isFunction(onObserver)) return config;
+  var props = Object.keys(properties).reduce(function (target, key) {
+    var prop = properties[key];
+
+    if (isFunction(prop) || prop === null) {
+      prop = {
+        type: prop
+      };
+    }
+
+    var observer = prop.observer;
+
+    prop.observer = function (newValue, oldValue, changedPath) {
+      if (isFunction(observer)) {
+        observer.call(this, newValue, oldValue, changedPath);
+      }
+
+      if (newValue !== oldValue) {
+        var _getValue = getValue(key, newValue, oldValue, props, this.data),
+            newValues = _getValue.newValues,
+            oldValues = _getValue.oldValues;
+
+        onObserver.call(this, newValues, oldValues);
+      }
+    };
+
+    target[key] = prop;
+    return target;
+  }, {});
+
+  if (isObject(mergeState)) {
+    Object.keys(mergeState).forEach(function (key) {
+      if (!props[key]) {
+        props[key] = {
+          type: null
+        };
+      }
+
+      props[key].observer = function (newValue, oldValue) {
+        if (newValue !== oldValue) {
+          var _getValue2 = getValue(key, newValue, oldValue, props, this.data),
+              newValues = _getValue2.newValues,
+              oldValues = _getValue2.oldValues;
+
+          onObserver.call(this, newValues, oldValues);
+        }
+      };
+    });
+  }
+
+  rest.properties = props;
+  return rest;
+}
+
 function defaultMapToProps() {
   return {};
 }
@@ -94,6 +181,11 @@ function createConnectComponent (store, zoro) {
   return function (mapStateToProps, mapDispatchToProps) {
     var shouldMapStateToProps = isFunction(mapStateToProps);
     var shouldMapDispatchToProps = isFunction(mapDispatchToProps);
+
+    if (!shouldMapStateToProps && !shouldMapDispatchToProps) {
+      return connectObserver;
+    }
+
     return function (config) {
       var mapState = shouldMapStateToProps ? mapStateToProps : defaultMapToProps;
       var mapDispatch = shouldMapDispatchToProps ? mapDispatchToProps : defaultMapToProps;
@@ -179,7 +271,9 @@ function createConnectComponent (store, zoro) {
         }
       }
 
-      var componentConfig = _extends({}, config, {
+      var result = connectObserver(config, mapState(store.getState()));
+
+      var componentConfig = _extends({}, result, {
         pageLifetimes: _extends({}, config.pageLifetimes),
         lifetimes: _extends({}, config.lifetimes),
         methods: _extends({}, config.methods, mapDispatch(store.dispatch))

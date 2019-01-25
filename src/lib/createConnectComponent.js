@@ -7,6 +7,7 @@ import {
   diff,
 } from './util'
 import { PLUGIN_EVENT } from './constant'
+import connectObserver from './connectObserver'
 
 function defaultMapToProps() {
   return {}
@@ -16,6 +17,10 @@ export default function(store, zoro) {
   return function(mapStateToProps, mapDispatchToProps) {
     const shouldMapStateToProps = isFunction(mapStateToProps)
     const shouldMapDispatchToProps = isFunction(mapDispatchToProps)
+
+    if (!shouldMapStateToProps && !shouldMapDispatchToProps) {
+      return connectObserver
+    }
 
     return config => {
       const mapState = shouldMapStateToProps
@@ -120,8 +125,10 @@ export default function(store, zoro) {
         }
       }
 
+      const result = connectObserver(config, mapState(store.getState()))
+
       const componentConfig = {
-        ...config,
+        ...result,
         pageLifetimes: { ...config.pageLifetimes },
         lifetimes: { ...config.lifetimes },
         methods: { ...config.methods, ...mapDispatch(store.dispatch) },
