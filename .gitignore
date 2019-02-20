@@ -4,9 +4,6 @@
 /node_modules
 
 # production
-/lib
-index.js
-example.js
 
 # misc
 .DS_Store

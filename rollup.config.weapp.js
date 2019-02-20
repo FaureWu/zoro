@@ -19,7 +19,7 @@ export default [
     output: {
       format: 'es',
       indent: false,
-      file: 'dist/zoro.js',
+      file: 'dist/zoro.weapp.js',
       exports: 'named',
     },
     plugins: [
@@ -36,7 +36,7 @@ export default [
     output: {
       format: 'es',
       indent: false,
-      file: 'dist/weapp-redux.js',
+      file: 'dist/redux.weapp.js',
     },
     plugins: [
       nodeResolve({
