@@ -2186,6 +2186,8 @@ function connectObserver(config, mergeState) {
         };
       }
 
+      if (isFunction(props[key].observer)) return;
+
       props[key].observer = function (newValue, oldValue) {
         if (newValue !== oldValue) {
           var _getValue2 = getValue(key, newValue, oldValue, props, this.data),

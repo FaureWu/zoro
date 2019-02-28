@@ -49,6 +49,7 @@ export default function connectObserver(config, mergeState) {
         props[key] = { type: null }
       }
 
+      if (isFunction(props[key].observer)) return
       props[key].observer = function(newValue, oldValue) {
         if (newValue !== oldValue) {
           const { newValues, oldValues } = getValue(
