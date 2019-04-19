@@ -7,6 +7,10 @@ const babelOption = {
   babelrc: false,
   exclude: 'node_modules/**',
   presets: [['@babel/preset-env', { modules: false, loose: true }]],
+  plugins: [
+    '@babel/plugin-proposal-object-rest-spread',
+    '@babel/plugin-proposal-class-properties',
+  ],
 }
 
 const replaceOption = {
