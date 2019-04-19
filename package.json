@@ -1,6 +1,6 @@
 {
   "name": "@opcjs/zoro",
-  "version": "2.3.4",
+  "version": "2.3.5",
   "description": "a redux framework, complete async await",
   "main": "dist/zoro.umd.js",
   "module": "dist/zoro.es.js",
@@ -87,6 +87,8 @@
     }
   },
   "commitlint": {
-    "extends": ["@commitlint/config-conventional"]
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
   }
 }

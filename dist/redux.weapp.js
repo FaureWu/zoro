@@ -1,19 +1,35 @@
-function _extends() {
-  _extends = Object.assign || function (target) {
-    for (var i = 1; i < arguments.length; i++) {
-      var source = arguments[i];
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
 
-      for (var key in source) {
-        if (Object.prototype.hasOwnProperty.call(source, key)) {
-          target[key] = source[key];
-        }
-      }
+  return obj;
+}
+
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+    var ownKeys = Object.keys(source);
+
+    if (typeof Object.getOwnPropertySymbols === 'function') {
+      ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {
+        return Object.getOwnPropertyDescriptor(source, sym).enumerable;
+      }));
     }
 
-    return target;
-  };
+    ownKeys.forEach(function (key) {
+      _defineProperty(target, key, source[key]);
+    });
+  }
 
-  return _extends.apply(this, arguments);
+  return target;
 }
 
 function _objectWithoutPropertiesLoose(source, excluded) {
@@ -72,9 +88,9 @@ var assert = function assert(validate, message) {
 function getConnectStoreData(current, pre) {
   var childks = Object.keys(current);
   return childks.reduce(function (result, key) {
-    var _extends2;
+    var _objectSpread2;
 
-    return _extends({}, result, (_extends2 = {}, _extends2[key] = pre[key], _extends2));
+    return _objectSpread({}, result, (_objectSpread2 = {}, _objectSpread2[key] = pre[key], _objectSpread2));
   }, {});
 }
 function uuid() {
@@ -102,15 +118,15 @@ function diff(current, next) {
 }
 
 function getValue(key, newValue, oldValue, props, data) {
-  var _extends2, _extends3;
+  var _objectSpread2, _objectSpread3;
 
   var values = Object.keys(props).reduce(function (result, key) {
     result[key] = data[key];
     return result;
   }, {});
   return {
-    newValues: _extends({}, values, (_extends2 = {}, _extends2[key] = newValue, _extends2)),
-    oldValues: _extends({}, values, (_extends3 = {}, _extends3[key] = oldValue, _extends3))
+    newValues: _objectSpread({}, values, (_objectSpread2 = {}, _objectSpread2[key] = newValue, _objectSpread2)),
+    oldValues: _objectSpread({}, values, (_objectSpread3 = {}, _objectSpread3[key] = oldValue, _objectSpread3))
   };
 }
 
@@ -275,10 +291,10 @@ function createConnectComponent (store, zoro) {
 
       var result = connectObserver(config, mapState(store.getState()));
 
-      var componentConfig = _extends({}, result, {
-        pageLifetimes: _extends({}, config.pageLifetimes),
-        lifetimes: _extends({}, config.lifetimes),
-        methods: _extends({}, config.methods, mapDispatch(store.dispatch))
+      var componentConfig = _objectSpread({}, result, {
+        pageLifetimes: _objectSpread({}, config.pageLifetimes),
+        lifetimes: _objectSpread({}, config.lifetimes),
+        methods: _objectSpread({}, config.methods, mapDispatch(store.dispatch))
       });
 
       if (isObject(config.lifetimes)) {
@@ -412,7 +428,7 @@ var connect = function connect(mapStateToProps, mapDispatchToProps) {
       }
     }
 
-    return _extends({}, config, mapDispatch(_store.dispatch), {
+    return _objectSpread({}, config, mapDispatch(_store.dispatch), {
       onLoad: onLoad,
       onUnload: onUnload,
       onShow: onShow,

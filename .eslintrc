@@ -5,6 +5,7 @@
     "plugin:jest/recommended"
   ],
   "rules": {
+    "no-extend-native": 0,
     "prettier/prettier": [
       "error",
       {

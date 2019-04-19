@@ -684,6 +684,75 @@ Context.prototype = {
 };
 var runtime$1 = runtime;
 
+if (typeof Promise !== 'function') {
+  throw new TypeError('A global Promise is required');
+}
+
+if (typeof Promise.prototype.finally !== 'function') {
+  var speciesConstructor = function speciesConstructor(O, defaultConstructor) {
+    if (!O || typeof O !== 'object' && typeof O !== 'function') {
+      throw new TypeError('Assertion failed: Type(O) is not Object');
+    }
+
+    var C = O.constructor;
+
+    if (typeof C === 'undefined') {
+      return defaultConstructor;
+    }
+
+    if (!C || typeof C !== 'object' && typeof C !== 'function') {
+      throw new TypeError('O.constructor is not an Object');
+    }
+
+    var S = typeof Symbol === 'function' && typeof Symbol.species === 'symbol' ? C[Symbol.species] : undefined;
+
+    if (S == null) {
+      return defaultConstructor;
+    }
+
+    if (typeof S === 'function' && S.prototype) {
+      return S;
+    }
+
+    throw new TypeError('no constructor found');
+  };
+
+  var shim = {
+    finally: function _finally(onFinally) {
+      var promise = this;
+
+      if (typeof promise !== 'object' || promise === null) {
+        throw new TypeError('"this" value is not an Object');
+      }
+
+      var C = speciesConstructor(promise, Promise); // throws if SpeciesConstructor throws
+
+      if (typeof onFinally !== 'function') {
+        return Promise.prototype.then.call(promise, onFinally, onFinally);
+      }
+
+      return Promise.prototype.then.call(promise, function (x) {
+        return new C(function (resolve) {
+          return resolve(onFinally());
+        }).then(function () {
+          return x;
+        });
+      }, function (e) {
+        return new C(function (resolve) {
+          return resolve(onFinally());
+        }).then(function () {
+          throw e;
+        });
+      });
+    }
+  };
+  Object.defineProperty(Promise.prototype, 'finally', {
+    configurable: true,
+    writable: true,
+    value: shim.finally
+  });
+}
+
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
   try {
     var info = gen[key](arg);
@@ -720,22 +789,38 @@ function _asyncToGenerator(fn) {
   };
 }
 
-function _extends() {
-  _extends = Object.assign || function (target) {
-    for (var i = 1; i < arguments.length; i++) {
-      var source = arguments[i];
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
 
-      for (var key in source) {
-        if (Object.prototype.hasOwnProperty.call(source, key)) {
-          target[key] = source[key];
-        }
-      }
+  return obj;
+}
+
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+    var ownKeys = Object.keys(source);
+
+    if (typeof Object.getOwnPropertySymbols === 'function') {
+      ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {
+        return Object.getOwnPropertyDescriptor(source, sym).enumerable;
+      }));
     }
 
-    return target;
-  };
+    ownKeys.forEach(function (key) {
+      _defineProperty(target, key, source[key]);
+    });
+  }
 
-  return _extends.apply(this, arguments);
+  return target;
 }
 
 function _objectWithoutPropertiesLoose(source, excluded) {
@@ -1458,12 +1543,12 @@ function putCreator(store, namespace) {
         warn(false, "we don't need the dispatch with namespace, if you call in the model, [" + type + "]");
       }
 
-      return store.dispatch(_extends({
+      return store.dispatch(_objectSpread({
         type: type
       }, rest));
     }
 
-    return store.dispatch(_extends({
+    return store.dispatch(_objectSpread({
       type: "" + namespace + NAMESPACE_DIVIDER + type
     }, rest));
   };
@@ -1557,7 +1642,7 @@ function () {
     this.defaultState = state;
     this.reducers = this.createReducer(reducers);
     this.effects = this.createEffects(effects);
-    this.actions = this.createActions(_extends({}, reducers, effects));
+    this.actions = this.createActions(_objectSpread({}, reducers, effects));
     this.handleSetup = setup;
   }
 
@@ -1591,14 +1676,14 @@ function () {
     var _this = this;
 
     var _reducers = Object.keys(reducers).reduce(function (combine, key) {
-      var _extends2;
+      var _objectSpread2;
 
       var reducer = reducers[key];
 
       var type = _this.createActionType(key);
 
       assert(isFunction(reducer), "the reducer must be an function, but we get " + typeof reducer + " with type " + type);
-      return _extends({}, combine, (_extends2 = {}, _extends2[type] = reducer, _extends2));
+      return _objectSpread({}, combine, (_objectSpread2 = {}, _objectSpread2[type] = reducer, _objectSpread2));
     }, {});
 
     return _createReducer(this.defaultState || null, _reducers);
@@ -1608,16 +1693,16 @@ function () {
     var _that = this;
 
     return Object.keys(actions).reduce(function (combine, name) {
-      var _extends3;
+      var _objectSpread3;
 
-      return _extends({}, combine, (_extends3 = {}, _extends3[name] = function (payload, meta, error) {
+      return _objectSpread({}, combine, (_objectSpread3 = {}, _objectSpread3[name] = function (payload, meta, error) {
         return {
           type: _that.createActionType(name),
           payload: payload,
           meta: meta,
           error: error
         };
-      }, _extends3));
+      }, _objectSpread3));
     }, {});
   };
 
@@ -1625,14 +1710,14 @@ function () {
     var _this2 = this;
 
     return Object.keys(effects).reduce(function (combine, key) {
-      var _extends4;
+      var _objectSpread4;
 
       var effect = effects[key];
 
       var type = _this2.createActionType(key);
 
       assert(isFunction(effect), "the effect must be an function, but we get " + typeof effect + " with type " + type);
-      return _extends({}, combine, (_extends4 = {}, _extends4[type] = effect, _extends4));
+      return _objectSpread({}, combine, (_objectSpread4 = {}, _objectSpread4[type] = effect, _objectSpread4));
     }, {});
   };
 
@@ -1774,7 +1859,7 @@ function _doneEffect() {
           case 7:
             resolveAction = _context.sent;
             assert(isUndefined(resolveAction) || isAction(resolveAction), 'the effect intercept return must be an action or none');
-            targetAction = _extends({}, action, resolveAction, {
+            targetAction = _objectSpread({}, action, resolveAction, {
               type: action.type
             });
             _splitType = splitType(action.type), namespace = _splitType.namespace;
@@ -1842,7 +1927,7 @@ function effectMiddlewareCreator (zoro) {
         });
         assert(isUndefined(resolveAction) || isAction(resolveAction), 'the action intercept return must be an action or none');
 
-        var targetAction = _extends({}, action, resolveAction, {
+        var targetAction = _objectSpread({}, action, resolveAction, {
           type: type
         });
 
@@ -1932,7 +2017,7 @@ function () {
     var _this = this;
 
     var rootReducer = Object.keys(this.models).reduce(function (combine, namespace) {
-      var _extends2;
+      var _objectSpread2;
 
       var model = _this.models[namespace];
       var reducers = model.getReducers();
@@ -1949,7 +2034,7 @@ function () {
         targetResolveReducers = resolveReducers;
       }
 
-      return _extends({}, combine, (_extends2 = {}, _extends2[namespace] = targetResolveReducers, _extends2));
+      return _objectSpread({}, combine, (_objectSpread2 = {}, _objectSpread2[namespace] = targetResolveReducers, _objectSpread2));
     }, {});
     return combineReducers(rootReducer);
   };
@@ -1962,9 +2047,9 @@ function () {
       var modelState = model.getDefaultState();
 
       if (modelState !== undefined) {
-        var _extends3;
+        var _objectSpread3;
 
-        return _extends({}, defaultState, (_extends3 = {}, _extends3[namespace] = model.getDefaultState(), _extends3));
+        return _objectSpread({}, defaultState, (_objectSpread3 = {}, _objectSpread3[namespace] = model.getDefaultState(), _objectSpread3));
       }
 
       return defaultState;
@@ -2023,7 +2108,7 @@ function () {
       assertModelUnique(_this4, model);
       _this4.models[namespace] = model;
       models[namespace] = model;
-      _this4.effects = _extends({}, _this4.effects, model.getEffects());
+      _this4.effects = _objectSpread({}, _this4.effects, model.getEffects());
 
       _this4.plugin.emit(PLUGIN_EVENT.ON_CREATE_MODEL, model);
     });
@@ -2049,7 +2134,7 @@ function () {
       rootReducer: rootReducer,
       middlewares: this.middlewares,
       enhancers: this.enhancers,
-      initialState: _extends({}, this.initialState, pluginInitialState || {}, this.getDefaultState())
+      initialState: _objectSpread({}, this.initialState, pluginInitialState || {}, this.getDefaultState())
     });
   };
 
@@ -2133,12 +2218,12 @@ function dispatcherCreator (namespace, model, zoro) {
   if (!actionCache[namespace]) {
     var actions = model.getActions();
     actionCache[namespace] = Object.keys(actions).reduce(function (dispatcher, name) {
-      var _extends2;
+      var _objectSpread2;
 
-      return _extends({}, dispatcher, (_extends2 = {}, _extends2[name] = function () {
+      return _objectSpread({}, dispatcher, (_objectSpread2 = {}, _objectSpread2[name] = function () {
         assert(!!zoro.store, "dispatch action must be call after app.start()");
         return zoro.store.dispatch(actions[name].apply(actions, arguments));
-      }, _extends2));
+      }, _objectSpread2));
     }, {});
   }
 

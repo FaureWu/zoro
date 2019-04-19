@@ -1,3 +1,4 @@
+import './pollyfill'
 import Zoro from './zoro'
 import dispatcherCreator from './dispatcherCreator'
 import { PLUGIN_EVENT, INTERCEPT_ACTION, INTERCEPT_EFFECT } from './constant'
