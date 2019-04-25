@@ -8,6 +8,7 @@
   * [接入taro](GUIDE/TARO.md)
   * [接入wepy](GUIDE/WEPY.md)
   * [接入微信原生小程序](GUIDE/WEAPP.md)
+  * [接入umi框架](GUIDE/UMI.md)
 * API
   * [ZORO API](API/README.md)
   * [MODEL API文档](API/MODEL.md)

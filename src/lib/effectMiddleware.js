@@ -44,9 +44,10 @@ async function doneEffect(zoro, action, effect) {
     })
     return Promise.resolve(result)
   } catch (e) {
-    handleError(e)
+    const isReject = handleError(e)
     zoro.plugin.emit(PLUGIN_EVENT.ON_ERROR, e, action, store)
-    return Promise.reject(e)
+
+    if (isReject !== false) return Promise.reject(e)
   } finally {
     zoro.plugin.emit(PLUGIN_EVENT.ON_DID_EFFECT, action, store, { key })
   }

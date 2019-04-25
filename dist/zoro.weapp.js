@@ -1837,7 +1837,7 @@ function _doneEffect() {
   _doneEffect = _asyncToGenerator(
   /*#__PURE__*/
   regeneratorRuntime.mark(function _callee(zoro, action, effect) {
-    var store, handleEffect, handleIntercepts, handleError, key, effectIntercept, resolveAction, targetAction, _splitType, namespace, result;
+    var store, handleEffect, handleIntercepts, handleError, key, effectIntercept, resolveAction, targetAction, _splitType, namespace, result, isReject;
 
     return regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
@@ -1878,23 +1878,29 @@ function _doneEffect() {
           case 18:
             _context.prev = 18;
             _context.t0 = _context["catch"](11);
-            handleError(_context.t0);
+            isReject = handleError(_context.t0);
             zoro.plugin.emit(PLUGIN_EVENT.ON_ERROR, _context.t0, action, store);
+
+            if (!(isReject !== false)) {
+              _context.next = 24;
+              break;
+            }
+
             return _context.abrupt("return", Promise.reject(_context.t0));
 
-          case 23:
-            _context.prev = 23;
+          case 24:
+            _context.prev = 24;
             zoro.plugin.emit(PLUGIN_EVENT.ON_DID_EFFECT, action, store, {
               key: key
             });
-            return _context.finish(23);
+            return _context.finish(24);
 
-          case 26:
+          case 27:
           case "end":
             return _context.stop();
         }
       }
-    }, _callee, this, [[11, 18, 23, 26]]);
+    }, _callee, this, [[11, 18, 24, 27]]);
   }));
   return _doneEffect.apply(this, arguments);
 }
