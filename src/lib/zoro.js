@@ -178,17 +178,10 @@ export default class Zoro {
       isArray(models),
       `the models must be an Array, but we get ${typeof models}`,
     )
-    const newModelOpts = []
-    models.forEach(opts => {
-      const modelOpts =
-        this.plugin.emitLoop(PLUGIN_EVENT.BEFORE_INJECT_MODEL, opts) || opts
-      this.modelOpts.push(modelOpts)
-      newModelOpts.push(modelOpts)
-      this.plugin.emit(PLUGIN_EVENT.AFTER_INJECT_MODEL, modelOpts)
-    })
+    this.modelOpts = this.modelOpts.concat(models)
 
     if (this.store) {
-      const newModels = this.createModels(newModelOpts)
+      const newModels = this.createModels(models)
       this.replaceReducer()
 
       if (this._isSetup) {
@@ -216,13 +209,16 @@ export default class Zoro {
 
   createModels(modelOpts) {
     const models = {}
-    modelOpts.forEach(opts => {
-      const model = new Model(opts)
+    modelOpts.forEach(option => {
+      const modelOption =
+        this.plugin.emitLoop(PLUGIN_EVENT.BEFORE_INJECT_MODEL, option) || option
+      const model = new Model(modelOption)
       const namespace = model.getNamespace()
       assertModelUnique(this, model)
       this.models[namespace] = model
       models[namespace] = model
       this.effects = { ...this.effects, ...model.getEffects() }
+      this.plugin.emit(PLUGIN_EVENT.AFTER_INJECT_MODEL, modelOpts)
       this.plugin.emit(PLUGIN_EVENT.ON_CREATE_MODEL, model)
     })
 
