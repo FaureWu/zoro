@@ -440,4 +440,4 @@ var connectComponent = function connectComponent(mapStateToProps, mapDispatchToP
   return createConnectComponent(_store)(mapStateToProps, mapDispatchToProps);
 };
 
-export { setStore, connect, connectComponent };
+export { connect, connectComponent, setStore };

@@ -14,7 +14,7 @@
         "trailingComma": "all",
         "bracketSpacing": true,
         "jsxBracketSameLine": false,
-        "parser": "babylon",
+        "parser": "babel",
         "semi": false
       }
     ]
