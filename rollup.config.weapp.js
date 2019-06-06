@@ -28,7 +28,7 @@ export default [
     },
     plugins: [
       nodeResolve({
-        jsnext: true,
+        mainFields: ['module', 'main', 'jsnext'],
       }),
       babel(babelOption),
       replace(replaceOption),
@@ -44,7 +44,7 @@ export default [
     },
     plugins: [
       nodeResolve({
-        jsnext: true,
+        mainFields: ['module', 'main', 'jsnext'],
       }),
       babel(babelOption),
       replace(replaceOption),
