@@ -48,4 +48,3 @@
 ## License
 
 [MIT](https://tldrlegal.com/license/mit-license)
-[996](https://github.com/996icu/996.ICU/blob/master/LICENSE)
