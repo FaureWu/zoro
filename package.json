@@ -1,6 +1,6 @@
 {
   "name": "@opcjs/zoro",
-  "version": "2.3.9",
+  "version": "2.3.10",
   "description": "a redux framework, complete async await",
   "main": "dist/zoro.umd.js",
   "module": "dist/zoro.es.js",
@@ -15,11 +15,13 @@
     "frontend"
   ],
   "scripts": {
-    "build": "npm run clean && cross-env NODE_ENV=production rollup --config rollup.config.js && rollup --config rollup.config.weapp.js",
+    "build": "npm run clean && cross-env NODE_ENV=production rollup --config rollup.config.js && npm run build:weapp",
+    "build:weapp": "cross-env-shell NODE_ENV=production \"rollup --config rollup.config.weapp.js && gulp replace:code\"",
     "clean": "rm -rf ./dist",
-    "release": "npm run lint && npm run build && npm publish --access=public",
+    "release": "npm run lint && npm run docs && npm run build && npm publish --access=public",
     "lint": "eslint src",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
+    "docs": "rm -rf docs && gitbook build ./book && gulp copy:book",
     "test": "jest"
   },
   "author": "Faure Wu <502556093@qq.com>",
@@ -54,6 +56,7 @@
     "eslint-plugin-prettier": "^3.1.0",
     "eslint-plugin-promise": "^4.1.1",
     "eslint-plugin-standard": "^4.0.0",
+    "gitbook-cli": "^2.3.2",
     "gulp": "^4.0.2",
     "gulp-replace-string": "^0.6.1",
     "husky": "^2.4.0",

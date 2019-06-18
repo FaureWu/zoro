@@ -116,6 +116,10 @@ function diff(current, next) {
     data: data
   };
 }
+function isZoroApp(app) {
+  if (app && app.zoro) return true;
+  return false;
+}
 
 function getValue(key, newValue, oldValue, props, data) {
   var _objectSpread2, _objectSpread3;
@@ -223,17 +227,23 @@ function createConnectComponent (store, zoro) {
 
         if (empty) return null;
         var key = uuid();
-        zoro.plugin.emit(PLUGIN_EVENT.ON_WILL_CONNECT, store, {
-          key: key,
-          name: this.is,
-          currentData: currentState,
-          nextData: mappedState
-        });
-        this.setData(data, function () {
-          zoro.plugin.emit(PLUGIN_EVENT.ON_DID_CONNECT, store, {
+
+        if (zoro) {
+          zoro.plugin.emit(PLUGIN_EVENT.ON_WILL_CONNECT, store, {
             key: key,
-            name: _this.is
+            name: this.is,
+            currentData: currentState,
+            nextData: mappedState
           });
+        }
+
+        this.setData(data, function () {
+          if (zoro) {
+            zoro.plugin.emit(PLUGIN_EVENT.ON_DID_CONNECT, store, {
+              key: key,
+              name: _this.is
+            });
+          }
         });
       }
 
@@ -330,8 +340,9 @@ var _store = null;
 var _app = null;
 var setStore = function setStore(store, app) {
   assert(isReduxStore(store), 'the store you provider not a standrand redux store');
+  assert(app === undefined || isZoroApp(app), 'the setStore second param not a standrand zoro app');
   _store = store;
-  _app = app;
+  if (isZoroApp(app)) _app = app;
 };
 
 function defaultMapToProps$1() {
@@ -361,7 +372,7 @@ var connect = function connect(mapStateToProps, mapDispatchToProps) {
       if (empty) return null;
       var key = uuid();
 
-      if (_app.zoro) {
+      if (isZoroApp(_app)) {
         _app.zoro.plugin.emit(PLUGIN_EVENT.ON_WILL_CONNECT, _store, {
           key: key,
           name: this.route,
@@ -371,7 +382,7 @@ var connect = function connect(mapStateToProps, mapDispatchToProps) {
       }
 
       this.setData(data, function () {
-        if (_app.zoro) {
+        if (isZoroApp(_app)) {
           _app.zoro.plugin.emit(PLUGIN_EVENT.ON_DID_CONNECT, _store, {
             key: key,
             name: _this.route
@@ -437,6 +448,7 @@ var connect = function connect(mapStateToProps, mapDispatchToProps) {
   };
 };
 var connectComponent = function connectComponent(mapStateToProps, mapDispatchToProps) {
+  if (isZoroApp(_app)) return createConnectComponent(_store, _app.zoro)(mapStateToProps, mapDispatchToProps);
   return createConnectComponent(_store)(mapStateToProps, mapDispatchToProps);
 };
 

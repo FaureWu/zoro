@@ -43,18 +43,22 @@ export default function(store, zoro) {
         if (empty) return null
 
         const key = uuid()
-        zoro.plugin.emit(PLUGIN_EVENT.ON_WILL_CONNECT, store, {
-          key,
-          name: this.is,
-          currentData: currentState,
-          nextData: mappedState,
-        })
-
-        this.setData(data, () => {
-          zoro.plugin.emit(PLUGIN_EVENT.ON_DID_CONNECT, store, {
+        if (zoro) {
+          zoro.plugin.emit(PLUGIN_EVENT.ON_WILL_CONNECT, store, {
             key,
             name: this.is,
+            currentData: currentState,
+            nextData: mappedState,
           })
+        }
+
+        this.setData(data, () => {
+          if (zoro) {
+            zoro.plugin.emit(PLUGIN_EVENT.ON_DID_CONNECT, store, {
+              key,
+              name: this.is,
+            })
+          }
         })
       }
 

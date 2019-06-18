@@ -55,3 +55,6 @@ Component(config)
 * mapStateToCom(handler) `<Function>` 使用方法同`mapStateToPage`
 * mapDispatchToCom(handler) `<Function>` 使用方法同`mapDispatchToPage`，请使用`dispatcher`代替
 
+## 特别提示
+
+connect及connectComponent为了减少重复渲染，内部会做浅对比

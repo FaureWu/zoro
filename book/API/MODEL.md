@@ -53,6 +53,8 @@ state是model初始值，优先级如下：initial state < plugin state < model 
   put({ type: 'modelName/asyncActionName' }) // 触发外部model中的异步action
   ```
 
+  `action参数举例{ type, payload, meta, error }符合标准action定义`
+
 * options.select(handler) `<Function>`
 
   用于获取本model中的state
