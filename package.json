@@ -15,10 +15,10 @@
     "frontend"
   ],
   "scripts": {
-    "build": "npm run clean && cross-env NODE_ENV=production rollup --config rollup.config.js && rollup --config rollup.config.weapp.js",
+    "build": "npm run clean && cross-env NODE_ENV=production rollup --config rollup.config.ts",
     "clean": "rm -rf ./dist",
     "release": "npm run lint && npm run build && npm publish --access=public",
-    "lint": "eslint src",
+    "lint": "eslint src --ext .ts",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
     "test": "jest"
   },
@@ -26,8 +26,7 @@
   "license": "MIT",
   "homepage": "https://github.com/FaureWu/zoro.git",
   "dependencies": {
-    "redux": "^4.0.0",
-    "regenerator-runtime": "^0.13.2"
+    "redux": "^4.0.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.4.4",
@@ -38,7 +37,10 @@
     "@babel/preset-env": "^7.4.5",
     "@commitlint/cli": "^8.0.0",
     "@commitlint/config-conventional": "^8.0.0",
+    "@typescript-eslint/eslint-plugin": "^1.10.2",
+    "@typescript-eslint/parser": "^1.10.2",
     "babel-core": "^7.0.0-0",
+    "babel-eslint": "^10.0.2",
     "babel-jest": "^24.8.0",
     "commitizen": "^3.1.1",
     "conventional-changelog": "^3.1.8",
@@ -46,24 +48,18 @@
     "cross-env": "^5.2.0",
     "cz-conventional-changelog": "^2.1.0",
     "eslint": "^5.16.0",
-    "eslint-config-prettier": "^4.3.0",
-    "eslint-config-standard": "^12.0.0",
-    "eslint-plugin-import": "^2.17.3",
-    "eslint-plugin-jest": "^22.6.4",
-    "eslint-plugin-node": "^9.1.0",
-    "eslint-plugin-prettier": "^3.1.0",
-    "eslint-plugin-promise": "^4.1.1",
-    "eslint-plugin-standard": "^4.0.0",
+    "eslint-config-alloy": "^2.0.4",
     "gulp": "^4.0.2",
     "gulp-replace-string": "^0.6.1",
     "husky": "^2.4.0",
     "jest": "^24.8.0",
-    "prettier": "^1.17.1",
     "rollup": "^1.14.2",
     "rollup-plugin-babel": "^4.3.2",
     "rollup-plugin-commonjs": "^10.0.0",
     "rollup-plugin-node-resolve": "^5.0.1",
-    "rollup-plugin-replace": "^2.2.0"
+    "rollup-plugin-replace": "^2.2.0",
+    "rollup-plugin-typescript2": "^0.21.1",
+    "typescript": "^3.5.2"
   },
   "directories": {
     "doc": "doc"
@@ -82,7 +78,6 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run lint",
       "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
     }
   },

@@ -2,6 +2,7 @@ import babel from 'rollup-plugin-babel'
 import nodeResolve from 'rollup-plugin-node-resolve'
 import replace from 'rollup-plugin-replace'
 import commonjs from 'rollup-plugin-commonjs'
+import typescript from 'rollup-plugin-typescript2'
 
 const pkg = require('./package.json')
 
@@ -10,7 +11,7 @@ const replaceOption = {
 }
 
 export default {
-  input: 'src/index.js',
+  input: 'src/index.ts',
   output: [
     { file: pkg.main, format: 'umd', name: 'zoro', exports: 'named' },
     { file: pkg.module, format: 'es', exports: 'named' },
@@ -19,7 +20,7 @@ export default {
     nodeResolve({
       mainFields: ['module', 'main', 'jsnext'],
     }),
-    babel(),
+    typescript(),
     replace(replaceOption),
     commonjs(),
   ],

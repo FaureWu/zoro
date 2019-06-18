@@ -1,22 +1,8 @@
 {
   "extends": [
-    "standard",
-    "plugin:prettier/recommended",
-    "plugin:jest/recommended"
+    "eslint-config-alloy/typescript"
   ],
   "rules": {
-    "no-extend-native": 0,
-    "prettier/prettier": [
-      "error",
-      {
-        "printWidth": 80,
-        "singleQuote": true,
-        "trailingComma": "all",
-        "bracketSpacing": true,
-        "jsxBracketSameLine": false,
-        "parser": "babel",
-        "semi": false
-      }
-    ]
+    "@typescript-eslint/indent": ["error", 2, { "SwitchCase": 1, "flatTernaryExpressions": true }]
   }
 }
