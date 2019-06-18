@@ -21,7 +21,7 @@
     "release": "npm run lint && npm run docs && npm run build && npm publish --access=public",
     "lint": "eslint src",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
-    "docs": "rm -rf docs && gitbook build ./book && gulp copy:book",
+    "docs": "rm -rf docs && gitbook build ./book && gulp copy:book && rm -rf ./book/_book",
     "test": "jest"
   },
   "author": "Faure Wu <502556093@qq.com>",
