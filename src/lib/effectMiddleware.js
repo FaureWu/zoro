@@ -16,6 +16,7 @@ import {
 } from './constant'
 
 async function doneEffectIntercepts(intercepts, action, options) {
+  if (intercepts.length <= 0) return
   const asyncIntercepts = intercepts.slice(0)
   let resolveAction
   async function doneEffectIntercept() {

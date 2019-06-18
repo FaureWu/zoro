@@ -1804,14 +1804,22 @@ function _doneEffectIntercepts() {
               return _doneEffectIntercept.apply(this, arguments);
             };
 
+            if (!(intercepts.length <= 0)) {
+              _context2.next = 4;
+              break;
+            }
+
+            return _context2.abrupt("return");
+
+          case 4:
             asyncIntercepts = intercepts.slice(0);
-            _context2.next = 5;
+            _context2.next = 7;
             return doneEffectIntercept();
 
-          case 5:
+          case 7:
             return _context2.abrupt("return", resolveAction);
 
-          case 6:
+          case 8:
           case "end":
             return _context2.stop();
         }
