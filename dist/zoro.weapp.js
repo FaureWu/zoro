@@ -1751,19 +1751,89 @@ var _createStore = (function (_ref) {
   return store;
 });
 
-function doneEffect(_x, _x2, _x3) {
+function doneEffectIntercepts(_x, _x2, _x3) {
+  return _doneEffectIntercepts.apply(this, arguments);
+}
+
+function _doneEffectIntercepts() {
+  _doneEffectIntercepts = _asyncToGenerator(
+  /*#__PURE__*/
+  regeneratorRuntime.mark(function _callee2(intercepts, action, options) {
+    var asyncIntercepts, resolveAction, doneEffectIntercept, _doneEffectIntercept;
+
+    return regeneratorRuntime.wrap(function _callee2$(_context2) {
+      while (1) {
+        switch (_context2.prev = _context2.next) {
+          case 0:
+            _doneEffectIntercept = function _ref3() {
+              _doneEffectIntercept = _asyncToGenerator(
+              /*#__PURE__*/
+              regeneratorRuntime.mark(function _callee() {
+                var asyncIntercept;
+                return regeneratorRuntime.wrap(function _callee$(_context) {
+                  while (1) {
+                    switch (_context.prev = _context.next) {
+                      case 0:
+                        asyncIntercept = asyncIntercepts.shift();
+                        _context.next = 3;
+                        return asyncIntercept(resolveAction || action, options);
+
+                      case 3:
+                        resolveAction = _context.sent;
+                        assert(isUndefined(resolveAction) || isAction(resolveAction), 'the effect intercept return must be an action or none');
+
+                        if (!(asyncIntercepts.length > 0)) {
+                          _context.next = 8;
+                          break;
+                        }
+
+                        _context.next = 8;
+                        return doneEffectIntercept();
+
+                      case 8:
+                      case "end":
+                        return _context.stop();
+                    }
+                  }
+                }, _callee);
+              }));
+              return _doneEffectIntercept.apply(this, arguments);
+            };
+
+            doneEffectIntercept = function _ref2() {
+              return _doneEffectIntercept.apply(this, arguments);
+            };
+
+            asyncIntercepts = intercepts.slice(0);
+            _context2.next = 5;
+            return doneEffectIntercept();
+
+          case 5:
+            return _context2.abrupt("return", resolveAction);
+
+          case 6:
+          case "end":
+            return _context2.stop();
+        }
+      }
+    }, _callee2);
+  }));
+  return _doneEffectIntercepts.apply(this, arguments);
+}
+
+function doneEffect(_x4, _x5, _x6) {
   return _doneEffect.apply(this, arguments);
 }
 
 function _doneEffect() {
   _doneEffect = _asyncToGenerator(
   /*#__PURE__*/
-  regeneratorRuntime.mark(function _callee(zoro, action, effect) {
-    var store, handleEffect, handleIntercepts, handleError, key, effectIntercept, resolveAction, targetAction, _splitType, namespace, result, isReject;
+  regeneratorRuntime.mark(function _callee3(zoro, action, effect) {
+    var store, handleEffect, handleIntercepts, handleError, key, effectIntercepts, resolveAction, targetAction, _splitType, namespace, result;
 
-    return regeneratorRuntime.wrap(function _callee$(_context) {
+    return regeneratorRuntime.wrap(function _callee3$(_context3) {
       while (1) {
-        switch (_context.prev = _context.next) {
+        switch (_context3.prev = _context3.next) {
           case 0:
             store = zoro.store, handleEffect = zoro.handleEffect, handleIntercepts = zoro.handleIntercepts, handleError = zoro.handleError;
             key = uuid();
@@ -1771,60 +1841,61 @@ function _doneEffect() {
               key: key
             });
             handleEffect(action);
-            effectIntercept = handleIntercepts[INTERCEPT_EFFECT] || noop;
-            _context.next = 7;
-            return effectIntercept(action, {
+            effectIntercepts = handleIntercepts[INTERCEPT_EFFECT] || [];
+            _context3.next = 7;
+            return doneEffectIntercepts(effectIntercepts, action, {
               store: store,
               NAMESPACE_DIVIDER: NAMESPACE_DIVIDER
             });
 
           case 7:
-            resolveAction = _context.sent;
-            assert(isUndefined(resolveAction) || isAction(resolveAction), 'the effect intercept return must be an action or none');
+            resolveAction = _context3.sent;
             targetAction = _objectSpread({}, action, resolveAction, {
               type: action.type
             });
             _splitType = splitType(action.type), namespace = _splitType.namespace;
-            _context.prev = 11;
-            _context.next = 14;
+            _context3.prev = 10;
+            _context3.next = 13;
             return effect(targetAction, {
               selectAll: selectCreator(store),
               select: selectCreator(store, namespace),
               put: putCreator(store, namespace)
             });
 
-          case 14:
-            result = _context.sent;
-            return _context.abrupt("return", Promise.resolve(result));
+          case 13:
+            result = _context3.sent;
+            return _context3.abrupt("return", Promise.resolve(result));
 
-          case 18:
-            _context.prev = 18;
-            _context.t0 = _context["catch"](11);
-            isReject = handleError(_context.t0);
-            zoro.plugin.emit(PLUGIN_EVENT.ON_ERROR, _context.t0, action, store);
+          case 17:
+            _context3.prev = 17;
+            _context3.t0 = _context3["catch"](10);
+            handleError(_context3.t0);
+            zoro.plugin.emit(PLUGIN_EVENT.ON_ERROR, _context3.t0, action, store);
+            return _context3.abrupt("return", Promise.reject(_context3.t0));
 
-            if (!(isReject !== false)) {
-              _context.next = 24;
-              break;
-            }
-
-            return _context.abrupt("return", Promise.reject(_context.t0));
-
-          case 24:
-            _context.prev = 24;
+          case 22:
+            _context3.prev = 22;
             zoro.plugin.emit(PLUGIN_EVENT.ON_DID_EFFECT, action, store, {
               key: key
             });
-            return _context.finish(24);
+            return _context3.finish(22);
 
-          case 27:
+          case 25:
           case "end":
-            return _context.stop();
+            return _context3.stop();
         }
       }
-    }, _callee, null, [[11, 18, 24, 27]]);
+    }, _callee3, null, [[10, 17, 22, 25]]);
   }));
   return _doneEffect.apply(this, arguments);
+}
+
+function doneActionIntercepts(intercepts, action, options) {
+  return intercepts.reduce(function (resolveAction, actionIntercept) {
+    var newResolveAction = actionIntercept(resolveAction, options);
+    assert(isUndefined(newResolveAction) || isAction(newResolveAction), 'the action intercept return must be an action or none');
+    return newResolveAction || resolveAction;
+  }, action);
 }
 
 function effectMiddlewareCreator (zoro) {
@@ -1848,12 +1919,11 @@ function effectMiddlewareCreator (zoro) {
           key: key
         });
         handleAction(action);
-        var actionIntercept = handleIntercepts[INTERCEPT_ACTION] || noop;
-        var resolveAction = actionIntercept(action, {
+        var actionIntercepts = handleIntercepts[INTERCEPT_ACTION] || [];
+        var resolveAction = doneActionIntercepts(actionIntercepts, action, {
           store: store,
           NAMESPACE_DIVIDER: NAMESPACE_DIVIDER
         });
-        assert(isUndefined(resolveAction) || isAction(resolveAction), 'the action intercept return must be an action or none');
 
         var targetAction = _objectSpread({}, action, resolveAction, {
           type: type
@@ -1987,8 +2057,8 @@ function () {
   _proto.setIntercept = function setIntercept(type, handler) {
     assert(INTERCEPT_TYPE.indexOf(type) !== -1, "we get an unkown intercept type, it's " + type);
     assert(isFunction(handler), "the intercept must be a Function, but we get " + typeof handler);
-    assert(!isFunction(this.handleIntercepts[type]), 'you can only set an one intercept for one type');
-    this.handleIntercepts[type] = handler;
+    if (!isArray(this.handleIntercepts[type])) this.handleIntercepts[type] = [];
+    this.handleIntercepts[type].push(handler);
   };
 
   _proto.injectModels = function injectModels(models) {
