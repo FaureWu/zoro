@@ -1,4 +1,11 @@
-import { assert, isFunction, getConnectStoreData, diff, uuid } from './lib/util'
+import {
+  assert,
+  isFunction,
+  getConnectStoreData,
+  diff,
+  uuid,
+  isZoroApp,
+} from './lib/util'
 import createConnectComponent from './lib/createConnectComponent'
 import { PLUGIN_EVENT } from './lib/constant'
 
@@ -17,8 +24,13 @@ export const setStore = function(store, app) {
     'the store you provider not a standrand redux store',
   )
 
+  assert(
+    app === undefined || isZoroApp(app),
+    'the setStore second param not a standrand zoro app',
+  )
+
   _store = store
-  _app = app
+  if (isZoroApp(app)) _app = app
 }
 
 function defaultMapToProps() {
@@ -47,7 +59,7 @@ export const connect = function(mapStateToProps, mapDispatchToProps) {
       if (empty) return null
 
       const key = uuid()
-      if (_app.zoro) {
+      if (isZoroApp(_app)) {
         _app.zoro.plugin.emit(PLUGIN_EVENT.ON_WILL_CONNECT, _store, {
           key,
           name: this.route,
@@ -57,7 +69,7 @@ export const connect = function(mapStateToProps, mapDispatchToProps) {
       }
 
       this.setData(data, () => {
-        if (_app.zoro) {
+        if (isZoroApp(_app)) {
           _app.zoro.plugin.emit(PLUGIN_EVENT.ON_DID_CONNECT, _store, {
             key,
             name: this.route,
@@ -126,5 +138,10 @@ export const connect = function(mapStateToProps, mapDispatchToProps) {
 }
 
 export const connectComponent = function(mapStateToProps, mapDispatchToProps) {
+  if (isZoroApp(_app))
+    return createConnectComponent(_store, _app.zoro)(
+      mapStateToProps,
+      mapDispatchToProps,
+    )
   return createConnectComponent(_store)(mapStateToProps, mapDispatchToProps)
 }

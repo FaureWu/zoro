@@ -156,3 +156,9 @@ export function diff(current, next) {
 
   return { empty, data }
 }
+
+export function isZoroApp(app) {
+  if (app && app.zoro) return true
+
+  return false
+}

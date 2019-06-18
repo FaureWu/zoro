@@ -65,6 +65,7 @@ app.model(user)
 const store = app.start(false)
 
 setStore(store)
+// setStore(store, app) // 如果你使用了性能辅助插件zoro-perf，请使用这行代码，在发布时还原，并且移除perf插件相关的代码引用
 
 App({
   onLaunch() {
