@@ -52,8 +52,6 @@ export const zoro = {
       if (error.message) {
         Toast.info(error.message, 2)
       }
-
-      return false // 此处必须返回false，阻止错误抛出
     },
     initialState = {},
   	extraMiddlewares = [],

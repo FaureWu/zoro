@@ -128,6 +128,8 @@ app.use(createLoading())
 
 ## app.intercept `<Object>`
 
+> 拦截器自2.4.0版本之后支持定义多个
+
 用于设置相关拦截器，目前支持的拦截器类型如下
 
 * app.intercept.action(handler) `<Function>` 拦截action触发，不包含异步action部分
@@ -157,7 +159,6 @@ app.intercept.effect(async function(action, { store, NAMESPACE_DIVIDER }) {
     return action
 })
 ```
-
 ---
 
 

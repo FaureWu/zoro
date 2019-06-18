@@ -165,12 +165,9 @@ export default class Zoro {
       `the intercept must be a Function, but we get ${typeof handler}`,
     )
 
-    assert(
-      !isFunction(this.handleIntercepts[type]),
-      'you can only set an one intercept for one type',
-    )
+    if (!isArray(this.handleIntercepts[type])) this.handleIntercepts[type] = []
 
-    this.handleIntercepts[type] = handler
+    this.handleIntercepts[type].push(handler)
   }
 
   injectModels(models) {
