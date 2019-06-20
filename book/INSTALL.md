@@ -24,7 +24,7 @@ $ yarn add @opcjs/zoro-plugin
 
 ## 微信原生小程序安装
 
-在微信原生小程序中使用zoro，无需执行安装命令，直接拷贝[zoro仓库](https://github.com/FaureWu/zoro)目录下的dist文件到小程序中即可
+在微信原生小程序中使用zoro，无需执行安装命令，直接拷贝[zoro仓库](https://github.com/FaureWu/zoro)目录下对应release版本的dist文件到小程序中即可
 
 dist目录下包含两个文件：
 
