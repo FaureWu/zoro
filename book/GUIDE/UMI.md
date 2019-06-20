@@ -4,6 +4,10 @@
 
 该文章仅阐述如何在umi框架使用zoro库
 
+## 模版
+
+[umi-zoro](https://github.com/FaureWu/umi-zoro-demo)
+
 ## 安装umi-plugin-zoro
 
 ```bash
