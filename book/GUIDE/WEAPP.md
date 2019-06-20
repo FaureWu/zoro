@@ -1,5 +1,7 @@
 # 微信原生小程序中使用
 
+> 特别提示：由于微信开发者工具不断提升于2015-05-08号更新了es6+增强编译，已经自带支持async, await，（目前需下载最新rc版本开发者工具，必须开启增强编译），因此自2.4.2版本之后，移除内部引入的regeneratorRuntime，如需使用老版本请在github release中下载对应版本即可
+
 微信原生小程序安装方法，如有不清楚请查看[安装文档](/INSTALL.md)中的关于微信原生小程序部分的说明
 
 通过微信开发者工具生成空白项目，这是一个简单的hello world工程项目，接下来将会演示如何改造它
@@ -9,7 +11,10 @@
 分析微信空白项目模版，我们可以改造其中的登录及其用户信息获取模块，创建一个user model
 
 ```js
+// 2.4.2版本之前
 import { regeneratorRuntime } from '../utils/zoro'
+// 2.4.2(含)版本之后无需再引入regeneratorRuntime，需开启开发者工具的增强编译
+// import { regeneratorRuntime } from '../utils/zoro'
 import { promise } from '../utils/util'
 
 // 首先对于需要使用的接口进行promise化

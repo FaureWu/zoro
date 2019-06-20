@@ -1,6 +1,6 @@
 {
   "name": "@opcjs/zoro",
-  "version": "2.4.1",
+  "version": "2.4.2",
   "description": "a redux framework, complete async await",
   "main": "dist/zoro.umd.js",
   "module": "dist/zoro.es.js",
@@ -16,7 +16,7 @@
   ],
   "scripts": {
     "build": "npm run clean && cross-env NODE_ENV=production rollup --config rollup.config.js && npm run build:weapp",
-    "build:weapp": "cross-env-shell NODE_ENV=production \"rollup --config rollup.config.weapp.js && gulp replace:code\"",
+    "build:weapp": "cross-env NODE_ENV=production rollup --config rollup.config.weapp.js",
     "clean": "rm -rf ./dist",
     "release": "npm run lint && npm run docs && npm run build && npm publish --access=public",
     "lint": "eslint src",
