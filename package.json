@@ -1,9 +1,10 @@
 {
   "name": "@opcjs/zoro",
-  "version": "2.3.9",
+  "version": "3.0.0",
   "description": "a redux framework, complete async await",
   "main": "dist/zoro.umd.js",
   "module": "dist/zoro.es.js",
+  "types": "types",
   "keywords": [
     "wx",
     "weapp",
@@ -18,9 +19,9 @@
     "build": "npm run clean && cross-env NODE_ENV=production rollup --config rollup.config.ts",
     "clean": "rm -rf ./dist",
     "release": "npm run lint && npm run build && npm publish --access=public",
-    "lint": "eslint src --ext .ts",
+    "lint": "eslint src --fix --ext .ts",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
-    "test": "jest"
+    "test": "jest --coverage"
   },
   "author": "Faure Wu <502556093@qq.com>",
   "license": "MIT",
@@ -37,29 +38,31 @@
     "@babel/preset-env": "^7.4.5",
     "@commitlint/cli": "^8.0.0",
     "@commitlint/config-conventional": "^8.0.0",
-    "@typescript-eslint/eslint-plugin": "^1.10.2",
-    "@typescript-eslint/parser": "^1.10.2",
+    "@types/jest": "^24.0.15",
+    "@types/prettier": "^1.16.4",
+    "@typescript-eslint/eslint-plugin": "^1.11.0",
+    "@typescript-eslint/parser": "^1.11.0",
     "babel-core": "^7.0.0-0",
-    "babel-eslint": "^10.0.2",
-    "babel-jest": "^24.8.0",
     "commitizen": "^3.1.1",
     "conventional-changelog": "^3.1.8",
     "conventional-changelog-cli": "^2.0.21",
     "cross-env": "^5.2.0",
     "cz-conventional-changelog": "^2.1.0",
-    "eslint": "^5.16.0",
-    "eslint-config-alloy": "^2.0.4",
+    "eslint": "^6.0.1",
+    "eslint-config-prettier": "^6.0.0",
+    "eslint-plugin-prettier": "^3.1.0",
     "gulp": "^4.0.2",
     "gulp-replace-string": "^0.6.1",
     "husky": "^2.4.0",
     "jest": "^24.8.0",
+    "prettier": "^1.18.2",
     "rollup": "^1.14.2",
-    "rollup-plugin-babel": "^4.3.2",
     "rollup-plugin-commonjs": "^10.0.0",
     "rollup-plugin-node-resolve": "^5.0.1",
     "rollup-plugin-replace": "^2.2.0",
-    "rollup-plugin-typescript2": "^0.21.1",
-    "typescript": "^3.5.2"
+    "rollup-plugin-typescript2": "^0.21.2",
+    "ts-jest": "^24.0.2",
+    "typescript": "^3.5.3"
   },
   "directories": {
     "doc": "doc"
@@ -74,6 +77,11 @@
   "config": {
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "jest": {
+    "transform": {
+      "\\.ts$": "ts-jest/preprocessor.js"
     }
   },
   "husky": {

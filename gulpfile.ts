@@ -5,7 +5,7 @@ gulp.task('replace:code', function() {
   return gulp
     .src(['./dist/zoro.js'])
     .pipe(
-      replace(/runtime;/, function(pattern) {
+      replace(/runtime;/, function(pattern: string) {
         return pattern + 'var regeneratorRuntime = runtime;'
       }),
     )

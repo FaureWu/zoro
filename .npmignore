@@ -4,3 +4,7 @@
 /docs
 /book
 /__tests__
+/rollup*
+/tsconfig*
+/gulp*
+/coverage
