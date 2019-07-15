@@ -16,8 +16,7 @@
     "importHelpers": true,
     "strictNullChecks": true,
     "suppressImplicitAnyIndexErrors": true,
-    "noUnusedLocals": true,
-    "types": ["jest", "prettier"]
+    "noUnusedLocals": true
   },
   "exclude": [
     "node_modules",

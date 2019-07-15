@@ -11,3 +11,9 @@ export function assert(
     throw new Error(message);
   }
 }
+
+export function isReduxAction(action: any): boolean {
+  return typeof action === 'object' && action !== null && !!action.type;
+}
+
+export function noop(): void {}

@@ -1,20 +1,19 @@
-import * as Redux from 'redux';
-import { assert } from './utils';
+import { AnyAction, Reducer } from 'redux';
+import { assert, isReduxAction } from './utils';
 
-type Handler = (action: Redux.AnyAction, state: any) => any;
+export type CustomReducer = (action: AnyAction, state: any) => any;
 
-interface Handlers {
-  [propName?: string]: Handler;
+export interface CustomReducers {
+  [propName: string]: CustomReducer;
 }
 
 export default function createReducer(
   initialState: any,
-  handlers: Handlers = {},
-): Redux.Reducer {
-  return function reducer(
-    state: any = initialState,
-    action: Redux.AnyAction,
-  ): any {
+  handlers: CustomReducers = {},
+): Reducer<any, AnyAction> {
+  return function reducer(state: any = initialState, action: AnyAction): any {
+    assert(isReduxAction(action), 'the action must be an redux action');
+
     if ({}.hasOwnProperty.call(handlers, action.type)) {
       const handler = handlers[action.type];
       assert(
@@ -23,6 +22,8 @@ export default function createReducer(
       );
 
       return handler(action, state);
+    } else {
+      console.warn(`you dispatch the unkown action type is ${action.type}`);
     }
 
     return state;
