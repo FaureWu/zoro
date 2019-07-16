@@ -1,12 +1,17 @@
-import { Reducer, AnyAction, Dispatch } from 'redux';
+import { Reducer, AnyAction } from 'redux';
 import { Select } from '../util/createSelect';
-import createReducer, { CustomReducers } from '../util/createReducer';
-import { assert } from '../util/utils';
+import { Put } from '../util/createPut';
+import createReducer, {
+  CustomReducers,
+  CustomReducer,
+} from '../util/createReducer';
+import { assert, noop } from '../util/utils';
+import { NAMESPACE_DIVIDER } from '../util/constant';
 
 export interface Operators {
   selectAll: Select;
   select: Select;
-  put: Dispatch;
+  put: Put;
 }
 
 export type Effect = (
@@ -15,7 +20,7 @@ export type Effect = (
 ) => void | Promise<any>;
 
 export interface Effects {
-  [propName]: Effect;
+  [propName: string]: Effect;
 }
 
 export type ActionCreator = (
@@ -25,7 +30,7 @@ export type ActionCreator = (
 ) => AnyAction;
 
 export interface ActionCreators {
-  [propName]: ActionCreator;
+  [propName: string]: ActionCreator;
 }
 
 export type Setup = (operator: Operators) => void;
@@ -73,7 +78,7 @@ class Model {
   private setup: Setup = noop;
 
   private createReducer(
-    reducers?: CustomReducers = {},
+    reducers: CustomReducers = {},
   ): Reducer<any, AnyAction> {
     const reducerHandlers: CustomReducers = Object.keys(reducers).reduce(
       (combine: CustomReducers, key: string): CustomReducers => {
@@ -84,7 +89,7 @@ class Model {
         );
 
         const type = `${this.getNamespace()}${NAMESPACE_DIVIDER}${key}`;
-        return { ...combine, [type]: this.reducerHandler };
+        return { ...combine, [type]: reducerHandler };
       },
       {},
     );
@@ -92,7 +97,7 @@ class Model {
     return createReducer(this.getInitState(), reducerHandlers);
   }
 
-  private createEffects(effects?: Effects = {}): Effects {
+  private createEffects(effects: Effects = {}): Effects {
     return Object.keys(effects).reduce(
       (combine: Effects, key: string): Effects => {
         const effect: Effect = effects[key];
@@ -108,8 +113,8 @@ class Model {
   }
 
   private createActionCreators(
-    reducers?: CustomReducers = {},
-    effects?: Effects = {},
+    reducers: CustomReducers = {},
+    effects: Effects = {},
   ): ActionCreators {
     const self = this;
     return Object.keys({ ...reducers, ...effects }).reduce(
@@ -143,7 +148,10 @@ class Model {
     this.reducer = this.createReducer(reducers);
     this.effects = this.createEffects(effects);
     this.actionCreators = this.createActionCreators(reducers, effects);
-    this.setup = setup;
+
+    if (typeof setup === 'function') {
+      this.setup = setup;
+    }
   }
 
   public getNamespace(): string {
@@ -166,7 +174,7 @@ class Model {
     return this.actionCreators;
   }
 
-  public getSetup(): Setup {
+  public getSetup(): Setup | undefined {
     return this.setup;
   }
 }

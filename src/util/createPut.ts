@@ -1,13 +1,11 @@
-import { Store, Dispatch, AnyAction } from 'redux';
+import { Store, AnyAction } from 'redux';
 import { NAMESPACE_DIVIDER } from './constant';
 import { assert, isReduxAction } from './utils';
 
-export default function createPut(store: Store, namespace?: string): Dispatch {
-  if (!namespace) {
-    return store.dispatch;
-  }
+export type Put = (action: AnyAction) => AnyAction | Promise<any>;
 
-  return function put(action: AnyAction = {}): AnyAction {
+export default function createPut(store: Store, namespace: string): Put {
+  return function put(action: AnyAction): AnyAction | Promise<any> {
     assert(
       isReduxAction(action),
       'the dispatch action must be an redux action',
@@ -26,7 +24,7 @@ export default function createPut(store: Store, namespace?: string): Dispatch {
         );
       }
 
-      return store.dispatch({ type, ...rest });
+      return store.dispatch(action);
     }
 
     return store.dispatch({

@@ -1,4 +1,4 @@
-import { assert, isReduxAction } from '../src/util/utils';
+import { assert, isReduxAction, noop } from '../src/util/utils';
 
 describe('FILE: util/utils', (): void => {
   test('assert(): assertion passed', (): void => {
@@ -29,5 +29,9 @@ describe('FILE: util/utils', (): void => {
     expect(isReduxAction(0)).toEqual(false);
     expect(isReduxAction(NaN)).toEqual(false);
     expect(isReduxAction((): void => {})).toEqual(false);
+  });
+
+  test('noop(): base test', (): void => {
+    expect(noop()).toEqual(undefined);
   });
 });
