@@ -31,7 +31,9 @@
         "flatTernaryExpressions": true
       }
     ],
-    "@typescript-eslint/semi": "off",
+    "no-undef": "error",
+    "@typescript-eslint/no-unused-vars": "error",
+    "@typescript-eslint/semi": "error",
     "prettier/prettier": "error",
     "@typescript-eslint/no-explicit-any": "off"
   }

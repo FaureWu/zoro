@@ -11,6 +11,11 @@ export default function createReducer(
   initialState: any,
   handlers: CustomReducers = {},
 ): Reducer<any, AnyAction> {
+  assert(
+    typeof handlers === 'object' && handlers !== null,
+    'the reducer handlers must be an object',
+  );
+
   return function reducer(state: any = initialState, action: AnyAction): any {
     assert(isReduxAction(action), 'the action must be an redux action');
 
@@ -18,7 +23,7 @@ export default function createReducer(
       const handler = handlers[action.type];
       assert(
         typeof handler === 'function',
-        `the reducer handler should be a function, but we get ${typeof handler}`,
+        'the reducer handler should be a function',
       );
 
       return handler(action, state);

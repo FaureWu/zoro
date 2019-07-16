@@ -80,9 +80,7 @@
     }
   },
   "jest": {
-    "transform": {
-      "\\.ts$": "ts-jest/preprocessor.js"
-    }
+    "preset": "ts-jest"
   },
   "husky": {
     "hooks": {
