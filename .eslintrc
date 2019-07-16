@@ -23,6 +23,7 @@
       2,
       { "SwitchCase": 1, "flatTernaryExpressions": true }
     ],
+    "comma-dangle": "off",
     "indent": [
       "error",
       2,
