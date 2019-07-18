@@ -1,0 +1,1386 @@
+(function (global, factory) {
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
+    typeof define === 'function' && define.amd ? define(['exports'], factory) :
+    (global = global || self, factory(global.zoro = {}));
+}(this, function (exports) { 'use strict';
+
+    /*! *****************************************************************************
+    Copyright (c) Microsoft Corporation. All rights reserved.
+    Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+    this file except in compliance with the License. You may obtain a copy of the
+    License at http://www.apache.org/licenses/LICENSE-2.0
+
+    THIS CODE IS PROVIDED ON AN *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION ANY IMPLIED
+    WARRANTIES OR CONDITIONS OF TITLE, FITNESS FOR A PARTICULAR PURPOSE,
+    MERCHANTABLITY OR NON-INFRINGEMENT.
+
+    See the Apache Version 2.0 License for specific language governing permissions
+    and limitations under the License.
+    ***************************************************************************** */
+
+    var __assign = function() {
+        __assign = Object.assign || function __assign(t) {
+            for (var s, i = 1, n = arguments.length; i < n; i++) {
+                s = arguments[i];
+                for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+            }
+            return t;
+        };
+        return __assign.apply(this, arguments);
+    };
+
+    function __rest(s, e) {
+        var t = {};
+        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+            t[p] = s[p];
+        if (s != null && typeof Object.getOwnPropertySymbols === "function")
+            for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+                if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                    t[p[i]] = s[p[i]];
+            }
+        return t;
+    }
+
+    function __awaiter(thisArg, _arguments, P, generator) {
+        return new (P || (P = Promise))(function (resolve, reject) {
+            function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+            function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+            function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+            step((generator = generator.apply(thisArg, _arguments || [])).next());
+        });
+    }
+
+    function __generator(thisArg, body) {
+        var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+        return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+        function verb(n) { return function (v) { return step([n, v]); }; }
+        function step(op) {
+            if (f) throw new TypeError("Generator is already executing.");
+            while (_) try {
+                if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+                if (y = 0, t) op = [op[0] & 2, t.value];
+                switch (op[0]) {
+                    case 0: case 1: t = op; break;
+                    case 4: _.label++; return { value: op[1], done: false };
+                    case 5: _.label++; y = op[1]; op = [0]; continue;
+                    case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                    default:
+                        if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                        if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                        if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                        if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                        if (t[2]) _.ops.pop();
+                        _.trys.pop(); continue;
+                }
+                op = body.call(thisArg, _);
+            } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+            if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+        }
+    }
+
+    function symbolObservablePonyfill(root) {
+    	var result;
+    	var Symbol = root.Symbol;
+
+    	if (typeof Symbol === 'function') {
+    		if (Symbol.observable) {
+    			result = Symbol.observable;
+    		} else {
+    			result = Symbol('observable');
+    			Symbol.observable = result;
+    		}
+    	} else {
+    		result = '@@observable';
+    	}
+
+    	return result;
+    }
+
+    /* global window */
+
+    var root;
+
+    if (typeof self !== 'undefined') {
+      root = self;
+    } else if (typeof window !== 'undefined') {
+      root = window;
+    } else if (typeof global !== 'undefined') {
+      root = global;
+    } else if (typeof module !== 'undefined') {
+      root = module;
+    } else {
+      root = Function('return this')();
+    }
+
+    var result = symbolObservablePonyfill(root);
+
+    /**
+     * These are private action types reserved by Redux.
+     * For any unknown actions, you must return the current state.
+     * If the current state is undefined, you must return the initial state.
+     * Do not reference these action types directly in your code.
+     */
+    var randomString = function randomString() {
+      return Math.random().toString(36).substring(7).split('').join('.');
+    };
+
+    var ActionTypes = {
+      INIT: "@@redux/INIT" + randomString(),
+      REPLACE: "@@redux/REPLACE" + randomString(),
+      PROBE_UNKNOWN_ACTION: function PROBE_UNKNOWN_ACTION() {
+        return "@@redux/PROBE_UNKNOWN_ACTION" + randomString();
+      }
+    };
+
+    /**
+     * @param {any} obj The object to inspect.
+     * @returns {boolean} True if the argument appears to be a plain object.
+     */
+    function isPlainObject(obj) {
+      if (typeof obj !== 'object' || obj === null) return false;
+      var proto = obj;
+
+      while (Object.getPrototypeOf(proto) !== null) {
+        proto = Object.getPrototypeOf(proto);
+      }
+
+      return Object.getPrototypeOf(obj) === proto;
+    }
+
+    /**
+     * Creates a Redux store that holds the state tree.
+     * The only way to change the data in the store is to call `dispatch()` on it.
+     *
+     * There should only be a single store in your app. To specify how different
+     * parts of the state tree respond to actions, you may combine several reducers
+     * into a single reducer function by using `combineReducers`.
+     *
+     * @param {Function} reducer A function that returns the next state tree, given
+     * the current state tree and the action to handle.
+     *
+     * @param {any} [preloadedState] The initial state. You may optionally specify it
+     * to hydrate the state from the server in universal apps, or to restore a
+     * previously serialized user session.
+     * If you use `combineReducers` to produce the root reducer function, this must be
+     * an object with the same shape as `combineReducers` keys.
+     *
+     * @param {Function} [enhancer] The store enhancer. You may optionally specify it
+     * to enhance the store with third-party capabilities such as middleware,
+     * time travel, persistence, etc. The only store enhancer that ships with Redux
+     * is `applyMiddleware()`.
+     *
+     * @returns {Store} A Redux store that lets you read the state, dispatch actions
+     * and subscribe to changes.
+     */
+
+    function createStore(reducer, preloadedState, enhancer) {
+      var _ref2;
+
+      if (typeof preloadedState === 'function' && typeof enhancer === 'function' || typeof enhancer === 'function' && typeof arguments[3] === 'function') {
+        throw new Error('It looks like you are passing several store enhancers to ' + 'createStore(). This is not supported. Instead, compose them ' + 'together to a single function.');
+      }
+
+      if (typeof preloadedState === 'function' && typeof enhancer === 'undefined') {
+        enhancer = preloadedState;
+        preloadedState = undefined;
+      }
+
+      if (typeof enhancer !== 'undefined') {
+        if (typeof enhancer !== 'function') {
+          throw new Error('Expected the enhancer to be a function.');
+        }
+
+        return enhancer(createStore)(reducer, preloadedState);
+      }
+
+      if (typeof reducer !== 'function') {
+        throw new Error('Expected the reducer to be a function.');
+      }
+
+      var currentReducer = reducer;
+      var currentState = preloadedState;
+      var currentListeners = [];
+      var nextListeners = currentListeners;
+      var isDispatching = false;
+      /**
+       * This makes a shallow copy of currentListeners so we can use
+       * nextListeners as a temporary list while dispatching.
+       *
+       * This prevents any bugs around consumers calling
+       * subscribe/unsubscribe in the middle of a dispatch.
+       */
+
+      function ensureCanMutateNextListeners() {
+        if (nextListeners === currentListeners) {
+          nextListeners = currentListeners.slice();
+        }
+      }
+      /**
+       * Reads the state tree managed by the store.
+       *
+       * @returns {any} The current state tree of your application.
+       */
+
+
+      function getState() {
+        if (isDispatching) {
+          throw new Error('You may not call store.getState() while the reducer is executing. ' + 'The reducer has already received the state as an argument. ' + 'Pass it down from the top reducer instead of reading it from the store.');
+        }
+
+        return currentState;
+      }
+      /**
+       * Adds a change listener. It will be called any time an action is dispatched,
+       * and some part of the state tree may potentially have changed. You may then
+       * call `getState()` to read the current state tree inside the callback.
+       *
+       * You may call `dispatch()` from a change listener, with the following
+       * caveats:
+       *
+       * 1. The subscriptions are snapshotted just before every `dispatch()` call.
+       * If you subscribe or unsubscribe while the listeners are being invoked, this
+       * will not have any effect on the `dispatch()` that is currently in progress.
+       * However, the next `dispatch()` call, whether nested or not, will use a more
+       * recent snapshot of the subscription list.
+       *
+       * 2. The listener should not expect to see all state changes, as the state
+       * might have been updated multiple times during a nested `dispatch()` before
+       * the listener is called. It is, however, guaranteed that all subscribers
+       * registered before the `dispatch()` started will be called with the latest
+       * state by the time it exits.
+       *
+       * @param {Function} listener A callback to be invoked on every dispatch.
+       * @returns {Function} A function to remove this change listener.
+       */
+
+
+      function subscribe(listener) {
+        if (typeof listener !== 'function') {
+          throw new Error('Expected the listener to be a function.');
+        }
+
+        if (isDispatching) {
+          throw new Error('You may not call store.subscribe() while the reducer is executing. ' + 'If you would like to be notified after the store has been updated, subscribe from a ' + 'component and invoke store.getState() in the callback to access the latest state. ' + 'See https://redux.js.org/api-reference/store#subscribe(listener) for more details.');
+        }
+
+        var isSubscribed = true;
+        ensureCanMutateNextListeners();
+        nextListeners.push(listener);
+        return function unsubscribe() {
+          if (!isSubscribed) {
+            return;
+          }
+
+          if (isDispatching) {
+            throw new Error('You may not unsubscribe from a store listener while the reducer is executing. ' + 'See https://redux.js.org/api-reference/store#subscribe(listener) for more details.');
+          }
+
+          isSubscribed = false;
+          ensureCanMutateNextListeners();
+          var index = nextListeners.indexOf(listener);
+          nextListeners.splice(index, 1);
+        };
+      }
+      /**
+       * Dispatches an action. It is the only way to trigger a state change.
+       *
+       * The `reducer` function, used to create the store, will be called with the
+       * current state tree and the given `action`. Its return value will
+       * be considered the **next** state of the tree, and the change listeners
+       * will be notified.
+       *
+       * The base implementation only supports plain object actions. If you want to
+       * dispatch a Promise, an Observable, a thunk, or something else, you need to
+       * wrap your store creating function into the corresponding middleware. For
+       * example, see the documentation for the `redux-thunk` package. Even the
+       * middleware will eventually dispatch plain object actions using this method.
+       *
+       * @param {Object} action A plain object representing “what changed”. It is
+       * a good idea to keep actions serializable so you can record and replay user
+       * sessions, or use the time travelling `redux-devtools`. An action must have
+       * a `type` property which may not be `undefined`. It is a good idea to use
+       * string constants for action types.
+       *
+       * @returns {Object} For convenience, the same action object you dispatched.
+       *
+       * Note that, if you use a custom middleware, it may wrap `dispatch()` to
+       * return something else (for example, a Promise you can await).
+       */
+
+
+      function dispatch(action) {
+        if (!isPlainObject(action)) {
+          throw new Error('Actions must be plain objects. ' + 'Use custom middleware for async actions.');
+        }
+
+        if (typeof action.type === 'undefined') {
+          throw new Error('Actions may not have an undefined "type" property. ' + 'Have you misspelled a constant?');
+        }
+
+        if (isDispatching) {
+          throw new Error('Reducers may not dispatch actions.');
+        }
+
+        try {
+          isDispatching = true;
+          currentState = currentReducer(currentState, action);
+        } finally {
+          isDispatching = false;
+        }
+
+        var listeners = currentListeners = nextListeners;
+
+        for (var i = 0; i < listeners.length; i++) {
+          var listener = listeners[i];
+          listener();
+        }
+
+        return action;
+      }
+      /**
+       * Replaces the reducer currently used by the store to calculate the state.
+       *
+       * You might need this if your app implements code splitting and you want to
+       * load some of the reducers dynamically. You might also need this if you
+       * implement a hot reloading mechanism for Redux.
+       *
+       * @param {Function} nextReducer The reducer for the store to use instead.
+       * @returns {void}
+       */
+
+
+      function replaceReducer(nextReducer) {
+        if (typeof nextReducer !== 'function') {
+          throw new Error('Expected the nextReducer to be a function.');
+        }
+
+        currentReducer = nextReducer; // This action has a similiar effect to ActionTypes.INIT.
+        // Any reducers that existed in both the new and old rootReducer
+        // will receive the previous state. This effectively populates
+        // the new state tree with any relevant data from the old one.
+
+        dispatch({
+          type: ActionTypes.REPLACE
+        });
+      }
+      /**
+       * Interoperability point for observable/reactive libraries.
+       * @returns {observable} A minimal observable of state changes.
+       * For more information, see the observable proposal:
+       * https://github.com/tc39/proposal-observable
+       */
+
+
+      function observable() {
+        var _ref;
+
+        var outerSubscribe = subscribe;
+        return _ref = {
+          /**
+           * The minimal observable subscription method.
+           * @param {Object} observer Any object that can be used as an observer.
+           * The observer object should have a `next` method.
+           * @returns {subscription} An object with an `unsubscribe` method that can
+           * be used to unsubscribe the observable from the store, and prevent further
+           * emission of values from the observable.
+           */
+          subscribe: function subscribe(observer) {
+            if (typeof observer !== 'object' || observer === null) {
+              throw new TypeError('Expected the observer to be an object.');
+            }
+
+            function observeState() {
+              if (observer.next) {
+                observer.next(getState());
+              }
+            }
+
+            observeState();
+            var unsubscribe = outerSubscribe(observeState);
+            return {
+              unsubscribe: unsubscribe
+            };
+          }
+        }, _ref[result] = function () {
+          return this;
+        }, _ref;
+      } // When a store is created, an "INIT" action is dispatched so that every
+      // reducer returns their initial state. This effectively populates
+      // the initial state tree.
+
+
+      dispatch({
+        type: ActionTypes.INIT
+      });
+      return _ref2 = {
+        dispatch: dispatch,
+        subscribe: subscribe,
+        getState: getState,
+        replaceReducer: replaceReducer
+      }, _ref2[result] = observable, _ref2;
+    }
+
+    function getUndefinedStateErrorMessage(key, action) {
+      var actionType = action && action.type;
+      var actionDescription = actionType && "action \"" + String(actionType) + "\"" || 'an action';
+      return "Given " + actionDescription + ", reducer \"" + key + "\" returned undefined. " + "To ignore an action, you must explicitly return the previous state. " + "If you want this reducer to hold no value, you can return null instead of undefined.";
+    }
+
+    function assertReducerShape(reducers) {
+      Object.keys(reducers).forEach(function (key) {
+        var reducer = reducers[key];
+        var initialState = reducer(undefined, {
+          type: ActionTypes.INIT
+        });
+
+        if (typeof initialState === 'undefined') {
+          throw new Error("Reducer \"" + key + "\" returned undefined during initialization. " + "If the state passed to the reducer is undefined, you must " + "explicitly return the initial state. The initial state may " + "not be undefined. If you don't want to set a value for this reducer, " + "you can use null instead of undefined.");
+        }
+
+        if (typeof reducer(undefined, {
+          type: ActionTypes.PROBE_UNKNOWN_ACTION()
+        }) === 'undefined') {
+          throw new Error("Reducer \"" + key + "\" returned undefined when probed with a random type. " + ("Don't try to handle " + ActionTypes.INIT + " or other actions in \"redux/*\" ") + "namespace. They are considered private. Instead, you must return the " + "current state for any unknown actions, unless it is undefined, " + "in which case you must return the initial state, regardless of the " + "action type. The initial state may not be undefined, but can be null.");
+        }
+      });
+    }
+    /**
+     * Turns an object whose values are different reducer functions, into a single
+     * reducer function. It will call every child reducer, and gather their results
+     * into a single state object, whose keys correspond to the keys of the passed
+     * reducer functions.
+     *
+     * @param {Object} reducers An object whose values correspond to different
+     * reducer functions that need to be combined into one. One handy way to obtain
+     * it is to use ES6 `import * as reducers` syntax. The reducers may never return
+     * undefined for any action. Instead, they should return their initial state
+     * if the state passed to them was undefined, and the current state for any
+     * unrecognized action.
+     *
+     * @returns {Function} A reducer function that invokes every reducer inside the
+     * passed object, and builds a state object with the same shape.
+     */
+
+
+    function combineReducers(reducers) {
+      var reducerKeys = Object.keys(reducers);
+      var finalReducers = {};
+
+      for (var i = 0; i < reducerKeys.length; i++) {
+        var key = reducerKeys[i];
+
+        if (typeof reducers[key] === 'function') {
+          finalReducers[key] = reducers[key];
+        }
+      }
+
+      var finalReducerKeys = Object.keys(finalReducers); // This is used to make sure we don't warn about the same
+
+      var shapeAssertionError;
+
+      try {
+        assertReducerShape(finalReducers);
+      } catch (e) {
+        shapeAssertionError = e;
+      }
+
+      return function combination(state, action) {
+        if (state === void 0) {
+          state = {};
+        }
+
+        if (shapeAssertionError) {
+          throw shapeAssertionError;
+        }
+
+        var hasChanged = false;
+        var nextState = {};
+
+        for (var _i = 0; _i < finalReducerKeys.length; _i++) {
+          var _key = finalReducerKeys[_i];
+          var reducer = finalReducers[_key];
+          var previousStateForKey = state[_key];
+          var nextStateForKey = reducer(previousStateForKey, action);
+
+          if (typeof nextStateForKey === 'undefined') {
+            var errorMessage = getUndefinedStateErrorMessage(_key, action);
+            throw new Error(errorMessage);
+          }
+
+          nextState[_key] = nextStateForKey;
+          hasChanged = hasChanged || nextStateForKey !== previousStateForKey;
+        }
+
+        return hasChanged ? nextState : state;
+      };
+    }
+
+    function _defineProperty(obj, key, value) {
+      if (key in obj) {
+        Object.defineProperty(obj, key, {
+          value: value,
+          enumerable: true,
+          configurable: true,
+          writable: true
+        });
+      } else {
+        obj[key] = value;
+      }
+
+      return obj;
+    }
+
+    function ownKeys(object, enumerableOnly) {
+      var keys = Object.keys(object);
+
+      if (Object.getOwnPropertySymbols) {
+        keys.push.apply(keys, Object.getOwnPropertySymbols(object));
+      }
+
+      if (enumerableOnly) keys = keys.filter(function (sym) {
+        return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+      });
+      return keys;
+    }
+
+    function _objectSpread2(target) {
+      for (var i = 1; i < arguments.length; i++) {
+        var source = arguments[i] != null ? arguments[i] : {};
+
+        if (i % 2) {
+          ownKeys(source, true).forEach(function (key) {
+            _defineProperty(target, key, source[key]);
+          });
+        } else if (Object.getOwnPropertyDescriptors) {
+          Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+        } else {
+          ownKeys(source).forEach(function (key) {
+            Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+          });
+        }
+      }
+
+      return target;
+    }
+
+    /**
+     * Composes single-argument functions from right to left. The rightmost
+     * function can take multiple arguments as it provides the signature for
+     * the resulting composite function.
+     *
+     * @param {...Function} funcs The functions to compose.
+     * @returns {Function} A function obtained by composing the argument functions
+     * from right to left. For example, compose(f, g, h) is identical to doing
+     * (...args) => f(g(h(...args))).
+     */
+    function compose() {
+      for (var _len = arguments.length, funcs = new Array(_len), _key = 0; _key < _len; _key++) {
+        funcs[_key] = arguments[_key];
+      }
+
+      if (funcs.length === 0) {
+        return function (arg) {
+          return arg;
+        };
+      }
+
+      if (funcs.length === 1) {
+        return funcs[0];
+      }
+
+      return funcs.reduce(function (a, b) {
+        return function () {
+          return a(b.apply(void 0, arguments));
+        };
+      });
+    }
+
+    /**
+     * Creates a store enhancer that applies middleware to the dispatch method
+     * of the Redux store. This is handy for a variety of tasks, such as expressing
+     * asynchronous actions in a concise manner, or logging every action payload.
+     *
+     * See `redux-thunk` package as an example of the Redux middleware.
+     *
+     * Because middleware is potentially asynchronous, this should be the first
+     * store enhancer in the composition chain.
+     *
+     * Note that each middleware will be given the `dispatch` and `getState` functions
+     * as named arguments.
+     *
+     * @param {...Function} middlewares The middleware chain to be applied.
+     * @returns {Function} A store enhancer applying the middleware.
+     */
+
+    function applyMiddleware() {
+      for (var _len = arguments.length, middlewares = new Array(_len), _key = 0; _key < _len; _key++) {
+        middlewares[_key] = arguments[_key];
+      }
+
+      return function (createStore) {
+        return function () {
+          var store = createStore.apply(void 0, arguments);
+
+          var _dispatch = function dispatch() {
+            throw new Error('Dispatching while constructing your middleware is not allowed. ' + 'Other middleware would not be applied to this dispatch.');
+          };
+
+          var middlewareAPI = {
+            getState: store.getState,
+            dispatch: function dispatch() {
+              return _dispatch.apply(void 0, arguments);
+            }
+          };
+          var chain = middlewares.map(function (middleware) {
+            return middleware(middlewareAPI);
+          });
+          _dispatch = compose.apply(void 0, chain)(store.dispatch);
+          return _objectSpread2({}, store, {
+            dispatch: _dispatch
+          });
+        };
+      };
+    }
+
+    var window$1 = (function () {
+        // @ts-ignore
+        return this;
+    })() || Function('return this')();
+    function createReduxStore(options) {
+        var composeEnhancers = window$1 && window$1.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
+            ? window$1.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
+            : compose;
+        var store = createStore(options.rootReducer, options.initialState, composeEnhancers.apply(void 0, [applyMiddleware.apply(void 0, options.middlewares)].concat(options.enhancers)));
+        return store;
+    }
+
+    var NAMESPACE_DIVIDER = '/';
+    var PLUGIN_EVENT = {
+        INJECT_INITIAL_STATE: 'injectInitialState',
+        INJECT_MODELS: 'injectModels',
+        INJECT_MIDDLEWARES: 'injectMiddlewares',
+        INJECT_ENHANCERS: 'injectEnhancers',
+        ON_REDUCER: 'onReducer',
+        ON_CREATE_MODEL: 'onCreateModel',
+        ON_SETUP_MODEL: 'onSetupModel',
+        ON_WILL_EFFECT: 'onWillEffect',
+        ON_DID_EFFECT: 'onDidEffect',
+        ON_WILL_ACTION: 'onWillAction',
+        ON_DID_ACTION: 'onDidAction',
+        ON_SETUP: 'onSetup',
+        ON_SUBSCRIBE: 'onSubscribe',
+        ON_ERROR: 'onError',
+        ON_WILL_CONNECT: 'onWillConnect',
+        ON_DID_CONNECT: 'onDidConnect',
+    };
+    var INTERCEPT_ACTION = 'INTERCEPT_ACTION';
+    var INTERCEPT_EFFECT = 'INTERCEPT_EFFECT';
+    var INTERCEPT_TYPE = [INTERCEPT_ACTION, INTERCEPT_EFFECT];
+
+    function noop() { }
+    function assert(validate, message) {
+        if ((typeof validate === 'boolean' && !validate) ||
+            (typeof validate === 'function' && !validate())) {
+            throw new Error(message);
+        }
+    }
+    function isReduxAction(action) {
+        return typeof action === 'object' && action !== null && !!action.type;
+    }
+    function parseModelActionType(actionType) {
+        var parts = actionType.split(NAMESPACE_DIVIDER);
+        assert(parts.length < 2, "invalid model action type, [" + actionType + "]");
+        return {
+            namespace: parts.slice(0, parts.length - 1).join(NAMESPACE_DIVIDER),
+            type: parts[parts.length - 1],
+        };
+    }
+    function uuid() {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (placeholder) {
+            var random = Math.floor(Math.random() * 16);
+            var value = placeholder === 'x' ? random : (random & 0x3) | 0x8;
+            return value.toString(16);
+        });
+    }
+
+    function createReducer(initialState, handlers) {
+        if (handlers === void 0) { handlers = {}; }
+        assert(typeof handlers === 'object' && handlers !== null, 'the reducer handlers must be an object');
+        return function reducer(state, action) {
+            if (state === void 0) { state = initialState; }
+            assert(isReduxAction(action), 'the action must be an redux action');
+            if ({}.hasOwnProperty.call(handlers, action.type)) {
+                var handler = handlers[action.type];
+                assert(typeof handler === 'function', 'the reducer handler should be a function');
+                return handler(action, state);
+            }
+            else {
+                console.warn("you dispatch the unkown action type is " + action.type);
+            }
+            return state;
+        };
+    }
+
+    function assertOption(options) {
+        var namespace = options.namespace, _a = options.reducers, reducers = _a === void 0 ? {} : _a, _b = options.effects, effects = _b === void 0 ? {} : _b, _c = options.setup, setup = _c === void 0 ? noop : _c;
+        assert(typeof namespace === 'string', "the model's namespace is necessary, but we get " + namespace);
+        assert(typeof reducers === 'object' && reducers !== null, "the " + namespace + " model reducers must an Object, but we get " + typeof reducers);
+        assert(typeof effects === 'object' && effects !== null, "the " + namespace + " model effects must an Object, but we get " + typeof effects);
+        assert(typeof setup === 'function', "the " + namespace + " setup must be a Function, but we get " + typeof setup);
+    }
+    var Model = /** @class */ (function () {
+        function Model(options) {
+            this.effects = {};
+            this.actionCreators = {};
+            this.setup = noop;
+            assertOption(options);
+            var namespace = options.namespace, state = options.state, reducers = options.reducers, effects = options.effects, setup = options.setup;
+            this.namespace = namespace;
+            this.initState = state;
+            this.reducer = this.createReducer(reducers);
+            this.effects = this.createEffects(effects);
+            this.actionCreators = this.createActionCreators(reducers, effects);
+            if (typeof setup === 'function') {
+                this.setup = setup;
+            }
+        }
+        Model.prototype.createReducer = function (reducers) {
+            var _this = this;
+            if (reducers === void 0) { reducers = {}; }
+            var reducerHandlers = Object.keys(reducers).reduce(function (combine, key) {
+                var _a;
+                var reducerHandler = reducers[key];
+                assert(typeof reducerHandler === 'function', "the reducer must be an function, but we get " + typeof reducerHandler + " with type " + key);
+                var type = "" + _this.getNamespace() + NAMESPACE_DIVIDER + key;
+                return __assign({}, combine, (_a = {}, _a[type] = reducerHandler, _a));
+            }, {});
+            return createReducer(this.getInitState(), reducerHandlers);
+        };
+        Model.prototype.createEffects = function (effects) {
+            var _this = this;
+            if (effects === void 0) { effects = {}; }
+            return Object.keys(effects).reduce(function (combine, key) {
+                var _a;
+                var effect = effects[key];
+                assert(typeof effect === 'function', "the effect must be an function, but we get " + typeof effect + " with type " + key);
+                var type = "" + _this.getNamespace() + NAMESPACE_DIVIDER + key;
+                return __assign({}, combine, (_a = {}, _a[type] = effect, _a));
+            }, {});
+        };
+        Model.prototype.createActionCreators = function (reducers, effects) {
+            if (reducers === void 0) { reducers = {}; }
+            if (effects === void 0) { effects = {}; }
+            var self = this;
+            return Object.keys(__assign({}, reducers, effects)).reduce(function (combine, key) {
+                combine[key] = function actionCreator(payload, meta, error) {
+                    return {
+                        type: "" + self.getNamespace() + NAMESPACE_DIVIDER + key,
+                        payload: payload,
+                        meta: meta,
+                        error: error,
+                    };
+                };
+                return combine;
+            }, {});
+        };
+        Model.prototype.getNamespace = function () {
+            return this.namespace;
+        };
+        Model.prototype.getInitState = function () {
+            return this.initState;
+        };
+        Model.prototype.getReducer = function () {
+            return this.reducer;
+        };
+        Model.prototype.getEffects = function () {
+            return this.effects;
+        };
+        Model.prototype.getActionCreators = function () {
+            return this.actionCreators;
+        };
+        Model.prototype.getSetup = function () {
+            return this.setup;
+        };
+        return Model;
+    }());
+
+    function createSelect(store, namespace) {
+        return function select(handler) {
+            var state = store.getState();
+            if (namespace) {
+                state = state[namespace];
+            }
+            if (typeof handler === 'function') {
+                return handler(state);
+            }
+            return state;
+        };
+    }
+
+    function createPut(store, namespace) {
+        return function put(action) {
+            assert(isReduxAction(action), 'the dispatch action must be an redux action');
+            var type = action.type, rest = __rest(action, ["type"]);
+            var params = type.split(NAMESPACE_DIVIDER);
+            if (params.length >= 2) {
+                var currentNamespace = params
+                    .slice(0, params.length - 1)
+                    .join(NAMESPACE_DIVIDER);
+                if (currentNamespace === namespace) {
+                    console.warn("when dispatch it's own model action, the namespace can be omit, [" + type + "]");
+                }
+                return store.dispatch(action);
+            }
+            assert(typeof namespace !== 'undefined', "we need a model namespace for action type, but we get [" + type + "]");
+            return store.dispatch(__assign({ type: "" + namespace + NAMESPACE_DIVIDER + type }, rest));
+        };
+    }
+
+    function doneEffectIntercepts(intercepts, action, option) {
+        return __awaiter(this, void 0, void 0, function () {
+            function doneEffectIntercept(prevAction) {
+                return __awaiter(this, void 0, void 0, function () {
+                    var effectIntercept, nextAction, resolveAction, resultAction_1;
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0:
+                                effectIntercept = effectIntercepts.shift();
+                                nextAction = prevAction;
+                                return [4 /*yield*/, effectIntercept(prevAction, option)];
+                            case 1:
+                                resolveAction = _a.sent();
+                                if (typeof resolveAction !== 'undefined') {
+                                    assert(isReduxAction(resolveAction), 'the effect intercept return must be an action or none');
+                                    resolveAction.type = action.type;
+                                    nextAction = resolveAction;
+                                }
+                                if (!(effectIntercepts.length > 0)) return [3 /*break*/, 3];
+                                return [4 /*yield*/, doneEffectIntercept(nextAction)];
+                            case 2:
+                                resultAction_1 = _a.sent();
+                                return [2 /*return*/, resultAction_1];
+                            case 3: return [2 /*return*/, nextAction];
+                        }
+                    });
+                });
+            }
+            var effectIntercepts, resultAction;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (intercepts.length <= 0)
+                            return [2 /*return*/, action];
+                        effectIntercepts = intercepts.slice(0);
+                        return [4 /*yield*/, doneEffectIntercept(action)];
+                    case 1:
+                        resultAction = _a.sent();
+                        return [2 /*return*/, resultAction];
+                }
+            });
+        });
+    }
+    function doneEffect(effect, action, zoro) {
+        return __awaiter(this, void 0, void 0, function () {
+            var effectId, plugin, store, effectIntercepts, nextAction, namespace, result, e_1;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        effectId = uuid();
+                        plugin = zoro.getPlugin();
+                        store = zoro.getStore();
+                        plugin.emit(PLUGIN_EVENT.ON_WILL_EFFECT, action, { store: store, effectId: effectId });
+                        if (typeof zoro.onEffect === 'function') {
+                            zoro.onEffect(action);
+                        }
+                        effectIntercepts = zoro.getIntercepts(INTERCEPT_EFFECT);
+                        return [4 /*yield*/, doneEffectIntercepts(effectIntercepts, action, {
+                                store: store,
+                                NAMESPACE_DIVIDER: NAMESPACE_DIVIDER,
+                            })];
+                    case 1:
+                        nextAction = _a.sent();
+                        namespace = parseModelActionType(nextAction.type).namespace;
+                        _a.label = 2;
+                    case 2:
+                        _a.trys.push([2, 4, 5, 6]);
+                        return [4 /*yield*/, effect(nextAction, {
+                                selectAll: createSelect(store),
+                                select: createSelect(store, namespace),
+                                put: createPut(store, namespace),
+                            })];
+                    case 3:
+                        result = _a.sent();
+                        return [2 /*return*/, Promise.resolve(result)];
+                    case 4:
+                        e_1 = _a.sent();
+                        if (typeof zoro.onError === 'function') {
+                            zoro.onError(e_1);
+                        }
+                        plugin.emit(PLUGIN_EVENT.ON_ERROR, e_1);
+                        return [2 /*return*/, Promise.reject(e_1)];
+                    case 5:
+                        plugin.emit(PLUGIN_EVENT.ON_DID_EFFECT, action, { store: store, effectId: effectId });
+                        return [7 /*endfinally*/];
+                    case 6: return [2 /*return*/];
+                }
+            });
+        });
+    }
+    function doneActionIntercepts(intercepts, action, option) {
+        if (intercepts.length <= 0)
+            return action;
+        return intercepts.reduce(function (nextAction, intercept) {
+            var resolveAction = intercept(nextAction, option);
+            if (typeof resolveAction !== 'undefined') {
+                assert(isReduxAction(resolveAction), 'the action intercept return must be an action or none');
+                return resolveAction;
+            }
+            return nextAction;
+        }, action);
+    }
+    function effectMiddlewareCreator(zoro) {
+        return function () { return function (next) { return function (action) {
+            var namespace = parseModelActionType(action.type).namespace;
+            var effects = zoro.getModelEffects(namespace);
+            var effect = effects[action.type];
+            if (typeof effect === 'function') {
+                return doneEffect(effect, action, zoro);
+            }
+            var store = zoro.getStore();
+            var plugin = zoro.getPlugin();
+            var actionId = uuid();
+            plugin.emit(PLUGIN_EVENT.ON_WILL_ACTION, action, {
+                store: store,
+                actionId: actionId,
+            });
+            if (typeof zoro.onAction === 'function') {
+                zoro.onAction(action);
+            }
+            var actionIntercepts = zoro.getIntercepts(INTERCEPT_ACTION);
+            var nextAction = doneActionIntercepts(actionIntercepts, action, {
+                store: store,
+                NAMESPACE_DIVIDER: NAMESPACE_DIVIDER,
+            });
+            plugin.emit(PLUGIN_EVENT.ON_DID_ACTION, nextAction, {
+                store: store,
+                actionId: actionId,
+            });
+            return next(nextAction);
+        }; }; };
+    }
+
+    var Plugin = /** @class */ (function () {
+        function Plugin() {
+            this.eventHandlers = {};
+        }
+        Plugin.prototype.on = function (eventName, eventHandler) {
+            assert(typeof eventName === 'string', "the plugin event's name is necessary, but we get " + eventName);
+            var eventHandlers = this.eventHandlers[eventName];
+            if (!(eventHandlers instanceof Array)) {
+                this.eventHandlers[eventName] = [];
+            }
+            this.eventHandlers[eventName].push(eventHandler);
+        };
+        Plugin.prototype.emit = function (eventName) {
+            var params = [];
+            for (var _i = 1; _i < arguments.length; _i++) {
+                params[_i - 1] = arguments[_i];
+            }
+            assert(typeof eventName === 'string', "the plugin event's name is necessary, but we get " + eventName);
+            var eventHandlers = this.eventHandlers[eventName];
+            if (eventHandlers instanceof Array) {
+                eventHandlers.forEach(function (eventHandler) {
+                    eventHandler.apply(void 0, params);
+                });
+            }
+        };
+        Plugin.prototype.emitWithResultSet = function (eventName) {
+            var params = [];
+            for (var _i = 1; _i < arguments.length; _i++) {
+                params[_i - 1] = arguments[_i];
+            }
+            assert(typeof eventName === 'string', "the plugin event's name is necessary, but we get " + eventName);
+            var eventHandlers = this.eventHandlers[eventName];
+            if (eventHandlers instanceof Array) {
+                return eventHandlers.reduce(function (result, eventHandler) {
+                    var returnData = eventHandler.apply(void 0, params);
+                    if (returnData instanceof Array) {
+                        return result.concat(returnData);
+                    }
+                    return result;
+                }, []);
+            }
+            return [];
+        };
+        Plugin.prototype.emitWithLoop = function (eventName, data) {
+            var params = [];
+            for (var _i = 2; _i < arguments.length; _i++) {
+                params[_i - 2] = arguments[_i];
+            }
+            assert(typeof eventName === 'string', "the plugin event's name is necessary, but we get " + eventName);
+            var eventHandlers = this.eventHandlers[eventName];
+            if (eventHandlers instanceof Array) {
+                return eventHandlers.reduce(function (result, eventHandler) {
+                    var prev = typeof result !== 'undefined' ? result : data;
+                    var next = eventHandler.apply(void 0, [prev].concat(params));
+                    return typeof next !== 'undefined' ? next : prev;
+                }, undefined);
+            }
+            return undefined;
+        };
+        Plugin.prototype.has = function (eventName) {
+            var eventHandlers = this.eventHandlers[eventName];
+            return eventHandlers instanceof Array && eventHandlers.length > 0;
+        };
+        return Plugin;
+    }());
+
+    function assertOptions(option) {
+        var _a = option.initialState, initialState = _a === void 0 ? {} : _a, _b = option.extraMiddlewares, extraMiddlewares = _b === void 0 ? [] : _b, _c = option.extraEnhancers, extraEnhancers = _c === void 0 ? [] : _c, _d = option.onEffect, onEffect = _d === void 0 ? noop : _d, _e = option.onAction, onAction = _e === void 0 ? noop : _e, _f = option.onReducer, onReducer = _f === void 0 ? noop : _f, _g = option.onSetup, onSetup = _g === void 0 ? noop : _g, _h = option.onError, onError = _h === void 0 ? noop : _h;
+        assert(typeof initialState === 'object' && initialState !== null, "initialState must be an Object, but we get " + typeof initialState);
+        assert(extraMiddlewares instanceof Array, "extraMiddlewares must be an Array, but we get " + typeof extraMiddlewares);
+        assert(extraEnhancers instanceof Array, "extraEnhancers must be an Array, but we get " + typeof extraEnhancers);
+        assert(typeof onEffect === 'function', "the onEffect must be an function handler, but we get " + typeof onEffect);
+        assert(typeof onAction === 'function', "the onAction must be an function handler, but we get " + typeof onAction);
+        assert(typeof onReducer === 'function', "the onReducer must be an function handler, but we get " + typeof onReducer);
+        assert(typeof onSetup === 'function', "the onSetup must be an function handler, but we get " + typeof onSetup);
+        assert(typeof onError === 'function', "the onError must be an function handler, but we get " + typeof onError);
+    }
+    var Zoro = /** @class */ (function () {
+        function Zoro(option) {
+            this.initState = {};
+            this.models = {};
+            this.modelOptions = [];
+            this.middlewares = [];
+            this.enhancers = [];
+            this.isSetup = false;
+            this.intercepts = {};
+            assertOptions(option);
+            var initialState = option.initialState, extraMiddlewares = option.extraMiddlewares, extraEnhancers = option.extraEnhancers, onEffect = option.onEffect, onAction = option.onAction, onReducer = option.onReducer, onSetup = option.onSetup, onError = option.onError;
+            this.plugin = new Plugin();
+            if (initialState) {
+                this.initState = initialState;
+            }
+            if (extraEnhancers) {
+                this.enhancers = extraEnhancers;
+            }
+            if (onEffect) {
+                this.onEffect = onEffect;
+            }
+            if (onAction) {
+                this.onAction = onAction;
+            }
+            if (onReducer) {
+                this.onReducer = onReducer;
+            }
+            if (onSetup) {
+                this.onSetup = onSetup;
+            }
+            if (onError) {
+                this.onError = onError;
+            }
+            if (extraMiddlewares) {
+                this.middlewares = [effectMiddlewareCreator(this)].concat(extraMiddlewares);
+            }
+        }
+        Zoro.prototype.getRootReducer = function () {
+            var _this = this;
+            var rootReducer = Object.keys(this.models).reduce(function (reducers, namespace) {
+                var model = _this.models[namespace];
+                var reducer = model.getReducer();
+                if (_this.onReducer) {
+                    var nextReducer_1 = _this.onReducer(reducer, { namespace: namespace });
+                    if (typeof nextReducer_1 === 'function') {
+                        reducer = nextReducer_1;
+                    }
+                    else {
+                        console.warn("onReducer need return a Reducer, but we get " + typeof nextReducer_1);
+                    }
+                }
+                var nextReducer = _this.getPlugin().emitWithLoop(PLUGIN_EVENT.ON_REDUCER, reducer, { namespace: namespace });
+                if (typeof nextReducer === 'function') {
+                    reducer = nextReducer;
+                }
+                reducers[namespace] = reducer;
+                return reducers;
+            }, {});
+            return combineReducers(rootReducer);
+        };
+        Zoro.prototype.getInitState = function () {
+            var _this = this;
+            var modelInitState = Object.keys(this.models).reduce(function (state, namespace) {
+                var model = _this.models[namespace];
+                state[namespace] = model.getInitState();
+                return state;
+            }, {});
+            var state = __assign({}, this.initState, modelInitState);
+            var pluginInitState = this.getPlugin().emitWithLoop(PLUGIN_EVENT.INJECT_INITIAL_STATE, state);
+            return __assign({}, state, pluginInitState);
+        };
+        Zoro.prototype.replaceReducer = function () {
+            var rootReducer = this.getRootReducer();
+            this.getStore().replaceReducer(rootReducer);
+        };
+        Zoro.prototype.createModel = function (modelOption) {
+            var nextModelOption = this.getPlugin().emitWithLoop(PLUGIN_EVENT.ON_CREATE_MODEL, modelOption);
+            if (typeof nextModelOption !== 'object' || nextModelOption === null) {
+                nextModelOption = modelOption;
+            }
+            var model = new Model(nextModelOption);
+            var namespace = model.getNamespace();
+            assert(typeof this.models[namespace] === 'undefined', "the model namespace must be unique, we get duplicate namespace " + namespace);
+            this.models[namespace] = model;
+            return model;
+        };
+        Zoro.prototype.createModels = function (modelOptions) {
+            var _this = this;
+            return modelOptions.reduce(function (models, modelOption) {
+                var model = _this.createModel(modelOption);
+                models[model.getNamespace()] = model;
+                return models;
+            }, {});
+        };
+        Zoro.prototype.injectPluginMiddlewares = function () {
+            var pluginMiddlewares = this.getPlugin().emitWithResultSet(PLUGIN_EVENT.INJECT_MIDDLEWARES);
+            if (typeof pluginMiddlewares !== 'undefined') {
+                assert(pluginMiddlewares instanceof Array, "the inject plugin middlewares must be an Array, but we get " + typeof pluginMiddlewares);
+                this.middlewares = this.middlewares.concat(pluginMiddlewares);
+            }
+        };
+        Zoro.prototype.injectPluginEnhancers = function () {
+            var pluginEnhancers = this.getPlugin().emitWithResultSet(PLUGIN_EVENT.INJECT_ENHANCERS);
+            if (typeof pluginEnhancers !== 'undefined') {
+                assert(pluginEnhancers instanceof Array, "the inject plugin enhancers must be an Array, but we get " + typeof pluginEnhancers);
+                this.enhancers = this.enhancers.concat(pluginEnhancers);
+            }
+        };
+        Zoro.prototype.injectPluginModels = function () {
+            var pluginModels = this.getPlugin().emitWithResultSet(PLUGIN_EVENT.INJECT_MODELS);
+            if (typeof pluginModels !== 'undefined') {
+                assert(pluginModels instanceof Array, "the inject plugin models must be an Array, but we get " + typeof pluginModels);
+                this.setModels(pluginModels);
+            }
+        };
+        Zoro.prototype.createStore = function () {
+            var rootReducer = this.getRootReducer();
+            this.injectPluginMiddlewares();
+            this.injectPluginEnhancers();
+            var initialState = this.getInitState();
+            return createReduxStore({
+                rootReducer: rootReducer,
+                middlewares: this.middlewares,
+                enhancers: this.enhancers,
+                initialState: initialState,
+            });
+        };
+        Zoro.prototype.setupModel = function (models) {
+            var _this = this;
+            var store = this.getStore();
+            Object.keys(models).forEach(function (namespace) {
+                var model = models[namespace];
+                _this.getPlugin().emit(PLUGIN_EVENT.ON_SETUP_MODEL, model);
+                var setup = model.getSetup();
+                if (typeof setup === 'function') {
+                    setup({
+                        put: createPut(store, namespace),
+                        select: createSelect(store, namespace),
+                        selectAll: createSelect(store),
+                    });
+                }
+            });
+        };
+        Zoro.prototype.getPlugin = function () {
+            return this.plugin;
+        };
+        Zoro.prototype.getStore = function () {
+            assert(typeof this.store !== 'undefined', 'the redux store is not create before call start()');
+            return this.store;
+        };
+        Zoro.prototype.getIntercepts = function (type) {
+            return this.intercepts[type] || [];
+        };
+        Zoro.prototype.getModel = function (namespace) {
+            var model = this.models[namespace];
+            assert(typeof model !== 'undefined', "the " + namespace + " model unkown when get model");
+            return model;
+        };
+        Zoro.prototype.getModelEffects = function (namespace) {
+            var model = this.models[namespace];
+            assert(typeof model !== 'undefined', "the " + namespace + " model unkown when get model effects");
+            return model.getEffects();
+        };
+        Zoro.prototype.setModel = function (modelOption) {
+            var _a;
+            this.modelOptions.push(modelOption);
+            if (this.store) {
+                var model = this.createModel(modelOption);
+                this.replaceReducer();
+                if (this.isSetup) {
+                    this.setupModel((_a = {}, _a[model.getNamespace()] = model, _a));
+                }
+            }
+        };
+        Zoro.prototype.setModels = function (modelOptions) {
+            assert(modelOptions instanceof Array, "the models must be an Array, but we get " + typeof modelOptions);
+            this.modelOptions = this.modelOptions.concat(modelOptions);
+            if (this.store) {
+                var models = this.createModels(modelOptions);
+                this.replaceReducer();
+                if (this.isSetup) {
+                    this.setupModel(models);
+                }
+            }
+        };
+        Zoro.prototype.setIntercept = function (type, intercept) {
+            assert(INTERCEPT_TYPE.indexOf(type) !== -1, "we get an unkown intercept type, it's " + type);
+            assert(typeof intercept === 'function', "the intercept must be a Function, but we get " + typeof intercept);
+            if (!(this.intercepts[type] instanceof Array)) {
+                this.intercepts[type] = [];
+            }
+            this.intercepts[type].push(intercept);
+        };
+        Zoro.prototype.usePlugin = function (pluginCreator) {
+            assert(typeof pluginCreator === 'function', "the use plugin must be a function, but we get " + typeof pluginCreator);
+            pluginCreator(this.getPlugin(), {
+                DIVIDER: NAMESPACE_DIVIDER,
+                PLUGIN_EVENT: PLUGIN_EVENT,
+            });
+        };
+        Zoro.prototype.start = function (setup) {
+            var _this = this;
+            if (setup === void 0) { setup = true; }
+            this.injectPluginModels();
+            this.createModels(this.modelOptions);
+            var store = (this.store = this.createStore());
+            store.subscribe(function () {
+                var plugin = _this.getPlugin();
+                if (plugin.has(PLUGIN_EVENT.ON_SUBSCRIBE)) {
+                    plugin.emit(PLUGIN_EVENT.ON_SUBSCRIBE, store);
+                }
+            });
+            if (setup) {
+                this.setup();
+            }
+            return store;
+        };
+        Zoro.prototype.setup = function () {
+            if (this.isSetup) {
+                return;
+            }
+            var store = this.getStore();
+            this.setupModel(this.models);
+            if (typeof this.onSetup === 'function') {
+                this.onSetup({
+                    put: createPut(store),
+                    select: createSelect(store),
+                });
+            }
+            this.getPlugin().emit(PLUGIN_EVENT.ON_SETUP, store);
+        };
+        return Zoro;
+    }());
+
+    var dispatcher = {};
+    var cache = {};
+    function createDispatch(model, zoro) {
+        var namespace = model.getNamespace();
+        if (typeof cache[namespace] !== 'undefined') {
+            return cache[namespace];
+        }
+        var modelActionCreators = model.getActionCreators();
+        cache[namespace] = Object.keys(modelActionCreators).reduce(function (combine, type) {
+            combine[type] = function dispatch(payload, meta, error) {
+                var store = zoro.getStore();
+                return store.dispatch(modelActionCreators[type](payload, meta, error));
+            };
+            return combine;
+        }, {});
+        return cache[namespace];
+    }
+    function defineDispatcher(zoro) {
+        if (typeof Proxy === 'function') {
+            dispatcher = new Proxy({}, {
+                get: function (target, namespace) {
+                    var model = zoro.getModel(namespace);
+                    return createDispatch(model, zoro);
+                },
+                set: function () {
+                    assert(false, 'cannot set the dispatcher');
+                },
+            });
+        }
+        else {
+            zoro
+                .getPlugin()
+                .on(PLUGIN_EVENT.ON_CREATE_MODEL, function fn(model) {
+                var namespace = model.getNamespace();
+                Object.defineProperty(dispatcher, namespace, {
+                    get: function () {
+                        return createDispatch(model, zoro);
+                    },
+                    set: function () {
+                        assert(false, 'cannot set the dispatcher');
+                    },
+                });
+            });
+        }
+    }
+    var dispatcher$1 = dispatcher;
+
+    function defineIntercept(app, zoro) {
+        app.intercept = {
+            action: function (intercept) {
+                zoro.setIntercept(INTERCEPT_ACTION, intercept);
+            },
+            effect: function (intercept) {
+                zoro.setIntercept(INTERCEPT_EFFECT, intercept);
+            },
+        };
+    }
+    var App = /** @class */ (function () {
+        function App(zoro) {
+            assert(zoro instanceof Zoro, 'invalid app option, we need the zoro object');
+            this.zoro = zoro;
+            defineDispatcher(this.zoro);
+            defineIntercept(this, this.zoro);
+        }
+        App.prototype.model = function (modelOptions) {
+            if (modelOptions instanceof Array) {
+                this.zoro.setModels(modelOptions);
+                return this;
+            }
+            this.zoro.setModel(modelOptions);
+            return this;
+        };
+        App.prototype.use = function (plugins) {
+            var _this = this;
+            if (plugins instanceof Array) {
+                plugins.forEach(function (plugin) {
+                    _this.zoro.usePlugin(plugin);
+                });
+                return this;
+            }
+            this.zoro.usePlugin(plugins);
+            return this;
+        };
+        App.prototype.start = function (setup) {
+            return this.zoro.start(setup);
+        };
+        App.prototype.setup = function () {
+            this.zoro.setup();
+        };
+        return App;
+    }());
+
+    function createApp(option) {
+        var zoro = new Zoro(option);
+        return new App(zoro);
+    }
+
+    exports.default = createApp;
+    exports.dispatcher = dispatcher$1;
+
+    Object.defineProperty(exports, '__esModule', { value: true });
+
+}));
