@@ -61,7 +61,7 @@ class Plugin {
     return [];
   }
 
-  public emitWithLoop(eventName: string, data: any): any {
+  public emitWithLoop(eventName: string, data: any, ...params: any[]): any {
     assert(
       typeof eventName === 'string',
       `the plugin event's name is necessary, but we get ${eventName}`,
@@ -72,7 +72,7 @@ class Plugin {
       return eventHandlers.reduce(
         (result: any, eventHandler: EventHandler): any => {
           const prev = typeof result !== 'undefined' ? result : data;
-          const next = eventHandler(prev);
+          const next = eventHandler(prev, ...params);
           return typeof next !== 'undefined' ? next : prev;
         },
         undefined,
@@ -80,6 +80,11 @@ class Plugin {
     }
 
     return undefined;
+  }
+
+  public has(eventName: string): boolean {
+    const eventHandlers = this.eventHandlers[eventName];
+    return eventHandlers instanceof Array && eventHandlers.length > 0;
   }
 }
 
