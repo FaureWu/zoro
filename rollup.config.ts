@@ -11,7 +11,7 @@ const replaceOption = {
 };
 
 export default {
-  input: 'src/hello.ts',
+  input: 'src/index.ts',
   output: [
     { file: pkg.main, format: 'umd', name: 'zoro', exports: 'named' },
     { file: pkg.module, format: 'es', exports: 'named' },

@@ -11,6 +11,7 @@ import {
 
 const window =
   (function(): any {
+    // @ts-ignore
     return this;
   })() || Function('return this')();
 

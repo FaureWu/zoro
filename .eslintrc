@@ -36,9 +36,11 @@
     "@typescript-eslint/no-unused-vars": "error",
     "@typescript-eslint/semi": "error",
     "prettier/prettier": "error",
-    "@typescript-eslint/no-explicit-any": "off"
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/explicit-member-accessibility": "off"
   },
   "globals": {
-    "Promise": true
+    "Promise": true,
+    "Proxy": true
   }
 }

@@ -5,8 +5,8 @@ import {
   Reducer,
   Store,
   combineReducers,
-  createStore,
 } from 'redux';
+import createReduxStore from './store';
 import Model, {
   Option as ModelOption,
   Operator as ModelOperator,
@@ -49,7 +49,7 @@ export interface State {
   [namespace: string]: any;
 }
 
-export interface Options {
+export interface Option {
   initialState?: State;
   extraMiddlewares?: Middleware[];
   extraEnhancers?: StoreEnhancer[];
@@ -69,7 +69,10 @@ export interface PluginCreatorOption {
   PLUGIN_EVENT: PluginEvent;
 }
 
-export type PluginCreator = (plugin: Plugin, option: PluginOption) => void;
+export type PluginCreator = (
+  plugin: Plugin,
+  option: PluginCreatorOption,
+) => void;
 
 export interface InterceptOption {
   store: Store;
@@ -79,13 +82,13 @@ export interface InterceptOption {
 export type Intercept = (
   action: AnyAction,
   option: InterceptOption,
-) => Promise<any>;
+) => void | AnyAction | Promise<AnyAction> | Promise<void>;
 
 export interface Intercepts {
-  [typeName: string]: Intercept[];
+  [type: string]: Intercept[];
 }
 
-function assertOptions(options: Options): void {
+function assertOptions(option: Option): void {
   const {
     initialState = {},
     extraMiddlewares = [],
@@ -95,7 +98,7 @@ function assertOptions(options: Options): void {
     onReducer = noop,
     onSetup = noop,
     onError = noop,
-  } = options;
+  } = option;
 
   assert(
     typeof initialState === 'object' && initialState !== null,
@@ -160,8 +163,8 @@ class Zoro {
 
   public onSetup?: OnSetup;
 
-  public constructor(options: Options) {
-    assertOptions(options);
+  public constructor(option: Option) {
+    assertOptions(option);
 
     const {
       initialState,
@@ -172,7 +175,7 @@ class Zoro {
       onReducer,
       onSetup,
       onError,
-    } = options;
+    } = option;
 
     this.plugin = new Plugin();
 
@@ -212,38 +215,39 @@ class Zoro {
   }
 
   private getRootReducer(): Reducer<any, AnyAction> {
-    const rootReducer: Reducer<any, AnyAction> = Object.keys(
-      this.models,
-    ).reduce((reducers: Reducers, namespace: string): Reducers => {
-      const model: Model = this.models[namespace];
-      let reducer: Reducer<any, AnyAction> = model.getReducer();
+    const rootReducer: Reducers = Object.keys(this.models).reduce(
+      (reducers: Reducers, namespace: string): Reducers => {
+        const model: Model = this.models[namespace];
+        let reducer: Reducer<any, AnyAction> = model.getReducer();
 
-      if (this.onReducer) {
-        const nextReducer = this.onReducer(reducer, { namespace });
+        if (this.onReducer) {
+          const nextReducer = this.onReducer(reducer, { namespace });
+
+          if (typeof nextReducer === 'function') {
+            reducer = nextReducer;
+          } else {
+            console.warn(
+              `onReducer need return a Reducer, but we get ${typeof nextReducer}`,
+            );
+          }
+        }
+
+        const nextReducer = this.getPlugin().emitWithLoop(
+          PLUGIN_EVENT.ON_REDUCER,
+          reducer,
+          { namespace },
+        );
 
         if (typeof nextReducer === 'function') {
           reducer = nextReducer;
-        } else {
-          console.warn(
-            `onReducer need return a Reducer, but we get ${typeof nextReducer}`,
-          );
         }
-      }
 
-      const nextReducer = this.getPlugin().emitWithLoop(
-        PLUGIN_EVENT.ON_REDUCER,
-        reducer,
-        { namespace },
-      );
+        reducers[namespace] = reducer;
 
-      if (typeof nextReducer === 'function') {
-        reducer = nextReducer;
-      }
-
-      reducers[namespace] = reducer;
-
-      return reducers;
-    }, {});
+        return reducers;
+      },
+      {},
+    );
 
     return combineReducers(rootReducer);
   }
@@ -276,7 +280,7 @@ class Zoro {
   }
 
   private replaceReducer(): void {
-    const rootReducer = this.getRootReducer();
+    const rootReducer: Reducer<any, AnyAction> = this.getRootReducer();
     this.getStore().replaceReducer(rootReducer);
   }
 
@@ -301,7 +305,7 @@ class Zoro {
     return model;
   }
 
-  private createModels(modelOptions: ModelOption[]): Model[] {
+  private createModels(modelOptions: ModelOption[]): Models {
     return modelOptions.reduce(
       (models: Models, modelOption: ModelOption): Models => {
         const model = this.createModel(modelOption);
@@ -361,7 +365,7 @@ class Zoro {
     this.injectPluginEnhancers();
     const initialState: any = this.getInitState();
 
-    return createStore({
+    return createReduxStore({
       rootReducer,
       middlewares: this.middlewares,
       enhancers: this.enhancers,
@@ -375,7 +379,7 @@ class Zoro {
     Object.keys(models).forEach((namespace: string): void => {
       const model: Model = models[namespace];
       this.getPlugin().emit(PLUGIN_EVENT.ON_SETUP_MODEL, model);
-      const setup: ModelSetup = model.getSetup();
+      const setup: ModelSetup | undefined = model.getSetup();
       if (typeof setup === 'function') {
         setup({
           put: createPut(store, namespace),
@@ -403,6 +407,16 @@ class Zoro {
     return this.intercepts[type] || [];
   }
 
+  public getModel(namespace: string): Model {
+    const model: Model = this.models[namespace];
+    assert(
+      typeof model !== 'undefined',
+      `the ${namespace} model unkown when get model`,
+    );
+
+    return model;
+  }
+
   public getModelEffects(namespace: string): ModelEffects {
     const model: Model = this.models[namespace];
     assert(
@@ -420,7 +434,7 @@ class Zoro {
       this.replaceReducer();
 
       if (this.isSetup) {
-        this.setupModel(model);
+        this.setupModel({ [model.getNamespace()]: model });
       }
     }
   }
@@ -478,16 +492,16 @@ class Zoro {
     this.createModels(this.modelOptions);
     const store: Store = (this.store = this.createStore());
 
-    if (setup) {
-      this.setupModel();
-    }
-
     store.subscribe((): void => {
       const plugin = this.getPlugin();
       if (plugin.has(PLUGIN_EVENT.ON_SUBSCRIBE)) {
         plugin.emit(PLUGIN_EVENT.ON_SUBSCRIBE, store);
       }
     });
+
+    if (setup) {
+      this.setup();
+    }
 
     return store;
   }
@@ -500,10 +514,13 @@ class Zoro {
     const store = this.getStore();
 
     this.setupModel(this.models);
-    this.onSetup({
-      put: createPut(store),
-      select: createSelect(store),
-    });
+
+    if (typeof this.onSetup === 'function') {
+      this.onSetup({
+        put: createPut(store),
+        select: createSelect(store),
+      });
+    }
     this.getPlugin().emit(PLUGIN_EVENT.ON_SETUP, store);
   }
 }

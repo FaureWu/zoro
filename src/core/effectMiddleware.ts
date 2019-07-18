@@ -28,9 +28,12 @@ async function doneEffectIntercepts(
   if (intercepts.length <= 0) return action;
 
   const effectIntercepts: Intercept[] = intercepts.slice(0);
-  async function doneEffectIntercept(prevAction: AnyAction): void {
+  async function doneEffectIntercept(
+    prevAction: AnyAction,
+  ): Promise<AnyAction> {
     const effectIntercept = effectIntercepts.shift();
     let nextAction = prevAction;
+    // @ts-ignore
     const resolveAction = await effectIntercept(prevAction, option);
 
     if (typeof resolveAction !== 'undefined') {
@@ -51,7 +54,7 @@ async function doneEffectIntercepts(
     return nextAction;
   }
 
-  const resultAction = await doneEffectIntercept();
+  const resultAction = await doneEffectIntercept(action);
 
   return resultAction;
 }
@@ -117,7 +120,7 @@ function doneActionIntercepts(
           'the action intercept return must be an action or none',
         );
 
-        return resolveAction;
+        return resolveAction as AnyAction;
       }
 
       return nextAction;
