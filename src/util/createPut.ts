@@ -4,7 +4,7 @@ import { assert, isReduxAction } from './utils';
 
 export type Put = (action: AnyAction) => AnyAction | Promise<any>;
 
-export default function createPut(store: Store, namespace: string): Put {
+export default function createPut(store: Store, namespace?: string): Put {
   return function put(action: AnyAction): AnyAction | Promise<any> {
     assert(
       isReduxAction(action),
@@ -26,6 +26,11 @@ export default function createPut(store: Store, namespace: string): Put {
 
       return store.dispatch(action);
     }
+
+    assert(
+      typeof namespace !== 'undefined',
+      `we need a model namespace for action type, but we get [${type}]`,
+    );
 
     return store.dispatch({
       type: `${namespace}${NAMESPACE_DIVIDER}${type}`,

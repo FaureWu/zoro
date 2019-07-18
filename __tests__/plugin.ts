@@ -32,4 +32,9 @@ describe('FILE: util/plugin', (): void => {
     });
     expect(plugin.emitWithLoop('eventLoop', 1)).toEqual(4);
   });
+
+  test('new Plugin(): has', (): void => {
+    expect(plugin.has('eventLoop')).toEqual(true);
+    expect(plugin.has('unknow')).toEqual(false);
+  });
 });

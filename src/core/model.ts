@@ -8,15 +8,20 @@ import createReducer, {
 import { assert, noop } from '../util/utils';
 import { NAMESPACE_DIVIDER } from '../util/constant';
 
-export interface Operators {
-  selectAll: Select;
+export interface ActionType {
+  namespace: string;
+  type: string;
+}
+
+export interface Operator {
+  selectAll?: Select;
   select: Select;
   put: Put;
 }
 
 export type Effect = (
   action: AnyAction,
-  operators: Operators,
+  operator: Operator,
 ) => void | Promise<any>;
 
 export interface Effects {
@@ -33,9 +38,9 @@ export interface ActionCreators {
   [propName: string]: ActionCreator;
 }
 
-export type Setup = (operator: Operators) => void;
+export type Setup = (operator: Operator) => void;
 
-export interface Options {
+export interface Option {
   namespace: string;
   state?: any;
   reducers?: CustomReducers;
@@ -43,7 +48,7 @@ export interface Options {
   setup?: Setup;
 }
 
-function assertOptions(options: Options): void {
+function assertOption(options: Option): void {
   const { namespace, reducers = {}, effects = {}, setup = noop } = options;
 
   assert(
@@ -138,8 +143,8 @@ class Model {
     );
   }
 
-  public constructor(options: Options) {
-    assertOptions(options);
+  public constructor(options: Option) {
+    assertOption(options);
 
     const { namespace, state, reducers, effects, setup } = options;
 

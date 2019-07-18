@@ -1,5 +1,5 @@
 import * as Redux from 'redux';
-import Model, { Operators } from '../src/core/model';
+import Model, { Operator } from '../src/core/model';
 import createPut from '../src/util/createPut';
 import createSelect from '../src/util/createSelect';
 import { noop } from '../src/util/utils';
@@ -37,16 +37,16 @@ describe('FILE: core/model', (): void => {
       effects: {
         async asyncAdd(
           action: Redux.AnyAction,
-          operator: Operators,
+          operator: Operator,
         ): Promise<void> {
-          await delay(2000);
+          await delay(100);
           operator.put({ type: 'add', payload: action.payload });
         },
         async asyncAdd2(
           action: Redux.AnyAction,
-          operator: Operators,
+          operator: Operator,
         ): Promise<string> {
-          await delay(2000);
+          await delay(100);
           operator.put({ type: 'add', payload: action.payload });
           return 'return value test';
         },
@@ -59,7 +59,7 @@ describe('FILE: core/model', (): void => {
       },
     } as Redux.Store;
 
-    const operator: Operators = {
+    const operator: Operator = {
       select: createSelect(store, 'model2'),
       selectAll: createSelect(store),
       put: createPut(store, 'model2'),

@@ -18,4 +18,17 @@ describe('FILE: util/createPut', (): void => {
       type: 'modelNamespace2/action',
     });
   });
+
+  test('createPut(): global dispatch', (): void => {
+    const put = createPut(store);
+    expect((): void => {
+      put({ type: 'action' });
+    }).toThrow(
+      'we need a model namespace for action type, but we get [action]',
+    );
+
+    expect(put({ type: 'modelNamespace2/action' })).toEqual({
+      type: 'modelNamespace2/action',
+    });
+  });
 });
