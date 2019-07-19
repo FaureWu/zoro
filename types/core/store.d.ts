@@ -1,8 +1,10 @@
 import { Reducer, AnyAction, Middleware, StoreEnhancer, Store } from 'redux';
-export interface Options {
-  initialState: any;
+export interface Option {
   rootReducer: Reducer<any, AnyAction>;
   middlewares: Middleware[];
   enhancers: StoreEnhancer[];
 }
-export default function createReduxStore(options: Options): Store;
+export interface GlobalState {
+  [namespace: string]: any;
+}
+export default function createReduxStore(option: Option): Store<GlobalState>;

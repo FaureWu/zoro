@@ -14,7 +14,12 @@ export interface ActionType {
 }
 
 export interface Operator {
-  selectAll?: Select;
+  selectAll: Select;
+  select: Select;
+  put: Put;
+}
+
+export interface GlobalOperator {
   select: Select;
   put: Put;
 }

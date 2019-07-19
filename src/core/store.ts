@@ -15,25 +15,28 @@ const window =
     return this;
   })() || Function('return this')();
 
-export interface Options {
-  initialState: any;
+export interface Option {
   rootReducer: Reducer<any, AnyAction>;
   middlewares: Middleware[];
   enhancers: StoreEnhancer[];
 }
 
-export default function createReduxStore(options: Options): Store {
+export interface GlobalState {
+  [namespace: string]: any;
+}
+
+export default function createReduxStore(option: Option): Store<GlobalState> {
   const composeEnhancers =
     window && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
       ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
       : compose;
 
   const store = createStore(
-    options.rootReducer,
-    options.initialState,
+    option.rootReducer,
+    undefined,
     composeEnhancers(
-      applyMiddleware(...options.middlewares),
-      ...options.enhancers,
+      applyMiddleware(...option.middlewares),
+      ...option.enhancers,
     ),
   );
 

@@ -23,7 +23,7 @@ export function isReduxAction(action: any): boolean {
 
 export function parseModelActionType(actionType: string): ModelActionType {
   const parts: string[] = actionType.split(NAMESPACE_DIVIDER);
-  assert(parts.length < 2, `invalid model action type, [${actionType}]`);
+  assert(parts.length >= 2, `invalid model action type, [${actionType}]`);
 
   return {
     namespace: parts.slice(0, parts.length - 1).join(NAMESPACE_DIVIDER),

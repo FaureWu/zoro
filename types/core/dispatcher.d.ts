@@ -8,6 +8,9 @@ export declare type CustomDispatch = (
 export interface CustomDispatchs {
   [type: string]: CustomDispatch;
 }
-declare let dispatcher: {};
+export interface Dispatcher {
+  [namespace: string]: CustomDispatchs;
+}
+declare const dispatcher: Dispatcher;
 export declare function defineDispatcher(zoro: Zoro): void;
 export default dispatcher;

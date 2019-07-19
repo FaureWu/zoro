@@ -6,7 +6,8 @@ export interface PluginEvent {
   INJECT_MIDDLEWARES: string;
   INJECT_ENHANCERS: string;
   ON_REDUCER: string;
-  ON_CREATE_MODEL: string;
+  ON_BEFORE_CREATE_MODEL: string;
+  ON_AFTER_CREATE_MODEL: string;
   ON_SETUP_MODEL: string;
   ON_WILL_EFFECT: string;
   ON_DID_EFFECT: string;
@@ -25,7 +26,8 @@ export const PLUGIN_EVENT: PluginEvent = {
   INJECT_MIDDLEWARES: 'injectMiddlewares',
   INJECT_ENHANCERS: 'injectEnhancers',
   ON_REDUCER: 'onReducer',
-  ON_CREATE_MODEL: 'onCreateModel',
+  ON_BEFORE_CREATE_MODEL: 'onBeforeCreateModel',
+  ON_AFTER_CREATE_MODEL: 'onAfterCreateModel',
   ON_SETUP_MODEL: 'onSetupModel',
   ON_WILL_EFFECT: 'onWillEffect',
   ON_DID_EFFECT: 'onDidEffect',

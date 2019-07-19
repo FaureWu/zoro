@@ -1,5 +1,9 @@
 import { Middleware, Dispatch, AnyAction } from 'redux';
-import Zoro, { Intercept, InterceptOption } from './zoro';
+import Zoro, {
+  ActionIntercept,
+  EffectIntercept,
+  InterceptOption,
+} from './zoro';
 import { ActionType as ModelActionType, Effect as ModelEffect } from './model';
 import createSelect from '../util/createSelect';
 import createPut from '../util/createPut';
@@ -21,13 +25,13 @@ type Handler2 = (action: AnyAction) => AnyAction | Promise<any>;
 type Handler1 = (next: Dispatch<AnyAction>) => Handler2;
 
 async function doneEffectIntercepts(
-  intercepts: Intercept[],
+  intercepts: EffectIntercept[],
   action: AnyAction,
   option: InterceptOption,
 ): Promise<AnyAction> {
   if (intercepts.length <= 0) return action;
 
-  const effectIntercepts: Intercept[] = intercepts.slice(0);
+  const effectIntercepts: EffectIntercept[] = intercepts.slice(0);
   async function doneEffectIntercept(
     prevAction: AnyAction,
   ): Promise<AnyAction> {
@@ -75,10 +79,14 @@ async function doneEffect(
   }
 
   const effectIntercepts = zoro.getIntercepts(INTERCEPT_EFFECT);
-  const nextAction = await doneEffectIntercepts(effectIntercepts, action, {
-    store,
-    NAMESPACE_DIVIDER,
-  });
+  const nextAction = await doneEffectIntercepts(
+    effectIntercepts as EffectIntercept[],
+    action,
+    {
+      store,
+      NAMESPACE_DIVIDER,
+    },
+  );
 
   const { namespace }: ModelActionType = parseModelActionType(nextAction.type);
 
@@ -104,14 +112,14 @@ async function doneEffect(
 }
 
 function doneActionIntercepts(
-  intercepts: Intercept[],
+  intercepts: ActionIntercept[],
   action: AnyAction,
   option: InterceptOption,
 ): AnyAction {
   if (intercepts.length <= 0) return action;
 
   return intercepts.reduce(
-    (nextAction: AnyAction, intercept: Intercept): AnyAction => {
+    (nextAction: AnyAction, intercept: ActionIntercept): AnyAction => {
       const resolveAction = intercept(nextAction, option);
 
       if (typeof resolveAction !== 'undefined') {
@@ -154,10 +162,14 @@ export default function effectMiddlewareCreator(zoro: Zoro): Middleware {
     }
 
     const actionIntercepts = zoro.getIntercepts(INTERCEPT_ACTION);
-    const nextAction = doneActionIntercepts(actionIntercepts, action, {
-      store,
-      NAMESPACE_DIVIDER,
-    });
+    const nextAction = doneActionIntercepts(
+      actionIntercepts as ActionIntercept[],
+      action,
+      {
+        store,
+        NAMESPACE_DIVIDER,
+      },
+    );
 
     plugin.emit(PLUGIN_EVENT.ON_DID_ACTION, nextAction, {
       store,

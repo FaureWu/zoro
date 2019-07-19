@@ -17,7 +17,7 @@ describe('FILE: core/model', (): void => {
     const reducer = model.getReducer();
     expect(model.getNamespace()).toEqual('model1');
     expect(model.getInitState()).toEqual(undefined);
-    expect(reducer(undefined, { type: 'ACTION_TYPE' })).toEqual(undefined);
+    expect(reducer(undefined, { type: 'ACTION_TYPE' })).toEqual(null);
     expect(model.getEffects()).toEqual({});
     expect(model.getActionCreators()).toEqual({});
     expect(model.getSetup()).toEqual(noop);
