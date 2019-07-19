@@ -4,6 +4,6 @@ export interface CustomReducers {
   [propName: string]: CustomReducer;
 }
 export default function createReducer(
-  initialState: any,
+  initialState?: any,
   handlers?: CustomReducers,
 ): Reducer<any, AnyAction>;

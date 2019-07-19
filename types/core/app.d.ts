@@ -1,17 +1,18 @@
 import { Store } from 'redux';
-import Zoro, { PluginCreator, Intercept } from './zoro';
+import Zoro, { PluginCreator, ActionIntercept, EffectIntercept } from './zoro';
 import { Option as ModelOption } from './model';
-export interface ZoroIntercept {
-  action: (intercept: Intercept) => void;
-  effect: (intercept: Intercept) => void;
+import { GlobalState } from './store';
+export interface Intercept {
+  action: (intercept: ActionIntercept) => void;
+  effect: (intercept: EffectIntercept) => void;
 }
 declare class App {
   private zoro;
-  intercept?: ZoroIntercept;
+  intercept: Intercept;
   constructor(zoro: Zoro);
   model(modelOptions: ModelOption | ModelOption[]): App;
   use(plugins: PluginCreator | PluginCreator[]): App;
-  start(setup: boolean): Store;
+  start(setup?: boolean): Store<GlobalState>;
   setup(): void;
 }
 export default App;

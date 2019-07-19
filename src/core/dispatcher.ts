@@ -1,4 +1,4 @@
-import { AnyAction, Store } from 'redux';
+import { AnyAction } from 'redux';
 import Zoro from './zoro';
 import Model from './model';
 import { PLUGIN_EVENT } from '../util/constant';
@@ -14,7 +14,11 @@ export interface CustomDispatchs {
   [type: string]: CustomDispatch;
 }
 
-let dispatcher = {};
+export interface Dispatcher {
+  [namespace: string]: CustomDispatchs;
+}
+
+const dispatcher: Dispatcher = {};
 const cache = {};
 
 function createDispatch(model: Model, zoro: Zoro): CustomDispatchs {
@@ -32,7 +36,7 @@ function createDispatch(model: Model, zoro: Zoro): CustomDispatchs {
         meta?: any,
         error?: boolean,
       ): AnyAction {
-        const store: Store = zoro.getStore();
+        const store = zoro.getStore();
         return store.dispatch(modelActionCreators[type](payload, meta, error));
       };
 
@@ -45,35 +49,20 @@ function createDispatch(model: Model, zoro: Zoro): CustomDispatchs {
 }
 
 export function defineDispatcher(zoro: Zoro): void {
-  if (typeof Proxy === 'function') {
-    dispatcher = new Proxy(
-      {},
-      {
-        get(target: any, namespace: string): CustomDispatchs {
-          const model: Model = zoro.getModel(namespace);
+  zoro
+    .getPlugin()
+    .on(PLUGIN_EVENT.ON_AFTER_CREATE_MODEL, function fn(model: Model): void {
+      const namespace = model.getNamespace();
+
+      Object.defineProperty(dispatcher, namespace, {
+        get(): CustomDispatchs {
           return createDispatch(model, zoro);
         },
         set(): any {
           assert(false, 'cannot set the dispatcher');
         },
-      },
-    );
-  } else {
-    zoro
-      .getPlugin()
-      .on(PLUGIN_EVENT.ON_CREATE_MODEL, function fn(model: Model): void {
-        const namespace = model.getNamespace();
-
-        Object.defineProperty(dispatcher, namespace, {
-          get(): CustomDispatchs {
-            return createDispatch(model, zoro);
-          },
-          set(): any {
-            assert(false, 'cannot set the dispatcher');
-          },
-        });
       });
-  }
+    });
 }
 
 export default dispatcher;

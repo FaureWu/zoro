@@ -21,6 +21,6 @@ describe('FILE: util/createReducer', (): void => {
 
   test('createReducer(): unkown action type return init state', (): void => {
     const reducer = createReducer(undefined, handlers);
-    expect(reducer(undefined, { type: 'UNKOWN_ACTION' })).toEqual(undefined);
+    expect(reducer(undefined, { type: 'UNKOWN_ACTION' })).toEqual(null);
   });
 });

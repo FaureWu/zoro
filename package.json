@@ -18,7 +18,7 @@
   "scripts": {
     "build": "npm run clean && cross-env NODE_ENV=production rollup --config rollup.config.ts && npm run fix:types",
     "clean": "rm -rf ./dist",
-    "release": "npm run lint && npm run build && npm publish --access=public",
+    "release": "npm run lint && npm run test && npm run build && npm publish --access=public",
     "lint": "eslint src --fix --ext .ts",
     "fix:types": "eslint types --fix --ext .ts",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",

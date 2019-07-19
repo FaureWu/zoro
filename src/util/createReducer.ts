@@ -8,7 +8,7 @@ export interface CustomReducers {
 }
 
 export default function createReducer(
-  initialState: any,
+  initialState: any = null,
   handlers: CustomReducers = {},
 ): Reducer<any, AnyAction> {
   assert(

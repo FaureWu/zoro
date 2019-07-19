@@ -1,3 +1,62 @@
+// @ts-nocheck
+
+/* eslint-disable */
+if (typeof Promise !== 'function') {
+  throw new TypeError('A global Promise is required');
+}
+
+if (typeof Promise.prototype.finally !== 'function') {
+  var speciesConstructor = function(O, defaultConstructor) {
+    if (!O || (typeof O !== 'object' && typeof O !== 'function')) {
+      throw new TypeError('Assertion failed: Type(O) is not Object');
+    }
+    var C = O.constructor;
+    if (typeof C === 'undefined') {
+      return defaultConstructor;
+    }
+    if (!C || (typeof C !== 'object' && typeof C !== 'function')) {
+      throw new TypeError('O.constructor is not an Object');
+    }
+    var S =
+      typeof Symbol === 'function' && typeof Symbol.species === 'symbol'
+        ? C[Symbol.species]
+        : undefined;
+    if (S == null) {
+      return defaultConstructor;
+    }
+    if (typeof S === 'function' && S.prototype) {
+      return S;
+    }
+    throw new TypeError('no constructor found');
+  };
+
+  var shim = {
+    finally(onFinally) {
+      var promise = this;
+      if (typeof promise !== 'object' || promise === null) {
+        throw new TypeError('"this" value is not an Object');
+      }
+      var C = speciesConstructor(promise, Promise); // throws if SpeciesConstructor throws
+      if (typeof onFinally !== 'function') {
+        return Promise.prototype.then.call(promise, onFinally, onFinally);
+      }
+      return Promise.prototype.then.call(
+        promise,
+        x => new C(resolve => resolve(onFinally())).then(() => x),
+        e =>
+          new C(resolve => resolve(onFinally())).then(() => {
+            throw e;
+          }),
+      );
+    },
+  };
+  Object.defineProperty(Promise.prototype, 'finally', {
+    configurable: true,
+    writable: true,
+    value: shim.finally,
+  });
+}
+
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation. All rights reserved.
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use
@@ -641,11 +700,11 @@ var window$1 = (function () {
     // @ts-ignore
     return this;
 })() || Function('return this')();
-function createReduxStore(options) {
+function createReduxStore(option) {
     var composeEnhancers = window$1 && window$1.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
         ? window$1.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
         : compose;
-    var store = createStore(options.rootReducer, options.initialState, composeEnhancers.apply(void 0, [applyMiddleware.apply(void 0, options.middlewares)].concat(options.enhancers)));
+    var store = createStore(option.rootReducer, undefined, composeEnhancers.apply(void 0, [applyMiddleware.apply(void 0, option.middlewares)].concat(option.enhancers)));
     return store;
 }
 
@@ -656,7 +715,8 @@ var PLUGIN_EVENT = {
     INJECT_MIDDLEWARES: 'injectMiddlewares',
     INJECT_ENHANCERS: 'injectEnhancers',
     ON_REDUCER: 'onReducer',
-    ON_CREATE_MODEL: 'onCreateModel',
+    ON_BEFORE_CREATE_MODEL: 'onBeforeCreateModel',
+    ON_AFTER_CREATE_MODEL: 'onAfterCreateModel',
     ON_SETUP_MODEL: 'onSetupModel',
     ON_WILL_EFFECT: 'onWillEffect',
     ON_DID_EFFECT: 'onDidEffect',
@@ -684,7 +744,7 @@ function isReduxAction(action) {
 }
 function parseModelActionType(actionType) {
     var parts = actionType.split(NAMESPACE_DIVIDER);
-    assert(parts.length < 2, "invalid model action type, [" + actionType + "]");
+    assert(parts.length >= 2, "invalid model action type, [" + actionType + "]");
     return {
         namespace: parts.slice(0, parts.length - 1).join(NAMESPACE_DIVIDER),
         type: parts[parts.length - 1],
@@ -699,6 +759,7 @@ function uuid() {
 }
 
 function createReducer(initialState, handlers) {
+    if (initialState === void 0) { initialState = null; }
     if (handlers === void 0) { handlers = {}; }
     assert(typeof handlers === 'object' && handlers !== null, 'the reducer handlers must be an object');
     return function reducer(state, action) {
@@ -1043,13 +1104,18 @@ function assertOptions(option) {
 }
 var Zoro = /** @class */ (function () {
     function Zoro(option) {
+        var _a;
+        if (option === void 0) { option = {}; }
         this.initState = {};
         this.models = {};
         this.modelOptions = [];
         this.middlewares = [];
         this.enhancers = [];
         this.isSetup = false;
-        this.intercepts = {};
+        this.intercepts = (_a = {},
+            _a[INTERCEPT_ACTION] = [],
+            _a[INTERCEPT_EFFECT] = [],
+            _a);
         assertOptions(option);
         var initialState = option.initialState, extraMiddlewares = option.extraMiddlewares, extraEnhancers = option.extraEnhancers, onEffect = option.onEffect, onAction = option.onAction, onReducer = option.onReducer, onSetup = option.onSetup, onError = option.onError;
         this.plugin = new Plugin();
@@ -1074,8 +1140,9 @@ var Zoro = /** @class */ (function () {
         if (onError) {
             this.onError = onError;
         }
+        this.middlewares = [effectMiddlewareCreator(this)];
         if (extraMiddlewares) {
-            this.middlewares = [effectMiddlewareCreator(this)].concat(extraMiddlewares);
+            this.middlewares = this.middlewares.concat(extraMiddlewares);
         }
     }
     Zoro.prototype.getRootReducer = function () {
@@ -1102,29 +1169,28 @@ var Zoro = /** @class */ (function () {
         return combineReducers(rootReducer);
     };
     Zoro.prototype.getInitState = function () {
-        var _this = this;
-        var modelInitState = Object.keys(this.models).reduce(function (state, namespace) {
-            var model = _this.models[namespace];
-            state[namespace] = model.getInitState();
-            return state;
-        }, {});
-        var state = __assign({}, this.initState, modelInitState);
-        var pluginInitState = this.getPlugin().emitWithLoop(PLUGIN_EVENT.INJECT_INITIAL_STATE, state);
-        return __assign({}, state, pluginInitState);
+        var pluginInitState = this.getPlugin().emitWithLoop(PLUGIN_EVENT.INJECT_INITIAL_STATE, this.initState);
+        return __assign({}, this.initState, pluginInitState);
     };
     Zoro.prototype.replaceReducer = function () {
         var rootReducer = this.getRootReducer();
         this.getStore().replaceReducer(rootReducer);
     };
     Zoro.prototype.createModel = function (modelOption) {
-        var nextModelOption = this.getPlugin().emitWithLoop(PLUGIN_EVENT.ON_CREATE_MODEL, modelOption);
+        var nextModelOption = this.getPlugin().emitWithLoop(PLUGIN_EVENT.ON_BEFORE_CREATE_MODEL, modelOption);
         if (typeof nextModelOption !== 'object' || nextModelOption === null) {
             nextModelOption = modelOption;
+        }
+        var initState = this.getInitState();
+        if (typeof nextModelOption.state === 'undefined' &&
+            typeof nextModelOption.namespace === 'string') {
+            nextModelOption.state = initState[nextModelOption.namespace];
         }
         var model = new Model(nextModelOption);
         var namespace = model.getNamespace();
         assert(typeof this.models[namespace] === 'undefined', "the model namespace must be unique, we get duplicate namespace " + namespace);
         this.models[namespace] = model;
+        this.getPlugin().emit(PLUGIN_EVENT.ON_AFTER_CREATE_MODEL, model);
         return model;
     };
     Zoro.prototype.createModels = function (modelOptions) {
@@ -1160,12 +1226,10 @@ var Zoro = /** @class */ (function () {
         var rootReducer = this.getRootReducer();
         this.injectPluginMiddlewares();
         this.injectPluginEnhancers();
-        var initialState = this.getInitState();
         return createReduxStore({
             rootReducer: rootReducer,
             middlewares: this.middlewares,
             enhancers: this.enhancers,
-            initialState: initialState,
         });
     };
     Zoro.prototype.setupModel = function (models) {
@@ -1293,34 +1357,20 @@ function createDispatch(model, zoro) {
     return cache[namespace];
 }
 function defineDispatcher(zoro) {
-    if (typeof Proxy === 'function') {
-        dispatcher = new Proxy({}, {
-            get: function (target, namespace) {
-                var model = zoro.getModel(namespace);
+    zoro
+        .getPlugin()
+        .on(PLUGIN_EVENT.ON_AFTER_CREATE_MODEL, function fn(model) {
+        var namespace = model.getNamespace();
+        Object.defineProperty(dispatcher, namespace, {
+            get: function () {
                 return createDispatch(model, zoro);
             },
             set: function () {
                 assert(false, 'cannot set the dispatcher');
             },
         });
-    }
-    else {
-        zoro
-            .getPlugin()
-            .on(PLUGIN_EVENT.ON_CREATE_MODEL, function fn(model) {
-            var namespace = model.getNamespace();
-            Object.defineProperty(dispatcher, namespace, {
-                get: function () {
-                    return createDispatch(model, zoro);
-                },
-                set: function () {
-                    assert(false, 'cannot set the dispatcher');
-                },
-            });
-        });
-    }
+    });
 }
-var dispatcher$1 = dispatcher;
 
 function defineIntercept(app, zoro) {
     app.intercept = {
@@ -1359,6 +1409,7 @@ var App = /** @class */ (function () {
         return this;
     };
     App.prototype.start = function (setup) {
+        if (setup === void 0) { setup = true; }
         return this.zoro.start(setup);
     };
     App.prototype.setup = function () {
@@ -1373,4 +1424,4 @@ function createApp(option) {
 }
 
 export default createApp;
-export { dispatcher$1 as dispatcher };
+export { dispatcher };

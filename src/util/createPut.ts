@@ -1,10 +1,14 @@
 import { Store, AnyAction } from 'redux';
+import { GlobalState } from '../core/store';
 import { NAMESPACE_DIVIDER } from './constant';
 import { assert, isReduxAction } from './utils';
 
 export type Put = (action: AnyAction) => AnyAction | Promise<any>;
 
-export default function createPut(store: Store, namespace?: string): Put {
+export default function createPut(
+  store: Store<GlobalState>,
+  namespace?: string,
+): Put {
   return function put(action: AnyAction): AnyAction | Promise<any> {
     assert(
       isReduxAction(action),

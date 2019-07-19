@@ -1,11 +1,16 @@
 import { Middleware, StoreEnhancer, AnyAction, Reducer, Store } from 'redux';
+import { GlobalState } from './store';
 import Model, {
   Option as ModelOption,
-  Operator as ModelOperator,
+  GlobalOperator,
   Effects as ModelEffects,
 } from './model';
 import Plugin from '../util/plugin';
-import { PluginEvent } from '../util/constant';
+import {
+  PluginEvent,
+  INTERCEPT_ACTION,
+  INTERCEPT_EFFECT,
+} from '../util/constant';
 export interface Models {
   [namespace: string]: Model;
 }
@@ -19,7 +24,7 @@ export declare type OnReducer = (
   reducer: Reducer<any, AnyAction>,
   option: OnReducerOption,
 ) => Reducer<any, AnyAction>;
-export declare type OnSetup = (operator: ModelOperator) => void;
+export declare type OnSetup = (operator: GlobalOperator) => void;
 export interface State {
   [namespace: string]: any;
 }
@@ -45,15 +50,20 @@ export declare type PluginCreator = (
   option: PluginCreatorOption,
 ) => void;
 export interface InterceptOption {
-  store: Store;
+  store: Store<GlobalState>;
   NAMESPACE_DIVIDER: string;
 }
-export declare type Intercept = (
+export declare type ActionIntercept = (
   action: AnyAction,
   option: InterceptOption,
-) => void | AnyAction | Promise<AnyAction> | Promise<void>;
+) => void | AnyAction;
+export declare type EffectIntercept = (
+  action: AnyAction,
+  option: InterceptOption,
+) => Promise<void> | Promise<AnyAction>;
 export interface Intercepts {
-  [type: string]: Intercept[];
+  [INTERCEPT_ACTION]: ActionIntercept[];
+  [INTERCEPT_EFFECT]: EffectIntercept[];
 }
 declare class Zoro {
   private initState;
@@ -70,7 +80,7 @@ declare class Zoro {
   onAction?: OnAction;
   onReducer?: OnReducer;
   onSetup?: OnSetup;
-  constructor(option: Option);
+  constructor(option?: Option);
   private getRootReducer;
   private getInitState;
   private replaceReducer;
@@ -82,15 +92,18 @@ declare class Zoro {
   private createStore;
   private setupModel;
   getPlugin(): Plugin;
-  getStore(): Store;
-  getIntercepts(type: string): Intercept[];
+  getStore(): Store<GlobalState>;
+  getIntercepts(type: string): ActionIntercept[] | EffectIntercept[];
   getModel(namespace: string): Model;
   getModelEffects(namespace: string): ModelEffects;
   setModel(modelOption: ModelOption): void;
   setModels(modelOptions: ModelOption[]): void;
-  setIntercept(type: string, intercept: Intercept): void;
+  setIntercept(
+    type: string,
+    intercept: ActionIntercept | EffectIntercept,
+  ): void;
   usePlugin(pluginCreator: PluginCreator): void;
-  start(setup?: boolean): Store;
+  start(setup?: boolean): Store<GlobalState>;
   setup(): void;
 }
 export default Zoro;

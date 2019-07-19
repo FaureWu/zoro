@@ -1,21 +1,22 @@
 import { Store } from 'redux';
-import Zoro, { PluginCreator, Intercept } from './zoro';
+import Zoro, { PluginCreator, ActionIntercept, EffectIntercept } from './zoro';
 import { Option as ModelOption } from './model';
+import { GlobalState } from './store';
 import { defineDispatcher } from './dispatcher';
 import { assert } from '../util/utils';
 import { INTERCEPT_ACTION, INTERCEPT_EFFECT } from '../util/constant';
 
-export interface ZoroIntercept {
-  action: (intercept: Intercept) => void;
-  effect: (intercept: Intercept) => void;
+export interface Intercept {
+  action: (intercept: ActionIntercept) => void;
+  effect: (intercept: EffectIntercept) => void;
 }
 
 function defineIntercept(app: App, zoro: Zoro): void {
   app.intercept = {
-    action(intercept: Intercept): void {
+    action(intercept: ActionIntercept): void {
       zoro.setIntercept(INTERCEPT_ACTION, intercept);
     },
-    effect(intercept: Intercept): void {
+    effect(intercept: EffectIntercept): void {
       zoro.setIntercept(INTERCEPT_EFFECT, intercept);
     },
   };
@@ -24,7 +25,7 @@ function defineIntercept(app: App, zoro: Zoro): void {
 class App {
   private zoro: Zoro;
 
-  public intercept?: ZoroIntercept;
+  public intercept: Intercept;
 
   public constructor(zoro: Zoro) {
     assert(zoro instanceof Zoro, 'invalid app option, we need the zoro object');
@@ -58,7 +59,7 @@ class App {
     return this;
   }
 
-  public start(setup: boolean): Store {
+  public start(setup: boolean = true): Store<GlobalState> {
     return this.zoro.start(setup);
   }
 
