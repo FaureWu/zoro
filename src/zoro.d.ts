@@ -269,6 +269,51 @@ export class App {
   public setup(): void;
 }
 
+export interface Scope {
+  zoro?: Zoro;
+  store?: Redux.Store;
+}
+
+export interface ComponentConfig {
+  [props: string]: any;
+}
+
+export type MapStateToComponent = (state: State) => object;
+export type MapDispatchToComponent = (dispatch: Redux.Dispatch) => object;
+export type CreateComponentConfig = (
+  config: ComponentConfig,
+) => ComponentConfig;
+
+export type ConnectComponent = (
+  mapStateToComponent?: MapStateToComponent,
+  mapDispatchToComponent?: MapDispatchToComponent,
+) => CreateComponentConfig;
+
+export interface PageConfig {
+  [props: string]: any;
+}
+
+export type MapStateToPage = (state: State, option: object) => object;
+export type MapDispatchToPage = (dispatch: Redux.Dispatch) => object;
+export type CreatePageConfig = (config: PageConfig) => PageConfig;
+
+export type Connect = (
+  mapStateToPage?: MapStateToPage,
+  mapDispatchToPage?: MapDispatchToPage,
+) => CreatePageConfig;
+
+export function setStore(store: Redux.Store, zoro?: Zoro): void;
+
+export function connectComponent(
+  mapStateToComponent?: MapStateToComponent,
+  mapDispatchToComponent?: MapDispatchToComponent,
+): ConnectComponent;
+
+export function connect(
+  mapStateToPage?: MapStateToPage,
+  mapDispatchToPage?: MapDispatchToPage,
+): Connect;
+
 export const dispatcher: DispatcherGroup;
 
 export default function zoro(config?: Config): App;

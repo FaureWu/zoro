@@ -1,5 +1,5 @@
 import * as Redux from 'redux';
-import * as Z from '../type';
+import * as Z from '../zoro';
 import createSelect from '../util/createSelect';
 import createPut from '../util/createPut';
 import {

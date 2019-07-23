@@ -1,5 +1,5 @@
 import * as Redux from 'redux';
-import * as Z from '../type';
+import * as Z from '../zoro';
 import createReduxStore from './store';
 import Model from './model';
 import effectMiddlewareCreator from './effectMiddleware';

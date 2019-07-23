@@ -9,7 +9,7 @@ const replaceOption = {
 
 export default [
   {
-    input: 'src/weapp-zoro.js',
+    input: 'src/index.ts',
     output: {
       format: 'es',
       indent: false,
@@ -20,13 +20,17 @@ export default [
       nodeResolve({
         mainFields: ['module', 'main', 'jsnext'],
       }),
-      typescript(),
+      typescript({
+        useTsconfigDeclarationDir: true,
+        clean: true,
+        rollupCommonJSResolveHack: true,
+      }),
       replace(replaceOption),
       commonjs(),
     ],
   },
   {
-    input: 'src/weapp-redux.js',
+    input: 'src/weapp/wedux.ts',
     output: {
       format: 'es',
       indent: false,
@@ -36,7 +40,11 @@ export default [
       nodeResolve({
         mainFields: ['module', 'main', 'jsnext'],
       }),
-      typescript(),
+      typescript({
+        useTsconfigDeclarationDir: true,
+        clean: true,
+        rollupCommonJSResolveHack: true,
+      }),
       replace(replaceOption),
       commonjs(),
     ],

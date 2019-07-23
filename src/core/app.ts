@@ -1,5 +1,5 @@
 import * as Redux from 'redux';
-import * as Z from '../type';
+import * as Z from '../zoro';
 import Zoro from './zoro';
 import { defineDispatcher } from './dispatcher';
 import { assert } from '../util/utils';

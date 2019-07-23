@@ -1,5 +1,5 @@
 import * as Redux from 'redux';
-import * as Z from '../type';
+import * as Z from '../zoro';
 import { assert, isReduxAction } from './utils';
 
 export default function createReducer(
