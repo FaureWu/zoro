@@ -1,22 +1,17 @@
-import { AnyAction, Reducer } from 'redux';
+import * as Redux from 'redux';
+import * as Z from '../type';
 import { assert, isReduxAction } from './utils';
-
-export type CustomReducer = (action: AnyAction, state: any) => any;
-
-export interface CustomReducers {
-  [propName: string]: CustomReducer;
-}
 
 export default function createReducer(
   initialState: any = null,
-  handlers: CustomReducers = {},
-): Reducer<any, AnyAction> {
+  handlers: Z.RReducers = {},
+): Redux.Reducer<any, Z.Action> {
   assert(
     typeof handlers === 'object' && handlers !== null,
     'the reducer handlers must be an object',
   );
 
-  return function reducer(state: any = initialState, action: AnyAction): any {
+  return function reducer(state: any = initialState, action: Z.Action): any {
     assert(isReduxAction(action), 'the action must be an redux action');
 
     if ({}.hasOwnProperty.call(handlers, action.type)) {

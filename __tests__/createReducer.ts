@@ -1,9 +1,9 @@
-import * as Redux from 'redux';
+import * as Z from '../src/type';
 import createReducer from '../src/util/createReducer';
 
 describe('FILE: util/createReducer', (): void => {
   const handlers = {
-    ACTION_TYPE: (action: Redux.AnyAction, state: any): any => state,
+    ACTION_TYPE: (action: Z.Action, state: any): any => state,
   };
 
   test('createReducer(): init state', (): void => {
@@ -15,7 +15,7 @@ describe('FILE: util/createReducer', (): void => {
   test('createReducer(): pass the error action', (): void => {
     const reducer = createReducer(undefined, handlers);
     expect((): void => {
-      reducer(undefined, {} as Redux.AnyAction);
+      reducer(undefined, {} as Z.Action);
     }).toThrow('the action must be an redux action');
   });
 

@@ -569,6 +569,56 @@ function combineReducers(reducers) {
   };
 }
 
+function bindActionCreator(actionCreator, dispatch) {
+  return function () {
+    return dispatch(actionCreator.apply(this, arguments));
+  };
+}
+/**
+ * Turns an object whose values are action creators, into an object with the
+ * same keys, but with every function wrapped into a `dispatch` call so they
+ * may be invoked directly. This is just a convenience method, as you can call
+ * `store.dispatch(MyActionCreators.doSomething())` yourself just fine.
+ *
+ * For convenience, you can also pass an action creator as the first argument,
+ * and get a dispatch wrapped function in return.
+ *
+ * @param {Function|Object} actionCreators An object whose values are action
+ * creator functions. One handy way to obtain it is to use ES6 `import * as`
+ * syntax. You may also pass a single function.
+ *
+ * @param {Function} dispatch The `dispatch` function available on your Redux
+ * store.
+ *
+ * @returns {Function|Object} The object mimicking the original object, but with
+ * every action creator wrapped into the `dispatch` call. If you passed a
+ * function as `actionCreators`, the return value will also be a single
+ * function.
+ */
+
+
+function bindActionCreators(actionCreators, dispatch) {
+  if (typeof actionCreators === 'function') {
+    return bindActionCreator(actionCreators, dispatch);
+  }
+
+  if (typeof actionCreators !== 'object' || actionCreators === null) {
+    throw new Error("bindActionCreators expected an object or a function, instead received " + (actionCreators === null ? 'null' : typeof actionCreators) + ". " + "Did you write \"import ActionCreators from\" instead of \"import * as ActionCreators from\"?");
+  }
+
+  var boundActionCreators = {};
+
+  for (var key in actionCreators) {
+    var actionCreator = actionCreators[key];
+
+    if (typeof actionCreator === 'function') {
+      boundActionCreators[key] = bindActionCreator(actionCreator, dispatch);
+    }
+  }
+
+  return boundActionCreators;
+}
+
 function _defineProperty(obj, key, value) {
   if (key in obj) {
     Object.defineProperty(obj, key, {
@@ -696,15 +746,24 @@ function applyMiddleware() {
   };
 }
 
+var Redux = /*#__PURE__*/Object.freeze({
+  __DO_NOT_USE__ActionTypes: ActionTypes,
+  applyMiddleware: applyMiddleware,
+  bindActionCreators: bindActionCreators,
+  combineReducers: combineReducers,
+  compose: compose,
+  createStore: createStore
+});
+
 var window$1 = (function () {
     // @ts-ignore
     return this;
 })() || Function('return this')();
-function createReduxStore(option) {
+function createReduxStore(config) {
     var composeEnhancers = window$1 && window$1.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
         ? window$1.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
         : compose;
-    var store = createStore(option.rootReducer, undefined, composeEnhancers.apply(void 0, [applyMiddleware.apply(void 0, option.middlewares)].concat(option.enhancers)));
+    var store = createStore(config.rootReducer, undefined, composeEnhancers.apply(void 0, [applyMiddleware.apply(Redux, config.middlewares)].concat(config.enhancers)));
     return store;
 }
 
@@ -777,20 +836,20 @@ function createReducer(initialState, handlers) {
     };
 }
 
-function assertOption(options) {
-    var namespace = options.namespace, _a = options.reducers, reducers = _a === void 0 ? {} : _a, _b = options.effects, effects = _b === void 0 ? {} : _b, _c = options.setup, setup = _c === void 0 ? noop : _c;
+function assertOption(config) {
+    var namespace = config.namespace, _a = config.reducers, reducers = _a === void 0 ? {} : _a, _b = config.effects, effects = _b === void 0 ? {} : _b, _c = config.setup, setup = _c === void 0 ? noop : _c;
     assert(typeof namespace === 'string', "the model's namespace is necessary, but we get " + namespace);
     assert(typeof reducers === 'object' && reducers !== null, "the " + namespace + " model reducers must an Object, but we get " + typeof reducers);
     assert(typeof effects === 'object' && effects !== null, "the " + namespace + " model effects must an Object, but we get " + typeof effects);
     assert(typeof setup === 'function', "the " + namespace + " setup must be a Function, but we get " + typeof setup);
 }
 var Model = /** @class */ (function () {
-    function Model(options) {
+    function Model(config) {
         this.effects = {};
         this.actionCreators = {};
         this.setup = noop;
-        assertOption(options);
-        var namespace = options.namespace, state = options.state, reducers = options.reducers, effects = options.effects, setup = options.setup;
+        assertOption(config);
+        var namespace = config.namespace, state = config.state, reducers = config.reducers, effects = config.effects, setup = config.setup;
         this.namespace = namespace;
         this.initState = state;
         this.reducer = this.createReducer(reducers);
@@ -1091,8 +1150,8 @@ var Plugin = /** @class */ (function () {
     return Plugin;
 }());
 
-function assertOptions(option) {
-    var _a = option.initialState, initialState = _a === void 0 ? {} : _a, _b = option.extraMiddlewares, extraMiddlewares = _b === void 0 ? [] : _b, _c = option.extraEnhancers, extraEnhancers = _c === void 0 ? [] : _c, _d = option.onEffect, onEffect = _d === void 0 ? noop : _d, _e = option.onAction, onAction = _e === void 0 ? noop : _e, _f = option.onReducer, onReducer = _f === void 0 ? noop : _f, _g = option.onSetup, onSetup = _g === void 0 ? noop : _g, _h = option.onError, onError = _h === void 0 ? noop : _h;
+function assertOptions(config) {
+    var _a = config.initialState, initialState = _a === void 0 ? {} : _a, _b = config.extraMiddlewares, extraMiddlewares = _b === void 0 ? [] : _b, _c = config.extraEnhancers, extraEnhancers = _c === void 0 ? [] : _c, _d = config.onEffect, onEffect = _d === void 0 ? noop : _d, _e = config.onAction, onAction = _e === void 0 ? noop : _e, _f = config.onReducer, onReducer = _f === void 0 ? noop : _f, _g = config.onSetup, onSetup = _g === void 0 ? noop : _g, _h = config.onError, onError = _h === void 0 ? noop : _h;
     assert(typeof initialState === 'object' && initialState !== null, "initialState must be an Object, but we get " + typeof initialState);
     assert(extraMiddlewares instanceof Array, "extraMiddlewares must be an Array, but we get " + typeof extraMiddlewares);
     assert(extraEnhancers instanceof Array, "extraEnhancers must be an Array, but we get " + typeof extraEnhancers);
@@ -1103,12 +1162,12 @@ function assertOptions(option) {
     assert(typeof onError === 'function', "the onError must be an function handler, but we get " + typeof onError);
 }
 var Zoro = /** @class */ (function () {
-    function Zoro(option) {
+    function Zoro(config) {
         var _a;
-        if (option === void 0) { option = {}; }
+        if (config === void 0) { config = {}; }
         this.initState = {};
         this.models = {};
-        this.modelOptions = [];
+        this.modelConfigs = [];
         this.middlewares = [];
         this.enhancers = [];
         this.isSetup = false;
@@ -1116,8 +1175,8 @@ var Zoro = /** @class */ (function () {
             _a[INTERCEPT_ACTION] = [],
             _a[INTERCEPT_EFFECT] = [],
             _a);
-        assertOptions(option);
-        var initialState = option.initialState, extraMiddlewares = option.extraMiddlewares, extraEnhancers = option.extraEnhancers, onEffect = option.onEffect, onAction = option.onAction, onReducer = option.onReducer, onSetup = option.onSetup, onError = option.onError;
+        assertOptions(config);
+        var initialState = config.initialState, extraMiddlewares = config.extraMiddlewares, extraEnhancers = config.extraEnhancers, onEffect = config.onEffect, onAction = config.onAction, onReducer = config.onReducer, onSetup = config.onSetup, onError = config.onError;
         this.plugin = new Plugin();
         if (initialState) {
             this.initState = initialState;
@@ -1176,27 +1235,27 @@ var Zoro = /** @class */ (function () {
         var rootReducer = this.getRootReducer();
         this.getStore().replaceReducer(rootReducer);
     };
-    Zoro.prototype.createModel = function (modelOption) {
-        var nextModelOption = this.getPlugin().emitWithLoop(PLUGIN_EVENT.ON_BEFORE_CREATE_MODEL, modelOption);
-        if (typeof nextModelOption !== 'object' || nextModelOption === null) {
-            nextModelOption = modelOption;
+    Zoro.prototype.createModel = function (modelConfig) {
+        var nextModelConfig = this.getPlugin().emitWithLoop(PLUGIN_EVENT.ON_BEFORE_CREATE_MODEL, modelConfig);
+        if (typeof nextModelConfig !== 'object' || nextModelConfig === null) {
+            nextModelConfig = modelConfig;
         }
         var initState = this.getInitState();
-        if (typeof nextModelOption.state === 'undefined' &&
-            typeof nextModelOption.namespace === 'string') {
-            nextModelOption.state = initState[nextModelOption.namespace];
+        if (typeof nextModelConfig.state === 'undefined' &&
+            typeof nextModelConfig.namespace === 'string') {
+            nextModelConfig.state = initState[nextModelConfig.namespace];
         }
-        var model = new Model(nextModelOption);
+        var model = new Model(nextModelConfig);
         var namespace = model.getNamespace();
         assert(typeof this.models[namespace] === 'undefined', "the model namespace must be unique, we get duplicate namespace " + namespace);
         this.models[namespace] = model;
         this.getPlugin().emit(PLUGIN_EVENT.ON_AFTER_CREATE_MODEL, model);
         return model;
     };
-    Zoro.prototype.createModels = function (modelOptions) {
+    Zoro.prototype.createModels = function (modelConfigs) {
         var _this = this;
-        return modelOptions.reduce(function (models, modelOption) {
-            var model = _this.createModel(modelOption);
+        return modelConfigs.reduce(function (models, modelConfig) {
+            var model = _this.createModel(modelConfig);
             models[model.getNamespace()] = model;
             return models;
         }, {});
@@ -1268,22 +1327,22 @@ var Zoro = /** @class */ (function () {
         assert(typeof model !== 'undefined', "the " + namespace + " model unkown when get model effects");
         return model.getEffects();
     };
-    Zoro.prototype.setModel = function (modelOption) {
+    Zoro.prototype.setModel = function (modelConfig) {
         var _a;
-        this.modelOptions.push(modelOption);
+        this.modelConfigs.push(modelConfig);
         if (this.store) {
-            var model = this.createModel(modelOption);
+            var model = this.createModel(modelConfig);
             this.replaceReducer();
             if (this.isSetup) {
                 this.setupModel((_a = {}, _a[model.getNamespace()] = model, _a));
             }
         }
     };
-    Zoro.prototype.setModels = function (modelOptions) {
-        assert(modelOptions instanceof Array, "the models must be an Array, but we get " + typeof modelOptions);
-        this.modelOptions = this.modelOptions.concat(modelOptions);
+    Zoro.prototype.setModels = function (modelConfigs) {
+        assert(modelConfigs instanceof Array, "the models must be an Array, but we get " + typeof modelConfigs);
+        this.modelConfigs = this.modelConfigs.concat(modelConfigs);
         if (this.store) {
-            var models = this.createModels(modelOptions);
+            var models = this.createModels(modelConfigs);
             this.replaceReducer();
             if (this.isSetup) {
                 this.setupModel(models);
@@ -1309,7 +1368,7 @@ var Zoro = /** @class */ (function () {
         var _this = this;
         if (setup === void 0) { setup = true; }
         this.injectPluginModels();
-        this.createModels(this.modelOptions);
+        this.createModels(this.modelConfigs);
         var store = (this.store = this.createStore());
         store.subscribe(function () {
             var plugin = _this.getPlugin();
@@ -1389,12 +1448,12 @@ var App = /** @class */ (function () {
         defineDispatcher(this.zoro);
         defineIntercept(this, this.zoro);
     }
-    App.prototype.model = function (modelOptions) {
-        if (modelOptions instanceof Array) {
-            this.zoro.setModels(modelOptions);
+    App.prototype.model = function (modelConfigs) {
+        if (modelConfigs instanceof Array) {
+            this.zoro.setModels(modelConfigs);
             return this;
         }
-        this.zoro.setModel(modelOptions);
+        this.zoro.setModel(modelConfigs);
         return this;
     };
     App.prototype.use = function (plugins) {
@@ -1418,10 +1477,11 @@ var App = /** @class */ (function () {
     return App;
 }());
 
-function createApp(option) {
-    var zoro = new Zoro(option);
+function zoro(config) {
+    if (config === void 0) { config = {}; }
+    var zoro = new Zoro(config);
     return new App(zoro);
 }
 
-export default createApp;
+export default zoro;
 export { dispatcher };

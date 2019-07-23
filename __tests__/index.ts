@@ -1,17 +1,16 @@
-import { AnyAction } from 'redux';
+import * as Z from '../src/type';
 import zoro, { dispatcher } from '../src/index';
-import { Option as ModelOption } from '../src/core/model';
 
 function delay(time: number): Promise<void> {
   // eslint-disable-next-line
   return new Promise((resolve): NodeJS.Timeout => setTimeout(resolve, time));
 }
 
-const model1: ModelOption = {
+const model1: Z.ModelConfig = {
   namespace: 'model1',
 };
 
-const model2: ModelOption = {
+const model2: Z.ModelConfig = {
   namespace: 'model2',
   state: {
     count: 1,
@@ -30,7 +29,7 @@ const model2: ModelOption = {
   },
 };
 
-const model3: ModelOption = {
+const model3: Z.ModelConfig = {
   namespace: 'model3',
   state: {
     count: 1,
@@ -101,13 +100,13 @@ describe('Integration Test', (): void => {
 
   test('action intercept test', async (): Promise<void> => {
     app.intercept.action(
-      (action): AnyAction => {
+      (action): Z.Action => {
         action.payload.count += 1;
         return action;
       },
     );
     app.intercept.action(
-      (action): AnyAction => {
+      (action): Z.Action => {
         action.payload.count += 2;
         return action;
       },

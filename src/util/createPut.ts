@@ -1,15 +1,13 @@
-import { Store, AnyAction } from 'redux';
-import { GlobalState } from '../core/store';
+import * as Redux from 'redux';
+import * as Z from '../type';
 import { NAMESPACE_DIVIDER } from './constant';
 import { assert, isReduxAction } from './utils';
 
-export type Put = (action: AnyAction) => AnyAction | Promise<any>;
-
 export default function createPut(
-  store: Store<GlobalState>,
+  store: Redux.Store,
   namespace?: string,
-): Put {
-  return function put(action: AnyAction): AnyAction | Promise<any> {
+): Z.Put {
+  return function put(action: Z.Action): Z.Action | Promise<any> {
     assert(
       isReduxAction(action),
       'the dispatch action must be an redux action',

@@ -1,12 +1,10 @@
+import * as Z from '../type';
 import { NAMESPACE_DIVIDER } from '../util/constant';
-import { ActionType as ModelActionType } from '../core/model';
 
 export function noop(): void {}
 
-type ValidateFunc = () => boolean;
-
 export function assert(
-  validate: boolean | ValidateFunc,
+  validate: boolean | Z.AssertValidate,
   message: string,
 ): void {
   if (
@@ -21,7 +19,7 @@ export function isReduxAction(action: any): boolean {
   return typeof action === 'object' && action !== null && !!action.type;
 }
 
-export function parseModelActionType(actionType: string): ModelActionType {
+export function parseModelActionType(actionType: string): Z.ModelType {
   const parts: string[] = actionType.split(NAMESPACE_DIVIDER);
   assert(parts.length >= 2, `invalid model action type, [${actionType}]`);
 

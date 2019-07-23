@@ -1,60 +1,11 @@
-import { Reducer, AnyAction } from 'redux';
-import { Select } from '../util/createSelect';
-import { Put } from '../util/createPut';
-import createReducer, {
-  CustomReducers,
-  CustomReducer,
-} from '../util/createReducer';
+import * as Redux from 'redux';
+import * as Z from '../type';
+import createReducer from '../util/createReducer';
 import { assert, noop } from '../util/utils';
 import { NAMESPACE_DIVIDER } from '../util/constant';
 
-export interface ActionType {
-  namespace: string;
-  type: string;
-}
-
-export interface Operator {
-  selectAll: Select;
-  select: Select;
-  put: Put;
-}
-
-export interface GlobalOperator {
-  select: Select;
-  put: Put;
-}
-
-export type Effect = (
-  action: AnyAction,
-  operator: Operator,
-) => void | Promise<any>;
-
-export interface Effects {
-  [propName: string]: Effect;
-}
-
-export type ActionCreator = (
-  payload?: any,
-  meta?: any,
-  error?: boolean,
-) => AnyAction;
-
-export interface ActionCreators {
-  [propName: string]: ActionCreator;
-}
-
-export type Setup = (operator: Operator) => void;
-
-export interface Option {
-  namespace: string;
-  state?: any;
-  reducers?: CustomReducers;
-  effects?: Effects;
-  setup?: Setup;
-}
-
-function assertOption(options: Option): void {
-  const { namespace, reducers = {}, effects = {}, setup = noop } = options;
+function assertOption(config: Z.ModelConfig): void {
+  const { namespace, reducers = {}, effects = {}, setup = noop } = config;
 
   assert(
     typeof namespace === 'string',
@@ -79,20 +30,20 @@ class Model {
 
   private initState: any;
 
-  private reducer: Reducer<any, AnyAction>;
+  private reducer: Redux.Reducer<any, Z.Action>;
 
-  private effects: Effects = {};
+  private effects: Z.ModelEffects = {};
 
-  private actionCreators: ActionCreators = {};
+  private actionCreators: Z.ActionCreators = {};
 
-  private setup: Setup = noop;
+  private setup: Z.ModelSetup = noop;
 
   private createReducer(
-    reducers: CustomReducers = {},
-  ): Reducer<any, AnyAction> {
-    const reducerHandlers: CustomReducers = Object.keys(reducers).reduce(
-      (combine: CustomReducers, key: string): CustomReducers => {
-        const reducerHandler: CustomReducer = reducers[key];
+    reducers: Z.RReducers = {},
+  ): Redux.Reducer<any, Z.Action> {
+    const reducerHandlers: Z.RReducers = Object.keys(reducers).reduce(
+      (combine: Z.RReducers, key: string): Z.RReducers => {
+        const reducerHandler: Z.RReducer = reducers[key];
         assert(
           typeof reducerHandler === 'function',
           `the reducer must be an function, but we get ${typeof reducerHandler} with type ${key}`,
@@ -107,10 +58,10 @@ class Model {
     return createReducer(this.getInitState(), reducerHandlers);
   }
 
-  private createEffects(effects: Effects = {}): Effects {
+  private createEffects(effects: Z.ModelEffects = {}): Z.ModelEffects {
     return Object.keys(effects).reduce(
-      (combine: Effects, key: string): Effects => {
-        const effect: Effect = effects[key];
+      (combine: Z.ModelEffects, key: string): Z.ModelEffects => {
+        const effect: Z.ModelEffect = effects[key];
         assert(
           typeof effect === 'function',
           `the effect must be an function, but we get ${typeof effect} with type ${key}`,
@@ -123,17 +74,17 @@ class Model {
   }
 
   private createActionCreators(
-    reducers: CustomReducers = {},
-    effects: Effects = {},
-  ): ActionCreators {
+    reducers: Z.RReducers = {},
+    effects: Z.ModelEffects = {},
+  ): Z.ActionCreators {
     const self = this;
     return Object.keys({ ...reducers, ...effects }).reduce(
-      (combine: ActionCreators, key: string): ActionCreators => {
+      (combine: Z.ActionCreators, key: string): Z.ActionCreators => {
         combine[key] = function actionCreator(
           payload?: any,
           meta?: any,
           error?: boolean,
-        ): AnyAction {
+        ): Z.Action {
           return {
             type: `${self.getNamespace()}${NAMESPACE_DIVIDER}${key}`,
             payload,
@@ -148,10 +99,10 @@ class Model {
     );
   }
 
-  public constructor(options: Option) {
-    assertOption(options);
+  public constructor(config: Z.ModelConfig) {
+    assertOption(config);
 
-    const { namespace, state, reducers, effects, setup } = options;
+    const { namespace, state, reducers, effects, setup } = config;
 
     this.namespace = namespace;
     this.initState = state;
@@ -172,19 +123,19 @@ class Model {
     return this.initState;
   }
 
-  public getReducer(): Reducer<any, AnyAction> {
+  public getReducer(): Redux.Reducer<any, Z.Action> {
     return this.reducer;
   }
 
-  public getEffects(): Effects {
+  public getEffects(): Z.ModelEffects {
     return this.effects;
   }
 
-  public getActionCreators(): ActionCreators {
+  public getActionCreators(): Z.ActionCreators {
     return this.actionCreators;
   }
 
-  public getSetup(): Setup | undefined {
+  public getSetup(): Z.ModelSetup | undefined {
     return this.setup;
   }
 }

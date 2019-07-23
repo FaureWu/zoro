@@ -1,13 +1,5 @@
-import {
-  createStore,
-  applyMiddleware,
-  compose,
-  Reducer,
-  AnyAction,
-  Middleware,
-  StoreEnhancer,
-  Store,
-} from 'redux';
+import * as Redux from 'redux';
+import * as Z from '../type';
 
 const window =
   (function(): any {
@@ -15,28 +7,18 @@ const window =
     return this;
   })() || Function('return this')();
 
-export interface Option {
-  rootReducer: Reducer<any, AnyAction>;
-  middlewares: Middleware[];
-  enhancers: StoreEnhancer[];
-}
-
-export interface GlobalState {
-  [namespace: string]: any;
-}
-
-export default function createReduxStore(option: Option): Store<GlobalState> {
+export default function createReduxStore(config: Z.StoreConfig): Redux.Store {
   const composeEnhancers =
     window && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
       ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
-      : compose;
+      : Redux.compose;
 
-  const store = createStore(
-    option.rootReducer,
+  const store = Redux.createStore(
+    config.rootReducer,
     undefined,
     composeEnhancers(
-      applyMiddleware(...option.middlewares),
-      ...option.enhancers,
+      Redux.applyMiddleware(...config.middlewares),
+      ...config.enhancers,
     ),
   );
 

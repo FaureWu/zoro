@@ -1,5 +1,6 @@
 import * as Redux from 'redux';
-import Model, { Operator } from '../src/core/model';
+import * as Z from '../src/type';
+import Model from '../src/core/model';
 import createPut from '../src/util/createPut';
 import createSelect from '../src/util/createSelect';
 import { noop } from '../src/util/utils';
@@ -30,21 +31,18 @@ describe('FILE: core/model', (): void => {
         count: 1,
       },
       reducers: {
-        add(action: Redux.AnyAction, state: any): any {
+        add(action: Z.Action, state: any): any {
           return { ...state, count: state.count + action.payload };
         },
       },
       effects: {
-        async asyncAdd(
-          action: Redux.AnyAction,
-          operator: Operator,
-        ): Promise<void> {
+        async asyncAdd(action: Z.Action, operator: Z.Operator): Promise<void> {
           await delay(100);
           operator.put({ type: 'add', payload: action.payload });
         },
         async asyncAdd2(
-          action: Redux.AnyAction,
-          operator: Operator,
+          action: Z.Action,
+          operator: Z.Operator,
         ): Promise<string> {
           await delay(100);
           operator.put({ type: 'add', payload: action.payload });
@@ -54,12 +52,12 @@ describe('FILE: core/model', (): void => {
     });
 
     const store = {
-      dispatch(action: Redux.AnyAction): Redux.AnyAction {
+      dispatch(action: Z.Action): Z.Action {
         return action;
       },
     } as Redux.Store;
 
-    const operator: Operator = {
+    const operator: Z.Operator = {
       select: createSelect(store, 'model2'),
       selectAll: createSelect(store),
       put: createPut(store, 'model2'),
