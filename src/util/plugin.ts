@@ -1,15 +1,10 @@
+import * as Z from '../type';
 import { assert } from './utils';
 
-export type EventHandler = (...params: any[]) => any;
-
-export interface EventHandlers {
-  [eventName: string]: EventHandler[];
-}
-
 class Plugin {
-  private eventHandlers: EventHandlers = {};
+  private eventHandlers: Z.PluginEvents = {};
 
-  public on(eventName: string, eventHandler: EventHandler): void {
+  public on(eventName: string, eventHandler: Z.PluginEvent): void {
     assert(
       typeof eventName === 'string',
       `the plugin event's name is necessary, but we get ${eventName}`,
@@ -31,7 +26,7 @@ class Plugin {
 
     const eventHandlers = this.eventHandlers[eventName];
     if (eventHandlers instanceof Array) {
-      eventHandlers.forEach((eventHandler: EventHandler): void => {
+      eventHandlers.forEach((eventHandler: Z.PluginEvent): void => {
         eventHandler(...params);
       });
     }
@@ -46,7 +41,7 @@ class Plugin {
     const eventHandlers = this.eventHandlers[eventName];
     if (eventHandlers instanceof Array) {
       return eventHandlers.reduce(
-        (result: any[], eventHandler: EventHandler): any[] => {
+        (result: any[], eventHandler: Z.PluginEvent): any[] => {
           const returnData = eventHandler(...params);
           if (returnData instanceof Array) {
             return result.concat(returnData);
@@ -70,7 +65,7 @@ class Plugin {
     const eventHandlers = this.eventHandlers[eventName];
     if (eventHandlers instanceof Array) {
       return eventHandlers.reduce(
-        (result: any, eventHandler: EventHandler): any => {
+        (result: any, eventHandler: Z.PluginEvent): any => {
           const prev = typeof result !== 'undefined' ? result : data;
           const next = eventHandler(prev, ...params);
           return typeof next !== 'undefined' ? next : prev;

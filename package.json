@@ -4,7 +4,7 @@
   "description": "a redux framework, complete async await",
   "main": "dist/zoro.umd.js",
   "module": "dist/zoro.es.js",
-  "types": "types",
+  "types": "src/type.d.ts",
   "keywords": [
     "wx",
     "weapp",
@@ -16,11 +16,10 @@
     "frontend"
   ],
   "scripts": {
-    "build": "npm run clean && cross-env NODE_ENV=production rollup --config rollup.config.ts && npm run fix:types",
+    "build": "npm run clean && cross-env NODE_ENV=production rollup --config rollup.config.ts",
     "clean": "rm -rf ./dist",
     "release": "npm run lint && npm run test && npm run build && npm publish --access=public",
     "lint": "eslint src --fix --ext .ts",
-    "fix:types": "eslint types --fix --ext .ts",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
     "test": "jest --coverage"
   },

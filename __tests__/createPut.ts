@@ -1,9 +1,10 @@
 import * as Redux from 'redux';
+import * as Z from '../src/type';
 import createPut from '../src/util/createPut';
 
 describe('FILE: util/createPut', (): void => {
   const store = {
-    dispatch(action: Redux.AnyAction): Redux.AnyAction {
+    dispatch(action: Z.Action): Z.Action {
       return action;
     },
   } as Redux.Store;

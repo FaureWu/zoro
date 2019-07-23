@@ -1,16 +1,12 @@
-import { Store } from 'redux';
-import { GlobalState } from '../core/store';
-
-export type SelectCallBack = (state: any) => any;
-
-export type Select = (handler?: SelectCallBack) => any;
+import * as Redux from 'redux';
+import * as Z from '../type';
 
 export default function createSelect(
-  store: Store<GlobalState>,
+  store: Redux.Store,
   namespace?: string,
-): Select {
-  return function select(handler?: SelectCallBack): any {
-    let state: GlobalState = store.getState();
+): Z.Select | Z.SelectAll {
+  return function select(handler?: Z.SelectHandler | Z.SelectAllHandler): any {
+    let state: Z.State = store.getState();
 
     if (namespace) {
       state = state[namespace];

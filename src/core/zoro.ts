@@ -1,25 +1,13 @@
-import {
-  Middleware,
-  StoreEnhancer,
-  AnyAction,
-  Reducer,
-  Store,
-  combineReducers,
-} from 'redux';
-import createReduxStore, { GlobalState } from './store';
-import Model, {
-  Option as ModelOption,
-  GlobalOperator,
-  Setup as ModelSetup,
-  Effects as ModelEffects,
-} from './model';
+import * as Redux from 'redux';
+import * as Z from '../type';
+import createReduxStore from './store';
+import Model from './model';
 import effectMiddlewareCreator from './effectMiddleware';
 import Plugin from '../util/plugin';
 import { assert, noop } from '../util/utils';
 import {
   PLUGIN_EVENT,
   NAMESPACE_DIVIDER,
-  PluginEvent,
   INTERCEPT_TYPE,
   INTERCEPT_ACTION,
   INTERCEPT_EFFECT,
@@ -27,76 +15,7 @@ import {
 import createPut from '../util/createPut';
 import createSelect from '../util/createSelect';
 
-export interface Models {
-  [namespace: string]: Model;
-}
-
-export type OnError = (e: Error) => void;
-
-export type OnAction = (action: AnyAction) => void;
-
-export interface OnReducerOption {
-  namespace: string;
-  [propName: string]: any;
-}
-
-export type OnReducer = (
-  reducer: Reducer<any, AnyAction>,
-  option: OnReducerOption,
-) => Reducer<any, AnyAction>;
-
-export type OnSetup = (operator: GlobalOperator) => void;
-
-export interface State {
-  [namespace: string]: any;
-}
-
-export interface Option {
-  initialState?: State;
-  extraMiddlewares?: Middleware[];
-  extraEnhancers?: StoreEnhancer[];
-  onEffect?: OnAction;
-  onAction?: OnAction;
-  onReducer?: OnReducer;
-  onSetup?: OnSetup;
-  onError?: OnError;
-}
-
-export interface Reducers {
-  [namespace: string]: Reducer<any, AnyAction>;
-}
-
-export interface PluginCreatorOption {
-  DIVIDER: string;
-  PLUGIN_EVENT: PluginEvent;
-}
-
-export type PluginCreator = (
-  plugin: Plugin,
-  option: PluginCreatorOption,
-) => void;
-
-export interface InterceptOption {
-  store: Store<GlobalState>;
-  NAMESPACE_DIVIDER: string;
-}
-
-export type ActionIntercept = (
-  action: AnyAction,
-  option: InterceptOption,
-) => void | AnyAction;
-
-export type EffectIntercept = (
-  action: AnyAction,
-  option: InterceptOption,
-) => Promise<void> | Promise<AnyAction>;
-
-export interface Intercepts {
-  [INTERCEPT_ACTION]: ActionIntercept[];
-  [INTERCEPT_EFFECT]: EffectIntercept[];
-}
-
-function assertOptions(option: Option): void {
+function assertOptions(config: Z.Config): void {
   const {
     initialState = {},
     extraMiddlewares = [],
@@ -106,7 +25,7 @@ function assertOptions(option: Option): void {
     onReducer = noop,
     onSetup = noop,
     onError = noop,
-  } = option;
+  } = config;
 
   assert(
     typeof initialState === 'object' && initialState !== null,
@@ -143,39 +62,39 @@ function assertOptions(option: Option): void {
 }
 
 class Zoro {
-  private initState: State = {};
+  private initState: Z.State = {};
 
-  private models: Models = {};
+  private models: Z.Models = {};
 
-  private modelOptions: ModelOption[] = [];
+  private modelConfigs: Z.ModelConfig[] = [];
 
-  private middlewares: Middleware[] = [];
+  private middlewares: Redux.Middleware[] = [];
 
-  private enhancers: StoreEnhancer[] = [];
+  private enhancers: Redux.StoreEnhancer[] = [];
 
   private isSetup: boolean = false;
 
-  private plugin: Plugin;
+  private plugin: Z.Plugin;
 
-  private store: Store<GlobalState>;
+  private store: Redux.Store;
 
-  private intercepts: Intercepts = {
+  private intercepts: Z.Intercepts = {
     [INTERCEPT_ACTION]: [],
     [INTERCEPT_EFFECT]: [],
   };
 
-  public onError?: OnError;
+  public onError?: Z.OnError;
 
-  public onEffect?: OnAction;
+  public onEffect?: Z.OnAction;
 
-  public onAction?: OnAction;
+  public onAction?: Z.OnAction;
 
-  public onReducer?: OnReducer;
+  public onReducer?: Z.OnReducer;
 
-  public onSetup?: OnSetup;
+  public onSetup?: Z.OnSetup;
 
-  public constructor(option: Option = {}) {
-    assertOptions(option);
+  public constructor(config: Z.Config = {}) {
+    assertOptions(config);
 
     const {
       initialState,
@@ -186,7 +105,7 @@ class Zoro {
       onReducer,
       onSetup,
       onError,
-    } = option;
+    } = config;
 
     this.plugin = new Plugin();
 
@@ -224,11 +143,11 @@ class Zoro {
     }
   }
 
-  private getRootReducer(): Reducer<any, AnyAction> {
-    const rootReducer: Reducers = Object.keys(this.models).reduce(
-      (reducers: Reducers, namespace: string): Reducers => {
-        const model: Model = this.models[namespace];
-        let reducer: Reducer<any, AnyAction> = model.getReducer();
+  private getRootReducer(): Redux.Reducer<any, Z.Action> {
+    const rootReducer: Z.Reducers = Object.keys(this.models).reduce(
+      (reducers: Z.Reducers, namespace: string): Z.Reducers => {
+        const model: Z.Model = this.models[namespace];
+        let reducer: Redux.Reducer<any, Z.Action> = model.getReducer();
 
         if (this.onReducer) {
           const nextReducer = this.onReducer(reducer, { namespace });
@@ -259,10 +178,10 @@ class Zoro {
       {},
     );
 
-    return combineReducers(rootReducer);
+    return Redux.combineReducers(rootReducer);
   }
 
-  private getInitState(): State {
+  private getInitState(): Z.State {
     const pluginInitState = this.getPlugin().emitWithLoop(
       PLUGIN_EVENT.INJECT_INITIAL_STATE,
       this.initState,
@@ -275,29 +194,29 @@ class Zoro {
   }
 
   private replaceReducer(): void {
-    const rootReducer: Reducer<any, AnyAction> = this.getRootReducer();
+    const rootReducer: Redux.Reducer<any, Z.Action> = this.getRootReducer();
     this.getStore().replaceReducer(rootReducer);
   }
 
-  private createModel(modelOption: ModelOption): Model {
-    let nextModelOption = this.getPlugin().emitWithLoop(
+  private createModel(modelConfig: Z.ModelConfig): Z.Model {
+    let nextModelConfig = this.getPlugin().emitWithLoop(
       PLUGIN_EVENT.ON_BEFORE_CREATE_MODEL,
-      modelOption,
+      modelConfig,
     );
 
-    if (typeof nextModelOption !== 'object' || nextModelOption === null) {
-      nextModelOption = modelOption;
+    if (typeof nextModelConfig !== 'object' || nextModelConfig === null) {
+      nextModelConfig = modelConfig;
     }
 
     const initState = this.getInitState();
     if (
-      typeof nextModelOption.state === 'undefined' &&
-      typeof nextModelOption.namespace === 'string'
+      typeof nextModelConfig.state === 'undefined' &&
+      typeof nextModelConfig.namespace === 'string'
     ) {
-      nextModelOption.state = initState[nextModelOption.namespace];
+      nextModelConfig.state = initState[nextModelConfig.namespace];
     }
 
-    const model: Model = new Model(nextModelOption);
+    const model: Z.Model = new Model(nextModelConfig);
     const namespace = model.getNamespace();
     assert(
       typeof this.models[namespace] === 'undefined',
@@ -309,10 +228,10 @@ class Zoro {
     return model;
   }
 
-  private createModels(modelOptions: ModelOption[]): Models {
-    return modelOptions.reduce(
-      (models: Models, modelOption: ModelOption): Models => {
-        const model = this.createModel(modelOption);
+  private createModels(modelConfigs: Z.ModelConfig[]): Z.Models {
+    return modelConfigs.reduce(
+      (models: Z.Models, modelConfig: Z.ModelConfig): Z.Models => {
+        const model = this.createModel(modelConfig);
         models[model.getNamespace()] = model;
 
         return models;
@@ -363,8 +282,8 @@ class Zoro {
     }
   }
 
-  private createStore(): Store<GlobalState> {
-    const rootReducer: Reducer<any, AnyAction> = this.getRootReducer();
+  private createStore(): Redux.Store {
+    const rootReducer: Redux.Reducer<any, Z.Action> = this.getRootReducer();
     this.injectPluginMiddlewares();
     this.injectPluginEnhancers();
 
@@ -375,13 +294,13 @@ class Zoro {
     });
   }
 
-  private setupModel(models: Models): void {
+  private setupModel(models: Z.Models): void {
     const store = this.getStore();
 
     Object.keys(models).forEach((namespace: string): void => {
-      const model: Model = models[namespace];
+      const model: Z.Model = models[namespace];
       this.getPlugin().emit(PLUGIN_EVENT.ON_SETUP_MODEL, model);
-      const setup: ModelSetup | undefined = model.getSetup();
+      const setup: Z.ModelSetup | undefined = model.getSetup();
       if (typeof setup === 'function') {
         setup({
           put: createPut(store, namespace),
@@ -392,11 +311,11 @@ class Zoro {
     });
   }
 
-  public getPlugin(): Plugin {
+  public getPlugin(): Z.Plugin {
     return this.plugin;
   }
 
-  public getStore(): Store<GlobalState> {
+  public getStore(): Redux.Store {
     assert(
       typeof this.store !== 'undefined',
       'the redux store is not create before call start()',
@@ -405,12 +324,14 @@ class Zoro {
     return this.store;
   }
 
-  public getIntercepts(type: string): ActionIntercept[] | EffectIntercept[] {
+  public getIntercepts(
+    type: string,
+  ): Z.ActionIntercept[] | Z.EffectIntercept[] {
     return this.intercepts[type] || [];
   }
 
-  public getModel(namespace: string): Model {
-    const model: Model = this.models[namespace];
+  public getModel(namespace: string): Z.Model {
+    const model: Z.Model = this.models[namespace];
     assert(
       typeof model !== 'undefined',
       `the ${namespace} model unkown when get model`,
@@ -419,8 +340,8 @@ class Zoro {
     return model;
   }
 
-  public getModelEffects(namespace: string): ModelEffects {
-    const model: Model = this.models[namespace];
+  public getModelEffects(namespace: string): Z.ModelEffects {
+    const model: Z.Model = this.models[namespace];
     assert(
       typeof model !== 'undefined',
       `the ${namespace} model unkown when get model effects`,
@@ -429,10 +350,10 @@ class Zoro {
     return model.getEffects();
   }
 
-  public setModel(modelOption: ModelOption): void {
-    this.modelOptions.push(modelOption);
+  public setModel(modelConfig: Z.ModelConfig): void {
+    this.modelConfigs.push(modelConfig);
     if (this.store) {
-      const model: Model = this.createModel(modelOption);
+      const model: Z.Model = this.createModel(modelConfig);
       this.replaceReducer();
 
       if (this.isSetup) {
@@ -441,16 +362,16 @@ class Zoro {
     }
   }
 
-  public setModels(modelOptions: ModelOption[]): void {
+  public setModels(modelConfigs: Z.ModelConfig[]): void {
     assert(
-      modelOptions instanceof Array,
-      `the models must be an Array, but we get ${typeof modelOptions}`,
+      modelConfigs instanceof Array,
+      `the models must be an Array, but we get ${typeof modelConfigs}`,
     );
 
-    this.modelOptions = this.modelOptions.concat(modelOptions);
+    this.modelConfigs = this.modelConfigs.concat(modelConfigs);
 
     if (this.store) {
-      const models: Models = this.createModels(modelOptions);
+      const models: Z.Models = this.createModels(modelConfigs);
       this.replaceReducer();
 
       if (this.isSetup) {
@@ -461,7 +382,7 @@ class Zoro {
 
   public setIntercept(
     type: string,
-    intercept: ActionIntercept | EffectIntercept,
+    intercept: Z.ActionIntercept | Z.EffectIntercept,
   ): void {
     assert(
       INTERCEPT_TYPE.indexOf(type) !== -1,
@@ -480,7 +401,7 @@ class Zoro {
     this.intercepts[type].push(intercept);
   }
 
-  public usePlugin(pluginCreator: PluginCreator): void {
+  public usePlugin(pluginCreator: Z.PluginCreator): void {
     assert(
       typeof pluginCreator === 'function',
       `the use plugin must be a function, but we get ${typeof pluginCreator}`,
@@ -492,9 +413,9 @@ class Zoro {
     });
   }
 
-  public start(setup: boolean = true): Store<GlobalState> {
+  public start(setup: boolean = true): Redux.Store {
     this.injectPluginModels();
-    this.createModels(this.modelOptions);
+    this.createModels(this.modelConfigs);
     const store = (this.store = this.createStore());
 
     store.subscribe((): void => {
