@@ -1,4 +1,4 @@
-import * as Z from '../type';
+import * as Z from '../zoro';
 import { NAMESPACE_DIVIDER } from '../util/constant';
 
 export function noop(): void {}
@@ -15,8 +15,21 @@ export function assert(
   }
 }
 
+export function isObject(obj: any): boolean {
+  return typeof obj === 'object' && obj !== null && !(obj instanceof Array);
+}
+
 export function isReduxAction(action: any): boolean {
   return typeof action === 'object' && action !== null && !!action.type;
+}
+
+export function isReduxStore(store: any): boolean {
+  return (
+    isObject(store) &&
+    typeof store.dispatch === 'function' &&
+    typeof store.getState === 'function' &&
+    typeof store.subscribe === 'function'
+  );
 }
 
 export function parseModelActionType(actionType: string): Z.ModelType {
@@ -38,4 +51,36 @@ export function uuid(): string {
       return value.toString(16);
     },
   );
+}
+
+export function getConnectStoreData(current: object, pre: object): object {
+  const childks = Object.keys(current);
+
+  return childks.reduce(
+    (result: object, key: string): object => ({
+      ...result,
+      [key]: pre[key],
+    }),
+    {},
+  );
+}
+
+export function diff(current: object, next: object): object | undefined {
+  let empty = true;
+  const data = Object.keys(current).reduce(
+    (result: object, key: string): object => {
+      if (current[key] === next[key]) {
+        return result;
+      }
+
+      empty = false;
+      result[key] = next[key];
+      return result;
+    },
+    {},
+  );
+
+  if (empty) return;
+
+  return data;
 }

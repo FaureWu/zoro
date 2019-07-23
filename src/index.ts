@@ -1,12 +1,34 @@
-import * as Z from './type';
+import * as Z from './zoro';
 import './util/pollyfill';
 import Zoro from './core/zoro';
+import { assert, isObject } from './util/utils';
 import App from './core/app';
 import dispatcher from './core/dispatcher';
+import createConnectComponent from './weapp/createConnectComponent';
+
+const scope: Z.Scope = {};
 
 export { dispatcher };
 
+export function connectComponent(
+  mapStateToProps?: Z.MapStateToComponent,
+  mapDispatchToProps?: Z.MapDispatchToComponent,
+): Z.CreateComponentConfig {
+  assert(
+    isObject(scope.zoro),
+    'connectComponent can be call after call app.start()',
+  );
+
+  // @ts-ignore
+  const store: Redux.Store = scope.zoro.getStore();
+
+  return createConnectComponent(store, scope.zoro)(
+    mapStateToProps,
+    mapDispatchToProps,
+  );
+}
+
 export default function zoro(config: Z.Config = {}): Z.App {
-  const zoro: Z.Zoro = new Zoro(config);
-  return new App(zoro);
+  scope.zoro = new Zoro(config);
+  return new App(scope.zoro);
 }

@@ -1,4 +1,4 @@
-import * as Z from '../type';
+import * as Z from '../zoro';
 
 export const NAMESPACE_DIVIDER = '/';
 

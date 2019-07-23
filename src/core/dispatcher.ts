@@ -1,4 +1,4 @@
-import * as Z from '../type';
+import * as Z from '../zoro';
 import { PLUGIN_EVENT } from '../util/constant';
 import { assert } from '../util/utils';
 

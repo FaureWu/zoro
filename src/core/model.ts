@@ -1,5 +1,5 @@
 import * as Redux from 'redux';
-import * as Z from '../type';
+import * as Z from '../zoro';
 import createReducer from '../util/createReducer';
 import { assert, noop } from '../util/utils';
 import { NAMESPACE_DIVIDER } from '../util/constant';

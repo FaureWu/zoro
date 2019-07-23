@@ -747,12 +747,12 @@ function applyMiddleware() {
 }
 
 var Redux = /*#__PURE__*/Object.freeze({
-  __DO_NOT_USE__ActionTypes: ActionTypes,
-  applyMiddleware: applyMiddleware,
-  bindActionCreators: bindActionCreators,
-  combineReducers: combineReducers,
-  compose: compose,
-  createStore: createStore
+__DO_NOT_USE__ActionTypes: ActionTypes,
+applyMiddleware: applyMiddleware,
+bindActionCreators: bindActionCreators,
+combineReducers: combineReducers,
+compose: compose,
+createStore: createStore
 });
 
 var window$1 = (function () {
