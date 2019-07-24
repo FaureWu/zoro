@@ -1,4 +1,4 @@
-import * as Z from '../src/type';
+import * as Z from '../src/zoro';
 import zoro, { dispatcher } from '../src/index';
 
 function delay(time: number): Promise<void> {

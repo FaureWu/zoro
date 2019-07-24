@@ -1,5 +1,5 @@
 import * as Redux from 'redux';
-import * as Z from '../src/type';
+import * as Z from '../src/zoro';
 import createPut from '../src/util/createPut';
 
 describe('FILE: util/createPut', (): void => {

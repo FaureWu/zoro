@@ -1,6 +1,6 @@
 {
   "name": "@opcjs/zoro",
-  "version": "3.0.0",
+  "version": "3.0.0-beta0",
   "description": "a redux framework, complete async await",
   "main": "dist/zoro.umd.js",
   "module": "dist/zoro.es.js",
@@ -20,6 +20,7 @@
     "build:weapp": "cross-env-shell NODE_ENV=production \"rollup --config rollup.config.weapp.ts && gulp replace:code\"",
     "clean": "rm -rf ./dist",
     "release": "npm run lint && npm run test && npm run build && npm publish --access=public",
+    "beta": "npm run lint && npm run test && npm run build && npm publish --tag=beta",
     "lint": "eslint src --fix --ext .ts",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
     "test": "jest --coverage"
@@ -31,19 +32,12 @@
     "redux": "^4.0.0"
   },
   "devDependencies": {
-    "@babel/cli": "^7.4.4",
-    "@babel/core": "^7.4.5",
-    "@babel/plugin-proposal-async-generator-functions": "^7.2.0",
-    "@babel/plugin-proposal-class-properties": "^7.4.4",
-    "@babel/plugin-proposal-object-rest-spread": "^7.4.4",
-    "@babel/preset-env": "^7.4.5",
     "@commitlint/cli": "^8.0.0",
     "@commitlint/config-conventional": "^8.0.0",
     "@types/jest": "^24.0.15",
     "@types/prettier": "^1.16.4",
     "@typescript-eslint/eslint-plugin": "^1.11.0",
     "@typescript-eslint/parser": "^1.11.0",
-    "babel-core": "^7.0.0-0",
     "commitizen": "^3.1.1",
     "conventional-changelog": "^3.1.8",
     "conventional-changelog-cli": "^2.0.21",
@@ -86,7 +80,8 @@
   },
   "husky": {
     "hooks": {
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
+      "pre-commit": "npm run jest && npm run lint"
     }
   },
   "commitlint": {
