@@ -9,11 +9,32 @@ const replaceOption = {
 
 export default [
   {
-    input: 'src/index.ts',
+    input: 'src/weapp.ts',
     output: {
       format: 'es',
       indent: false,
       file: 'dist/zoro.weapp.js',
+      exports: 'named',
+    },
+    plugins: [
+      nodeResolve({
+        mainFields: ['module', 'main', 'jsnext'],
+      }),
+      typescript({
+        useTsconfigDeclarationDir: true,
+        clean: true,
+        rollupCommonJSResolveHack: true,
+      }),
+      replace(replaceOption),
+      commonjs(),
+    ],
+  },
+  {
+    input: 'src/weapp-gen.ts',
+    output: {
+      format: 'es',
+      indent: false,
+      file: 'dist/zoro.weapp-gen.js',
       exports: 'named',
     },
     plugins: [
