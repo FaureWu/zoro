@@ -1,4 +1,4 @@
-import * as Z from '../src/type';
+import * as Z from '../src/zoro';
 import createReducer from '../src/util/createReducer';
 
 describe('FILE: util/createReducer', (): void => {
