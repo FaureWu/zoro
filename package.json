@@ -17,7 +17,7 @@
   ],
   "scripts": {
     "build": "npm run clean && cross-env NODE_ENV=production rollup --config rollup.config.ts && npm run build:weapp",
-    "build:weapp": "cross-env NODE_ENV=production rollup --config rollup.config.weapp.ts",
+    "build:weapp": "cross-env-shell NODE_ENV=production \"rollup --config rollup.config.weapp.ts && gulp replace:code\"",
     "clean": "rm -rf ./dist",
     "release": "npm run lint && npm run test && npm run build && npm publish --access=public",
     "lint": "eslint src --fix --ext .ts",
@@ -63,6 +63,7 @@
     "rollup-plugin-replace": "^2.2.0",
     "rollup-plugin-typescript2": "^0.21.2",
     "ts-jest": "^24.0.2",
+    "ts-node": "^8.3.0",
     "typescript": "^3.5.3"
   },
   "directories": {
