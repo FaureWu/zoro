@@ -169,6 +169,7 @@ export interface ModelConfig {
   reducers?: RReducers;
   effects?: ModelEffects;
   setup?: ModelSetup;
+  [prop: string]: any;
 }
 
 export interface StoreConfig {
