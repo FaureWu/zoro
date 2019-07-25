@@ -7,67 +7,26 @@ const replaceOption = {
   'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
 };
 
-export default [
-  {
-    input: 'src/weapp.ts',
-    output: {
-      format: 'es',
-      indent: false,
-      file: 'dist/zoro.weapp.js',
-      exports: 'named',
-    },
-    plugins: [
-      nodeResolve({
-        mainFields: ['module', 'main', 'jsnext'],
-      }),
-      typescript({
-        useTsconfigDeclarationDir: true,
-        clean: true,
-        rollupCommonJSResolveHack: true,
-      }),
-      replace(replaceOption),
-      commonjs(),
-    ],
+const libs = ['weapp', 'weapp-gen'];
+
+export default libs.map(name => ({
+  input: `src/${name}.ts`,
+  output: {
+    format: 'es',
+    indent: false,
+    file: `dist/zoro.${name}.js`,
+    exports: 'named',
   },
-  {
-    input: 'src/weapp-gen.ts',
-    output: {
-      format: 'es',
-      indent: false,
-      file: 'dist/zoro.weapp-gen.js',
-      exports: 'named',
-    },
-    plugins: [
-      nodeResolve({
-        mainFields: ['module', 'main', 'jsnext'],
-      }),
-      typescript({
-        useTsconfigDeclarationDir: true,
-        clean: true,
-        rollupCommonJSResolveHack: true,
-      }),
-      replace(replaceOption),
-      commonjs(),
-    ],
-  },
-  {
-    input: 'src/weapp/wedux.ts',
-    output: {
-      format: 'es',
-      indent: false,
-      file: 'dist/redux.weapp.js',
-    },
-    plugins: [
-      nodeResolve({
-        mainFields: ['module', 'main', 'jsnext'],
-      }),
-      typescript({
-        useTsconfigDeclarationDir: true,
-        clean: true,
-        rollupCommonJSResolveHack: true,
-      }),
-      replace(replaceOption),
-      commonjs(),
-    ],
-  },
-];
+  plugins: [
+    nodeResolve({
+      mainFields: ['module', 'main', 'jsnext'],
+    }),
+    typescript({
+      useTsconfigDeclarationDir: true,
+      clean: true,
+      rollupCommonJSResolveHack: true,
+    }),
+    replace(replaceOption),
+    commonjs(),
+  ],
+}))
