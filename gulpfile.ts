@@ -1,5 +1,6 @@
 const gulp = require('gulp')
 const replace = require('gulp-replace-string')
+const rename = require('gulp-rename')
 
 gulp.task('replace:code', function() {
   return gulp
@@ -10,4 +11,10 @@ gulp.task('replace:code', function() {
       }),
     )
     .pipe(gulp.dest('./dist/'))
+})
+
+gulp.task('copy:type', function() {
+  return gulp.src(['./src/zoro.d.ts'])
+    .pipe(rename('zoro.weapp.d.ts'))
+    .pipe(gulp.dest('./dist'))
 })
