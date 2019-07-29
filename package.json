@@ -1,6 +1,6 @@
 {
   "name": "@opcjs/zoro",
-  "version": "3.0.0-beta6",
+  "version": "3.0.0-beta7",
   "description": "a redux framework, complete async await",
   "main": "dist/zoro.umd.js",
   "module": "dist/zoro.es.js",
