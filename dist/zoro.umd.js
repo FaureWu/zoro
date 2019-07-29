@@ -878,9 +878,6 @@
               assert(typeof handler === 'function', 'the reducer handler should be a function');
               return handler(action, state);
           }
-          else {
-              console.warn("you dispatch the unkown action type is " + action.type);
-          }
           return state;
       };
   }
