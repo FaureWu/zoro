@@ -61,16 +61,31 @@ async function doneEffect(
   const plugin = zoro.getPlugin();
   const store = zoro.getStore();
 
-  plugin.emit(PLUGIN_EVENT.ON_WILL_EFFECT, action, { store, effectId });
+  let resolveAction: Z.Action | undefined = plugin.emitWithLoop(
+    PLUGIN_EVENT.ON_WILL_EFFECT,
+    action,
+    {
+      store,
+      effectId,
+    },
+  );
+
+  if (typeof resolveAction !== 'undefined') {
+    assert(
+      isReduxAction(resolveAction),
+      'the on will effect plugin event need return must be an action or none',
+    );
+    resolveAction.type = action.type;
+  } else resolveAction = action;
 
   if (typeof zoro.onEffect === 'function') {
-    zoro.onEffect(action);
+    zoro.onEffect(resolveAction);
   }
 
   const effectIntercepts = zoro.getIntercepts(INTERCEPT_EFFECT);
   const nextAction = await doneEffectIntercepts(
     effectIntercepts as Z.EffectIntercept[],
-    action,
+    resolveAction,
     {
       store,
       NAMESPACE_DIVIDER,
@@ -143,19 +158,31 @@ export default function effectMiddlewareCreator(
     const store = zoro.getStore();
     const plugin = zoro.getPlugin();
     const actionId = uuid();
-    plugin.emit(PLUGIN_EVENT.ON_WILL_ACTION, action, {
-      store,
-      actionId,
-    });
+    let resolveAction: Z.Action | undefined = plugin.emitWithLoop(
+      PLUGIN_EVENT.ON_WILL_ACTION,
+      action,
+      {
+        store,
+        actionId,
+      },
+    );
+
+    if (typeof resolveAction !== 'undefined') {
+      assert(
+        isReduxAction(resolveAction),
+        'the on will action plugin event need return must be an action or none',
+      );
+      resolveAction.type = action.type;
+    } else resolveAction = action;
 
     if (typeof zoro.onAction === 'function') {
-      zoro.onAction(action);
+      zoro.onAction(resolveAction);
     }
 
     const actionIntercepts = zoro.getIntercepts(INTERCEPT_ACTION);
     const nextAction = doneActionIntercepts(
       actionIntercepts as Z.ActionIntercept[],
-      action,
+      resolveAction,
       {
         store,
         NAMESPACE_DIVIDER,

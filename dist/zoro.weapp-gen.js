@@ -1742,19 +1742,28 @@ function doneEffectIntercepts(intercepts, action, option) {
 }
 function doneEffect(effect, action, zoro) {
     return __awaiter(this, void 0, void 0, function () {
-        var effectId, plugin, store, effectIntercepts, nextAction, namespace, result, e_1;
+        var effectId, plugin, store, resolveAction, effectIntercepts, nextAction, namespace, result, e_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     effectId = uuid();
                     plugin = zoro.getPlugin();
                     store = zoro.getStore();
-                    plugin.emit(PLUGIN_EVENT.ON_WILL_EFFECT, action, { store: store, effectId: effectId });
+                    resolveAction = plugin.emitWithLoop(PLUGIN_EVENT.ON_WILL_EFFECT, action, {
+                        store: store,
+                        effectId: effectId,
+                    });
+                    if (typeof resolveAction !== 'undefined') {
+                        assert(isReduxAction(resolveAction), 'the on will effect plugin event need return must be an action or none');
+                        resolveAction.type = action.type;
+                    }
+                    else
+                        resolveAction = action;
                     if (typeof zoro.onEffect === 'function') {
-                        zoro.onEffect(action);
+                        zoro.onEffect(resolveAction);
                     }
                     effectIntercepts = zoro.getIntercepts(INTERCEPT_EFFECT);
-                    return [4 /*yield*/, doneEffectIntercepts(effectIntercepts, action, {
+                    return [4 /*yield*/, doneEffectIntercepts(effectIntercepts, resolveAction, {
                             store: store,
                             NAMESPACE_DIVIDER: NAMESPACE_DIVIDER,
                         })];
@@ -1810,15 +1819,21 @@ function effectMiddlewareCreator(zoro) {
         var store = zoro.getStore();
         var plugin = zoro.getPlugin();
         var actionId = uuid();
-        plugin.emit(PLUGIN_EVENT.ON_WILL_ACTION, action, {
+        var resolveAction = plugin.emitWithLoop(PLUGIN_EVENT.ON_WILL_ACTION, action, {
             store: store,
             actionId: actionId,
         });
+        if (typeof resolveAction !== 'undefined') {
+            assert(isReduxAction(resolveAction), 'the on will action plugin event need return must be an action or none');
+            resolveAction.type = action.type;
+        }
+        else
+            resolveAction = action;
         if (typeof zoro.onAction === 'function') {
-            zoro.onAction(action);
+            zoro.onAction(resolveAction);
         }
         var actionIntercepts = zoro.getIntercepts(INTERCEPT_ACTION);
-        var nextAction = doneActionIntercepts(actionIntercepts, action, {
+        var nextAction = doneActionIntercepts(actionIntercepts, resolveAction, {
             store: store,
             NAMESPACE_DIVIDER: NAMESPACE_DIVIDER,
         });
