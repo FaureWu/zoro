@@ -9,6 +9,7 @@
 分析微信空白项目模版，我们可以改造其中的登录及其用户信息获取模块，创建一个user model
 
 ```js
+// 3.x版本后，如果开启增强编译，无需引入regeneratorRuntime
 import { regeneratorRuntime } from '../utils/zoro'
 import { promise } from '../utils/util'
 
@@ -48,6 +49,8 @@ export default {
 这里有一个需要注意的地方，为什么我们需要在头部引入regeneratorRuntime呢？因为在该文件中我们使用到了新语法async，await
 
 无论在哪个文件中，只要我们使用了async，await都必须在头部引入regeneratorRuntime
+
+> 如开启了开发工具的增强编译，无需引入regeneratorRuntime
 
 ## STEP2
 

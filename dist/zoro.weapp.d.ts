@@ -259,6 +259,8 @@ export class Zoro {
 export class App {
   constructor(zoro: Zoro);
 
+  public zoro: Zoro;
+
   public intercept: RegisterIntercepts;
 
   public model(modelConfigs: ModelConfig | ModelConfig[]): App;

@@ -4,11 +4,6 @@
 
 如何在微信原生小程序使用zoro，请查看[微信原生小程序中使用](/GUIDE/WEAPP.md)
 
-当我们完成微信原生小程序安装zoro步骤后，我们会得到两个文件
-
-* zoro.js zoro主库文件，相关api，请移步[ZORO API](/API/README.md)
-* weapp-redux.js 这里主要介绍的该文件中API使用，该文件用于结合微信原生小程序和redux
-
 ## setStore(store) `<Function>`
 
 设置redux store

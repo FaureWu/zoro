@@ -12,7 +12,8 @@
 
 ---
 
-🎉🎉🎉自`2.3.6`版本后，支持通过[umi-plugin-zoro](https://github.com/FaureWu/umi-plugin-zoro)一键接入[umi](https://github.com/umijs/umi)框架中了，详细接入方式查看[umi接入文档](https://faurewu.github.io/zoro/GUIDE/UMI.html)
+🎉🎉🎉至`3.0.0`版本后，已全面基于typescript重写，现已支持typescript
+🎉🎉🎉至`2.3.6`版本后，支持通过[umi-plugin-zoro](https://github.com/FaureWu/umi-plugin-zoro)一键接入[umi](https://github.com/umijs/umi)框架中了，详细接入方式查看[umi接入文档](https://faurewu.github.io/zoro/GUIDE/UMI.html)
 
 ## 文档
 * [API文档](https://faurewu.github.io/zoro/)

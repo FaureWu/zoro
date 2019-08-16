@@ -17,7 +17,7 @@ function defineIntercept(app: Z.App, zoro: Z.Zoro): void {
 }
 
 class App {
-  private zoro: Z.Zoro;
+  public zoro: Z.Zoro;
 
   public intercept: Z.RegisterIntercepts;
 
