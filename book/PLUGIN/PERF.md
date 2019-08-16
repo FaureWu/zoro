@@ -76,7 +76,10 @@ app.model(...)
 app.use(createPerf(wx))
 const store = app.start()
 
+// 3.x 版本之前
 setStore(store, app)
+// 3.x 版本之后
+setStore(store, app.zoro)
 ```
 
 ## 特别提示

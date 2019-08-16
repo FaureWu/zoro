@@ -182,7 +182,7 @@ const result = await dispatcher.counter.asyncAdd(payload, meta, error)
  同时也支持Promise语法
 
 ```js
-dispatcher.counter.asyncAdd(payload, meta, error).then(...).catch(...)
+dispatcher.counter.asyncAdd(payload, meta, error).then(...).catch(...).finally(...)
 ```
 
 同步类型的action至2.2.5版本之后不再支持.then(...)

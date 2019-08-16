@@ -56,13 +56,12 @@ loading model的具体实现，这里不列出了，有兴趣的可以直接去[
 ```js
 PLUGIN_EVENT = {
   INJECT_INITIAL_STATE: 'injectInitialState',
-  BEFORE_INJECT_MODEL: 'beforeInjectModel',
-  AFTER_INJECT_MODEL: 'afterInjectModel',
   INJECT_MODELS: 'injectModels',
   INJECT_MIDDLEWARES: 'injectMiddlewares',
   INJECT_ENHANCERS: 'injectEnhancers',
   ON_REDUCER: 'onReducer',
-  ON_CREATE_MODEL: 'onCreateModel',
+  ON_BEFORE_CREATE_MODEL: 'onBeforeCreateModel',
+  ON_AFTER_CREATE_MODEL: 'onAfterCreateModel',
   ON_SETUP_MODEL: 'onSetupModel',
   ON_WILL_EFFECT: 'onWillEffect',
   ON_DID_EFFECT: 'onDidEffect',
@@ -71,6 +70,8 @@ PLUGIN_EVENT = {
   ON_SETUP: 'onSetup',
   ON_SUBSCRIBE: 'onSubscribe',
   ON_ERROR: 'onError',
+  ON_WILL_CONNECT: 'onWillConnect',
+  ON_DID_CONNECT: 'onDidConnect',
 }
 ```
 
@@ -85,22 +86,22 @@ event.on(PLUGIN_EVENT.INJECT_INITIAL_STATE, function(initialState) {
 })
 ```
 
-## PLUGIN_EVENT.BEFORE_INJECT_MODEL
+## PLUGIN_EVENT.BEFORE_INJECT_MODEL(3.x版本后已废弃)
 
 注入model前执行，返回值为修改过后的model定义
 
 ```js
-event.on(PLUGIN_EVENT.BEFORE_INJECT_MODEL, function(modelOption) {
-  return { ...modelOption, ...newModelOption }
+event.on(PLUGIN_EVENT.BEFORE_INJECT_MODEL, function(modelConfig) {
+  return { ...modelConfig, ...newModelConfig }
 })
 ```
 
-## PLUGIN_EVENT.AFTER_INJECT_MODEL
+## PLUGIN_EVENT.AFTER_INJECT_MODEL(3.x版本后已废弃)
 
 注入model后执行
 
 ```js
-event.on(PLUGIN_EVENT.AFTER_INJECT_MODEL, function(modelOption) {})
+event.on(PLUGIN_EVENT.AFTER_INJECT_MODEL, function(modelConfig) {})
 ```
 
 ## PLUGIN_EVENT.INJECT_MODELS
@@ -109,7 +110,7 @@ event.on(PLUGIN_EVENT.AFTER_INJECT_MODEL, function(modelOption) {})
 
 ```js
 event.on(PLUGIN_EVENT.INJECT_MODELS, function() {
-    return [modelOption]
+    return [modelConfig, ...]
 })
 ```
 
@@ -138,17 +139,35 @@ event.on(PLUGIN_EVENT.INJECT_ENHANCERS, function() {
 重定义reducer
 
 ```js
-event.on(PLUGIN_EVENT.ON_REDUCER, function(namespace, reducer) {
+event.on(PLUGIN_EVENT.ON_REDUCER, function(reducer, { namespace }) {
 	return undoable(reducer)
 })
 ```
 
-## PLUGIN_EVENT.ON_CREATE_MODEL
+## PLUGIN_EVENT.ON_CREATE_MODEL(3.x版本后已废弃)
 
 创建model完成后执行，此时的model不再是配置，而是真正的model对象
 
 ```js
 event.on(PLUGIN_EVENT.ON_CREATE_MODEL, function(model) {})
+```
+
+## PLUGIN_EVENT.ON_BEFORE_CREATE_MODEL(3.x版本后新增)
+
+创建model实例前触发，此时会传递model配置，可用于修改model配置
+
+```js
+event.on(PLUGIN_EVENT.ON_BEFORE_CREATE_MODEL, function(modelConfig) {
+  return newModelConfig
+})
+```
+
+## PLUGIN_EVENT.ON_AFTER_CREATE_MODEL(3.x版本后新增)
+
+创建model实例完成后触发，此时传递model实例，dispatcher便是基于此事件
+
+```js
+event.on(PLUGIN_EVENT.ON_AFTER_CREATE_MODEL, function(model) {})
 ```
 
 ## PLUGIN_EVENT.ON_SETUP_MODEL
@@ -164,7 +183,12 @@ event.on(PLUGIN_EVENT.ON_SETUP_MODEL, function(model) {})
 调用异步action时触发
 
 ```js
+// 2.x 版本
 event.on(PLUGIN_EVENT.ON_WILL_EFFECT, function(action, store) {})
+// 3.x 版本, 可监听修改action
+event.on(PLUGIN_EVENT.ON_WILL_EFFECT, function(action, { store, effectId }) {
+  return newAction
+})
 ```
 
 ## PLUGIN_EVENT.ON_DID_EFFECT
@@ -172,7 +196,10 @@ event.on(PLUGIN_EVENT.ON_WILL_EFFECT, function(action, store) {})
 调用异步action结束时触发
 
 ```js
+// 2.x 版本
 event.on(PLUGIN_EVENT.ON_DID_EFFECT, function(action, store) {})
+// 3.x 版本
+event.on(PLUGIN_EVENT.ON_DID_EFFECT, function(action, { store, effectId }))
 ```
 
 ## PLUGIN_EVENT.ON_WILL_ACTION
@@ -180,7 +207,12 @@ event.on(PLUGIN_EVENT.ON_DID_EFFECT, function(action, store) {})
 调用同步action时触发
 
 ```js
+// 2.x 版本
 event.on(PLUGIN_EVENT.ON_WILL_ACTION, function(action, store) {})
+// 3.x 版本，可监听修改action
+event.on(PLUGIN_EVENT.ON_WILL_ACTION, function(action, { store, actionId }) {
+  return newAction
+})
 ```
 
 ## PLUGIN_EVENT.ON_DID_ACTION
@@ -188,7 +220,10 @@ event.on(PLUGIN_EVENT.ON_WILL_ACTION, function(action, store) {})
 调用同步action结束时触发
 
 ```js
+// 2.x 版本
 event.on(PLUGIN_EVENT.ON_DID_ACTION, function(action, store) {})
+// 3.x 版本
+event.on(PLUGIN_EVENT.ON_DID_ACTION, function(action, { store, actionId }) {})
 ```
 
 ## PLUGIN_EVENT.ON_SETUP
@@ -212,6 +247,9 @@ event.on(PLUGIN_EVENT.ON_SUBSCRIBE, function(store) {})
 异步action发生异常时触发
 
 ```js
+// 2.x 版本
 event.on(PLUGIN_EVENT.ON_ERROR, function(error, action, store) {})
+// 3.x 版本
+event.on(PLUGIN_EVENT.ON_ERROR, function(error) {})
 ```
 
