@@ -2008,7 +2008,10 @@ var Zoro = /** @class */ (function () {
         }
         var model = new Model(nextModelConfig);
         var namespace = model.getNamespace();
-        assert(typeof this.models[namespace] === 'undefined', "the model namespace must be unique, we get duplicate namespace " + namespace);
+        if (typeof this.models[namespace] !== 'undefined') {
+            console.warn("the model namespace must be unique, we get duplicate namespace " + namespace);
+            return;
+        }
         this.models[namespace] = model;
         this.getPlugin().emit(PLUGIN_EVENT.ON_AFTER_CREATE_MODEL, model);
         return model;
@@ -2017,6 +2020,8 @@ var Zoro = /** @class */ (function () {
         var _this = this;
         return modelConfigs.reduce(function (models, modelConfig) {
             var model = _this.createModel(modelConfig);
+            if (!model)
+                return models;
             models[model.getNamespace()] = model;
             return models;
         }, {});
@@ -2093,6 +2098,8 @@ var Zoro = /** @class */ (function () {
         this.modelConfigs.push(modelConfig);
         if (this.store) {
             var model = this.createModel(modelConfig);
+            if (!model)
+                return;
             this.replaceReducer();
             if (this.isSetup) {
                 this.setupModel((_a = {}, _a[model.getNamespace()] = model, _a));
