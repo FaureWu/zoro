@@ -198,7 +198,7 @@ class Zoro {
     this.getStore().replaceReducer(rootReducer);
   }
 
-  private createModel(modelConfig: Z.ModelConfig): Z.Model {
+  private createModel(modelConfig: Z.ModelConfig): Z.Model | void {
     let nextModelConfig = this.getPlugin().emitWithLoop(
       PLUGIN_EVENT.ON_BEFORE_CREATE_MODEL,
       modelConfig,
@@ -218,10 +218,12 @@ class Zoro {
 
     const model: Z.Model = new Model(nextModelConfig);
     const namespace = model.getNamespace();
-    assert(
-      typeof this.models[namespace] === 'undefined',
-      `the model namespace must be unique, we get duplicate namespace ${namespace}`,
-    );
+    if (typeof this.models[namespace] !== 'undefined') {
+      console.warn(
+        `the model namespace must be unique, we get duplicate namespace ${namespace}`,
+      );
+      return;
+    }
     this.models[namespace] = model;
     this.getPlugin().emit(PLUGIN_EVENT.ON_AFTER_CREATE_MODEL, model);
 
@@ -232,6 +234,7 @@ class Zoro {
     return modelConfigs.reduce(
       (models: Z.Models, modelConfig: Z.ModelConfig): Z.Models => {
         const model = this.createModel(modelConfig);
+        if (!model) return models;
         models[model.getNamespace()] = model;
 
         return models;
@@ -353,7 +356,8 @@ class Zoro {
   public setModel(modelConfig: Z.ModelConfig): void {
     this.modelConfigs.push(modelConfig);
     if (this.store) {
-      const model: Z.Model = this.createModel(modelConfig);
+      const model = this.createModel(modelConfig);
+      if (!model) return;
       this.replaceReducer();
 
       if (this.isSetup) {
