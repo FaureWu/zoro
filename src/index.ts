@@ -5,10 +5,11 @@ import { assert, isObject } from './util/utils';
 import App from './core/app';
 import dispatcher from './core/dispatcher';
 import createConnectComponent from './weapp/createConnectComponent';
+import Tracker from './util/tracker';
 
 const scope: Z.Scope = {};
 
-export { dispatcher };
+export { dispatcher, Tracker };
 
 export function connectComponent(
   mapStateToProps?: Z.MapStateToComponent,
