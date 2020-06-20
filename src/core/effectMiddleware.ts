@@ -107,7 +107,7 @@ async function doneEffect(
       zoro.onError(e);
     }
 
-    plugin.emit(PLUGIN_EVENT.ON_ERROR, e);
+    plugin.emit(PLUGIN_EVENT.ON_ERROR, e, action, { store });
 
     return Promise.reject(e);
   } finally {

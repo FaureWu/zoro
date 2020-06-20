@@ -1086,7 +1086,7 @@
                       if (typeof zoro.onError === 'function') {
                           zoro.onError(e_1);
                       }
-                      plugin.emit(PLUGIN_EVENT.ON_ERROR, e_1);
+                      plugin.emit(PLUGIN_EVENT.ON_ERROR, e_1, action, { store: store });
                       return [2 /*return*/, Promise.reject(e_1)];
                   case 5:
                       plugin.emit(PLUGIN_EVENT.ON_DID_EFFECT, action, { store: store, effectId: effectId });
