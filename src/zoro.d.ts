@@ -263,9 +263,9 @@ export class Zoro {
 
   public getModelEffects(namespace: string): ModelEffects;
 
-  public setModel(modelConfig: ModelConfig): void;
+  public setModel(modelConfig: ModelConfig, warn?: boolean): void;
 
-  public setModels(modelConfigs: ModelConfig[]): void;
+  public setModels(modelConfigs: ModelConfig[], warn?: boolean): void;
 
   public setIntercept(
     type: string,

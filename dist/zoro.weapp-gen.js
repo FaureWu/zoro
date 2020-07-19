@@ -1996,7 +1996,8 @@ var Zoro = /** @class */ (function () {
         var rootReducer = this.getRootReducer();
         this.getStore().replaceReducer(rootReducer);
     };
-    Zoro.prototype.createModel = function (modelConfig) {
+    Zoro.prototype.createModel = function (modelConfig, warn) {
+        if (warn === void 0) { warn = true; }
         var nextModelConfig = this.getPlugin().emitWithLoop(PLUGIN_EVENT.ON_BEFORE_CREATE_MODEL, modelConfig);
         if (typeof nextModelConfig !== 'object' || nextModelConfig === null) {
             nextModelConfig = modelConfig;
@@ -2009,17 +2010,18 @@ var Zoro = /** @class */ (function () {
         var model = new Model(nextModelConfig);
         var namespace = model.getNamespace();
         if (typeof this.models[namespace] !== 'undefined') {
-            console.warn("the model namespace must be unique, we get duplicate namespace " + namespace);
+            warn &&
+                console.warn("the model namespace must be unique, we get duplicate namespace " + namespace);
             return;
         }
         this.models[namespace] = model;
         this.getPlugin().emit(PLUGIN_EVENT.ON_AFTER_CREATE_MODEL, model);
         return model;
     };
-    Zoro.prototype.createModels = function (modelConfigs) {
+    Zoro.prototype.createModels = function (modelConfigs, warn) {
         var _this = this;
         return modelConfigs.reduce(function (models, modelConfig) {
-            var model = _this.createModel(modelConfig);
+            var model = _this.createModel(modelConfig, warn);
             if (!model)
                 return models;
             models[model.getNamespace()] = model;
@@ -2093,11 +2095,11 @@ var Zoro = /** @class */ (function () {
         assert(typeof model !== 'undefined', "the " + namespace + " model unkown when get model effects");
         return model.getEffects();
     };
-    Zoro.prototype.setModel = function (modelConfig) {
+    Zoro.prototype.setModel = function (modelConfig, warn) {
         var _a;
         this.modelConfigs.push(modelConfig);
         if (this.store) {
-            var model = this.createModel(modelConfig);
+            var model = this.createModel(modelConfig, warn);
             if (!model)
                 return;
             this.replaceReducer();
@@ -2106,11 +2108,11 @@ var Zoro = /** @class */ (function () {
             }
         }
     };
-    Zoro.prototype.setModels = function (modelConfigs) {
+    Zoro.prototype.setModels = function (modelConfigs, warn) {
         assert(modelConfigs instanceof Array, "the models must be an Array, but we get " + typeof modelConfigs);
         this.modelConfigs = this.modelConfigs.concat(modelConfigs);
         if (this.store) {
-            var models = this.createModels(modelConfigs);
+            var models = this.createModels(modelConfigs, warn);
             this.replaceReducer();
             if (this.isSetup) {
                 this.setupModel(models);
@@ -2216,6 +2218,18 @@ var App = /** @class */ (function () {
         defineDispatcher(this.zoro);
         defineIntercept(this, this.zoro);
     }
+    /**
+     * 改函数为内建特殊函数使用，请使用model代替
+     */
+    // eslint-disable-next-line
+    App.prototype.model__quiet = function (modelConfigs) {
+        if (modelConfigs instanceof Array) {
+            this.zoro.setModels(modelConfigs, false);
+            return this;
+        }
+        this.zoro.setModel(modelConfigs, false);
+        return this;
+    };
     App.prototype.model = function (modelConfigs) {
         if (modelConfigs instanceof Array) {
             this.zoro.setModels(modelConfigs);

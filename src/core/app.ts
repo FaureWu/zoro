@@ -28,6 +28,21 @@ class App {
     defineIntercept(this, this.zoro);
   }
 
+  /**
+   * 改函数为内建特殊函数使用，请使用model代替
+   */
+  // eslint-disable-next-line
+  public model__quiet(modelConfigs: Z.ModelConfig | Z.ModelConfig[]): Z.App {
+    if (modelConfigs instanceof Array) {
+      this.zoro.setModels(modelConfigs, false);
+      return this;
+    }
+
+    this.zoro.setModel(modelConfigs, false);
+
+    return this;
+  }
+
   public model(modelConfigs: Z.ModelConfig | Z.ModelConfig[]): Z.App {
     if (modelConfigs instanceof Array) {
       this.zoro.setModels(modelConfigs);

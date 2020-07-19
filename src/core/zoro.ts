@@ -198,7 +198,10 @@ class Zoro {
     this.getStore().replaceReducer(rootReducer);
   }
 
-  private createModel(modelConfig: Z.ModelConfig): Z.Model | void {
+  private createModel(
+    modelConfig: Z.ModelConfig,
+    warn: boolean = true,
+  ): Z.Model | void {
     let nextModelConfig = this.getPlugin().emitWithLoop(
       PLUGIN_EVENT.ON_BEFORE_CREATE_MODEL,
       modelConfig,
@@ -219,9 +222,10 @@ class Zoro {
     const model: Z.Model = new Model(nextModelConfig);
     const namespace = model.getNamespace();
     if (typeof this.models[namespace] !== 'undefined') {
-      console.warn(
-        `the model namespace must be unique, we get duplicate namespace ${namespace}`,
-      );
+      warn &&
+        console.warn(
+          `the model namespace must be unique, we get duplicate namespace ${namespace}`,
+        );
       return;
     }
     this.models[namespace] = model;
@@ -230,10 +234,13 @@ class Zoro {
     return model;
   }
 
-  private createModels(modelConfigs: Z.ModelConfig[]): Z.Models {
+  private createModels(
+    modelConfigs: Z.ModelConfig[],
+    warn?: boolean,
+  ): Z.Models {
     return modelConfigs.reduce(
       (models: Z.Models, modelConfig: Z.ModelConfig): Z.Models => {
-        const model = this.createModel(modelConfig);
+        const model = this.createModel(modelConfig, warn);
         if (!model) return models;
         models[model.getNamespace()] = model;
 
@@ -353,10 +360,10 @@ class Zoro {
     return model.getEffects();
   }
 
-  public setModel(modelConfig: Z.ModelConfig): void {
+  public setModel(modelConfig: Z.ModelConfig, warn?: boolean): void {
     this.modelConfigs.push(modelConfig);
     if (this.store) {
-      const model = this.createModel(modelConfig);
+      const model = this.createModel(modelConfig, warn);
       if (!model) return;
       this.replaceReducer();
 
@@ -366,7 +373,7 @@ class Zoro {
     }
   }
 
-  public setModels(modelConfigs: Z.ModelConfig[]): void {
+  public setModels(modelConfigs: Z.ModelConfig[], warn?: boolean): void {
     assert(
       modelConfigs instanceof Array,
       `the models must be an Array, but we get ${typeof modelConfigs}`,
@@ -375,7 +382,7 @@ class Zoro {
     this.modelConfigs = this.modelConfigs.concat(modelConfigs);
 
     if (this.store) {
-      const models: Z.Models = this.createModels(modelConfigs);
+      const models: Z.Models = this.createModels(modelConfigs, warn);
       this.replaceReducer();
 
       if (this.isSetup) {
