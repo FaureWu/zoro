@@ -444,13 +444,12 @@
 <h2 id="pluginevent">PLUGIN_EVENT</h2>
 <pre><code class="lang-js">PLUGIN_EVENT = {
   INJECT_INITIAL_STATE: <span class="hljs-string">&apos;injectInitialState&apos;</span>,
-  BEFORE_INJECT_MODEL: <span class="hljs-string">&apos;beforeInjectModel&apos;</span>,
-  AFTER_INJECT_MODEL: <span class="hljs-string">&apos;afterInjectModel&apos;</span>,
   INJECT_MODELS: <span class="hljs-string">&apos;injectModels&apos;</span>,
   INJECT_MIDDLEWARES: <span class="hljs-string">&apos;injectMiddlewares&apos;</span>,
   INJECT_ENHANCERS: <span class="hljs-string">&apos;injectEnhancers&apos;</span>,
   ON_REDUCER: <span class="hljs-string">&apos;onReducer&apos;</span>,
-  ON_CREATE_MODEL: <span class="hljs-string">&apos;onCreateModel&apos;</span>,
+  ON_BEFORE_CREATE_MODEL: <span class="hljs-string">&apos;onBeforeCreateModel&apos;</span>,
+  ON_AFTER_CREATE_MODEL: <span class="hljs-string">&apos;onAfterCreateModel&apos;</span>,
   ON_SETUP_MODEL: <span class="hljs-string">&apos;onSetupModel&apos;</span>,
   ON_WILL_EFFECT: <span class="hljs-string">&apos;onWillEffect&apos;</span>,
   ON_DID_EFFECT: <span class="hljs-string">&apos;onDidEffect&apos;</span>,
@@ -459,6 +458,8 @@
   ON_SETUP: <span class="hljs-string">&apos;onSetup&apos;</span>,
   ON_SUBSCRIBE: <span class="hljs-string">&apos;onSubscribe&apos;</span>,
   ON_ERROR: <span class="hljs-string">&apos;onError&apos;</span>,
+  ON_WILL_CONNECT: <span class="hljs-string">&apos;onWillConnect&apos;</span>,
+  ON_DID_CONNECT: <span class="hljs-string">&apos;onDidConnect&apos;</span>,
 }
 </code></pre>
 <h2 id="plugineventinjectinitialstate">PLUGIN_EVENT.INJECT_INITIAL_STATE</h2>
@@ -468,20 +469,20 @@
   <span class="hljs-keyword">return</span> { ...initialState, ...customInitalState }
 })
 </code></pre>
-<h2 id="plugineventbeforeinjectmodel">PLUGIN_EVENT.BEFORE_INJECT_MODEL</h2>
+<h2 id="plugineventbeforeinjectmodel3x&#x7248;&#x672C;&#x540E;&#x5DF2;&#x5E9F;&#x5F03;">PLUGIN_EVENT.BEFORE_INJECT_MODEL(3.x&#x7248;&#x672C;&#x540E;&#x5DF2;&#x5E9F;&#x5F03;)</h2>
 <p>&#x6CE8;&#x5165;model&#x524D;&#x6267;&#x884C;&#xFF0C;&#x8FD4;&#x56DE;&#x503C;&#x4E3A;&#x4FEE;&#x6539;&#x8FC7;&#x540E;&#x7684;model&#x5B9A;&#x4E49;</p>
-<pre><code class="lang-js">event.on(PLUGIN_EVENT.BEFORE_INJECT_MODEL, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">modelOption</span>) </span>{
-  <span class="hljs-keyword">return</span> { ...modelOption, ...newModelOption }
+<pre><code class="lang-js">event.on(PLUGIN_EVENT.BEFORE_INJECT_MODEL, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">modelConfig</span>) </span>{
+  <span class="hljs-keyword">return</span> { ...modelConfig, ...newModelConfig }
 })
 </code></pre>
-<h2 id="plugineventafterinjectmodel">PLUGIN_EVENT.AFTER_INJECT_MODEL</h2>
+<h2 id="plugineventafterinjectmodel3x&#x7248;&#x672C;&#x540E;&#x5DF2;&#x5E9F;&#x5F03;">PLUGIN_EVENT.AFTER_INJECT_MODEL(3.x&#x7248;&#x672C;&#x540E;&#x5DF2;&#x5E9F;&#x5F03;)</h2>
 <p>&#x6CE8;&#x5165;model&#x540E;&#x6267;&#x884C;</p>
-<pre><code class="lang-js">event.on(PLUGIN_EVENT.AFTER_INJECT_MODEL, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">modelOption</span>) </span>{})
+<pre><code class="lang-js">event.on(PLUGIN_EVENT.AFTER_INJECT_MODEL, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">modelConfig</span>) </span>{})
 </code></pre>
 <h2 id="plugineventinjectmodels">PLUGIN_EVENT.INJECT_MODELS</h2>
 <p>&#x6CE8;&#x5165;&#x65B0;&#x7684;models&#xFF0C;&#x8FD4;&#x56DE;&#x503C;&#x4E3A;&#x9700;&#x8981;&#x6CE8;&#x5165;&#x7684;model&#x6570;&#x7EC4;</p>
 <pre><code class="lang-js">event.on(PLUGIN_EVENT.INJECT_MODELS, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-    <span class="hljs-keyword">return</span> [modelOption]
+    <span class="hljs-keyword">return</span> [modelConfig, ...]
 })
 </code></pre>
 <h2 id="plugineventinjectmiddlewares">PLUGIN_EVENT.INJECT_MIDDLEWARES</h2>
@@ -498,13 +499,23 @@
 </code></pre>
 <h2 id="plugineventonreducer">PLUGIN_EVENT.ON_REDUCER</h2>
 <p>&#x91CD;&#x5B9A;&#x4E49;reducer</p>
-<pre><code class="lang-js">event.on(PLUGIN_EVENT.ON_REDUCER, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">namespace, reducer</span>) </span>{
+<pre><code class="lang-js">event.on(PLUGIN_EVENT.ON_REDUCER, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">reducer, { namespace }</span>) </span>{
     <span class="hljs-keyword">return</span> undoable(reducer)
 })
 </code></pre>
-<h2 id="plugineventoncreatemodel">PLUGIN_EVENT.ON_CREATE_MODEL</h2>
+<h2 id="plugineventoncreatemodel3x&#x7248;&#x672C;&#x540E;&#x5DF2;&#x5E9F;&#x5F03;">PLUGIN_EVENT.ON_CREATE_MODEL(3.x&#x7248;&#x672C;&#x540E;&#x5DF2;&#x5E9F;&#x5F03;)</h2>
 <p>&#x521B;&#x5EFA;model&#x5B8C;&#x6210;&#x540E;&#x6267;&#x884C;&#xFF0C;&#x6B64;&#x65F6;&#x7684;model&#x4E0D;&#x518D;&#x662F;&#x914D;&#x7F6E;&#xFF0C;&#x800C;&#x662F;&#x771F;&#x6B63;&#x7684;model&#x5BF9;&#x8C61;</p>
 <pre><code class="lang-js">event.on(PLUGIN_EVENT.ON_CREATE_MODEL, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">model</span>) </span>{})
+</code></pre>
+<h2 id="plugineventonbeforecreatemodel3x&#x7248;&#x672C;&#x540E;&#x65B0;&#x589E;">PLUGIN_EVENT.ON_BEFORE_CREATE_MODEL(3.x&#x7248;&#x672C;&#x540E;&#x65B0;&#x589E;)</h2>
+<p>&#x521B;&#x5EFA;model&#x5B9E;&#x4F8B;&#x524D;&#x89E6;&#x53D1;&#xFF0C;&#x6B64;&#x65F6;&#x4F1A;&#x4F20;&#x9012;model&#x914D;&#x7F6E;&#xFF0C;&#x53EF;&#x7528;&#x4E8E;&#x4FEE;&#x6539;model&#x914D;&#x7F6E;</p>
+<pre><code class="lang-js">event.on(PLUGIN_EVENT.ON_BEFORE_CREATE_MODEL, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">modelConfig</span>) </span>{
+  <span class="hljs-keyword">return</span> newModelConfig
+})
+</code></pre>
+<h2 id="plugineventonaftercreatemodel3x&#x7248;&#x672C;&#x540E;&#x65B0;&#x589E;">PLUGIN_EVENT.ON_AFTER_CREATE_MODEL(3.x&#x7248;&#x672C;&#x540E;&#x65B0;&#x589E;)</h2>
+<p>&#x521B;&#x5EFA;model&#x5B9E;&#x4F8B;&#x5B8C;&#x6210;&#x540E;&#x89E6;&#x53D1;&#xFF0C;&#x6B64;&#x65F6;&#x4F20;&#x9012;model&#x5B9E;&#x4F8B;&#xFF0C;dispatcher&#x4FBF;&#x662F;&#x57FA;&#x4E8E;&#x6B64;&#x4E8B;&#x4EF6;</p>
+<pre><code class="lang-js">event.on(PLUGIN_EVENT.ON_AFTER_CREATE_MODEL, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">model</span>) </span>{})
 </code></pre>
 <h2 id="plugineventonsetupmodel">PLUGIN_EVENT.ON_SETUP_MODEL</h2>
 <p>&#x8C03;&#x7528;<code>app.start()</code>&#x6216;&#x8005;<code>app.setup()</code>&#x65F6;&#x89E6;&#x53D1;</p>
@@ -512,19 +523,35 @@
 </code></pre>
 <h2 id="plugineventonwilleffect">PLUGIN_EVENT.ON_WILL_EFFECT</h2>
 <p>&#x8C03;&#x7528;&#x5F02;&#x6B65;action&#x65F6;&#x89E6;&#x53D1;</p>
-<pre><code class="lang-js">event.on(PLUGIN_EVENT.ON_WILL_EFFECT, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">action, store</span>) </span>{})
+<pre><code class="lang-js"><span class="hljs-comment">// 2.x &#x7248;&#x672C;</span>
+event.on(PLUGIN_EVENT.ON_WILL_EFFECT, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">action, store</span>) </span>{})
+<span class="hljs-comment">// 3.x &#x7248;&#x672C;, &#x53EF;&#x76D1;&#x542C;&#x4FEE;&#x6539;action</span>
+event.on(PLUGIN_EVENT.ON_WILL_EFFECT, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">action, { store, effectId }</span>) </span>{
+  <span class="hljs-keyword">return</span> newAction
+})
 </code></pre>
 <h2 id="plugineventondideffect">PLUGIN_EVENT.ON_DID_EFFECT</h2>
 <p>&#x8C03;&#x7528;&#x5F02;&#x6B65;action&#x7ED3;&#x675F;&#x65F6;&#x89E6;&#x53D1;</p>
-<pre><code class="lang-js">event.on(PLUGIN_EVENT.ON_DID_EFFECT, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">action, store</span>) </span>{})
-</code></pre>
+<pre><code class="lang-js"><span class="hljs-comment">// 2.x &#x7248;&#x672C;</span>
+event.on(PLUGIN_EVENT.ON_DID_EFFECT, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">action, store</span>) </span>{})
+<span class="hljs-comment">// 3.x &#x7248;&#x672C;</span>
+event.on(PLUGIN_EVENT.ON_DID_EFFECT, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">action, { store, effectId }</span>))
+</span></code></pre>
 <h2 id="plugineventonwillaction">PLUGIN_EVENT.ON_WILL_ACTION</h2>
 <p>&#x8C03;&#x7528;&#x540C;&#x6B65;action&#x65F6;&#x89E6;&#x53D1;</p>
-<pre><code class="lang-js">event.on(PLUGIN_EVENT.ON_WILL_ACTION, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">action, store</span>) </span>{})
+<pre><code class="lang-js"><span class="hljs-comment">// 2.x &#x7248;&#x672C;</span>
+event.on(PLUGIN_EVENT.ON_WILL_ACTION, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">action, store</span>) </span>{})
+<span class="hljs-comment">// 3.x &#x7248;&#x672C;&#xFF0C;&#x53EF;&#x76D1;&#x542C;&#x4FEE;&#x6539;action</span>
+event.on(PLUGIN_EVENT.ON_WILL_ACTION, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">action, { store, actionId }</span>) </span>{
+  <span class="hljs-keyword">return</span> newAction
+})
 </code></pre>
 <h2 id="plugineventondidaction">PLUGIN_EVENT.ON_DID_ACTION</h2>
 <p>&#x8C03;&#x7528;&#x540C;&#x6B65;action&#x7ED3;&#x675F;&#x65F6;&#x89E6;&#x53D1;</p>
-<pre><code class="lang-js">event.on(PLUGIN_EVENT.ON_DID_ACTION, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">action, store</span>) </span>{})
+<pre><code class="lang-js"><span class="hljs-comment">// 2.x &#x7248;&#x672C;</span>
+event.on(PLUGIN_EVENT.ON_DID_ACTION, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">action, store</span>) </span>{})
+<span class="hljs-comment">// 3.x &#x7248;&#x672C;</span>
+event.on(PLUGIN_EVENT.ON_DID_ACTION, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">action, { store, actionId }</span>) </span>{})
 </code></pre>
 <h2 id="plugineventonsetup">PLUGIN_EVENT.ON_SETUP</h2>
 <p>&#x8C03;&#x7528;<code>app.start()</code>&#x6216;&#x8005;<code>app.setup()</code>&#x65F6;&#x89E6;&#x53D1;</p>
@@ -536,7 +563,10 @@
 </code></pre>
 <h2 id="plugineventonerror">PLUGIN_EVENT.ON_ERROR</h2>
 <p>&#x5F02;&#x6B65;action&#x53D1;&#x751F;&#x5F02;&#x5E38;&#x65F6;&#x89E6;&#x53D1;</p>
-<pre><code class="lang-js">event.on(PLUGIN_EVENT.ON_ERROR, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">error, action, store</span>) </span>{})
+<pre><code class="lang-js"><span class="hljs-comment">// 2.x &#x7248;&#x672C;</span>
+event.on(PLUGIN_EVENT.ON_ERROR, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">error, action, store</span>) </span>{})
+<span class="hljs-comment">// 3.x &#x7248;&#x672C;</span>
+event.on(PLUGIN_EVENT.ON_ERROR, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">error</span>) </span>{})
 </code></pre>
 
                                 
@@ -577,7 +607,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"插件开发","level":"1.5.5","depth":2,"previous":{"title":"perf插件","level":"1.5.4","depth":2,"path":"PLUGIN/PERF.md","ref":"PLUGIN/PERF.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"PLUGIN/DEVELOPMENT.md","mtime":"2018-12-28T10:18:12.000Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2019-04-25T07:37:37.909Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"插件开发","level":"1.5.5","depth":2,"previous":{"title":"perf插件","level":"1.5.4","depth":2,"path":"PLUGIN/PERF.md","ref":"PLUGIN/PERF.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"PLUGIN/DEVELOPMENT.md","mtime":"2019-12-17T09:35:56.000Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2020-08-16T06:27:47.738Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
